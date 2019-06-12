@@ -124,6 +124,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="external_DFRobot_LCD.h" />
+    <ClInclude Include="external_I2CIO.h" />
+    <ClInclude Include="external_LCD.h" />
+    <ClInclude Include="external_LiquidCrystal_I2C.h" />
+    <ClInclude Include="external_MPU6050.h" />
+    <ClInclude Include="external_MPU6050_6Axis_MotionApps20.h" />
+    <ClInclude Include="external_MPU6050_helper_3dmath.h" />
+    <ClInclude Include="external_MPU6050_I2Cdev.h" />
+    <ClInclude Include="external_VL6180X.h" />
+    <ClInclude Include="hardware.h" />
+    <ClInclude Include="hardware_definition.h" />
+    <ClInclude Include="type_traits.h" />
+    <ClInclude Include="units.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="external_DFRobot_LCD.cpp" />
+    <ClCompile Include="external_I2CIO.cpp" />
+    <ClCompile Include="external_LCD.cpp" />
+    <ClCompile Include="external_LiquidCrystal_I2C.cpp" />
+    <ClCompile Include="external_MPU6050.cpp" />
+    <ClCompile Include="external_MPU6050_I2Cdev.cpp" />
+    <ClCompile Include="external_VL6180X.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
