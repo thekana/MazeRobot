@@ -146,6 +146,7 @@
     <ClCompile Include="external_MPU6050.cpp" />
     <ClCompile Include="external_MPU6050_I2Cdev.cpp" />
     <ClCompile Include="external_VL6180X.cpp" />
+    <ClCompile Include="hardware.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

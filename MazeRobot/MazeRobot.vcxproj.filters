@@ -77,5 +77,8 @@
     <ClCompile Include="external_VL6180X.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hardware.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
