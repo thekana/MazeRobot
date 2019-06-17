@@ -1,5 +1,6 @@
 #include <SoftwareSerial.h>
-SoftwareSerial BT(10, 11); 
+//SoftwareSerial BT(10, 11); 
+#define BT Serial1
 // creates a "virtual" serial port/UART
 // connect BT module TX to D10
 // connect BT module RX to D11
@@ -38,10 +39,11 @@ void loop()
       while(BT.available()){
         a = BT.read();
         c = String(c+a);
+        delay(10);
       }
       Serial.println(c);
+      delay(10);
     }
-    delay(10);
     c = "";
     // you can add more "if" statements with other characters to add more commands
   }
