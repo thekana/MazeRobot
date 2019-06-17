@@ -11,11 +11,10 @@ void setup()
   // Send test message to other device
   BT.println("Hello from Arduino");
   Serial.begin(9600);
-  Serial.println("Waiting Bluetooth Message");
+  Serial.println("Waiting Bluetooth Message Enter MAZE");
 }
 char a; // stores incoming character from other device
 String c;
-String f = "Construct";
 void loop() 
 {
   if (BT.available())
@@ -40,13 +39,14 @@ void loop()
         BT.println("Input Maze Name:");
         String s = BT.readString();
         Serial.println("Input Data are");
-        char buff[100];
-        sprintf(buff, "Width is %d, Height is %d, %s is Name", w, h, s.c_str());
-        Serial.println(buff);
+        char message[50];
+        sprintf(message, "Width is %d, Height is %d, Name is", w, h);
+        Serial.print(message);
+        Serial.println(s);
         BT.println("Do you want to quit Maze Constructor Mode? Y/N");
         waitBTInput();
         if(BT.peek() == 'Y' || BT.peek() == 'y'){
-          BT.println("Quiting Clearing Receive Buffer");
+          BT.println("Quiting & Clearing Receive Buffer");
           clearBTInBuffer();
           Serial.println("In Message Mode");
           quit = 1;
