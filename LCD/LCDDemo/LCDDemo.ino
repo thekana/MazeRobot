@@ -27,7 +27,8 @@ void setup()
   
   // Print on first row
   lcd.setCursor(0,0);
-  lcd.print("Hello world!");
+  String h = "Hello There!";
+  lcd.print(h);
   
   // Wait 1 second
   delay(1000);
@@ -37,7 +38,7 @@ void setup()
   lcd.print("How are you?");
   
   // Wait 8 seconds
-  delay(8000);
+  delay(1000);
   
   // Clear the display
   lcd.clear();
@@ -71,7 +72,7 @@ void loop()
     
   // Demo 2 - scroll
   lcd.setCursor(0,0);
-  lcd.print("Scroll demo - ");
+  lcd.print("Scroll demo -----+++++");
   delay(1500);
   // set the display to automatically scroll:
   lcd.autoscroll();
