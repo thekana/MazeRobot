@@ -772,7 +772,7 @@ public:
 	int closeS() { return this->s; }
 	int closeD() { return this->d; }
 	String toString() {
-		String str = String("Cell Location object with X,Y " + String(getX()));
+		String str = String("Cell Location object with X,Y: " + String(getX()) + "," + String(getY()));
 		return str;
 	}
 	void print() {

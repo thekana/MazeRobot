@@ -20,7 +20,7 @@ const int  en = 2, rw = 1, rs = 0, d4 = 4, d5 = 5, d6 = 6, d7 = 7, bl = 3;
 
 // Define I2C Address - change if reqiuired
 const int i2c_addr = 0x3F;
-hardware::cell_location cell(1, 3, 1, 1, 1, 1);
+hardware::cell_location cell(6, 9, 1, 1, 1, 1);
 LiquidCrystal_I2C lcd(i2c_addr, en, rw, rs, d4, d5, d6, d7, bl, POSITIVE);
 
 //////////////////////////////////////////////
@@ -60,7 +60,7 @@ void loop()
       BT.println("Send '2' to turn LED on");
     } else {
       c = BT.readString();
-      Serial.println(c);
+      Serial.print(c);    //if not println must send string with LF from phone
 	    Serial.println(cell.toString());
       delay(10);
       lcdPrintRoutine(c);
@@ -90,22 +90,32 @@ void lcdPrintRoutine(String str){
     delay(500);
     return;
   }
+  ///////////////////////////////
    /* Split into two lines
   lcd.print(str.substring(0,16));
   lcd.setCursor(0,1);
   lcd.print(str.substring(16));
   */
-  //char buff[20];
-  //sub.toCharArray(buff,str.length()-15);
-
-  /*
+  //////////////////////////////
+  /*lcd.print(str.substring(0,16));
+  delay(1500);
+  String sub1 = str.substring(16);
+  Serial.println(sub1);
   lcd.autoscroll();
-  // print from 0 to 9:
-  for (auto ch : buff) {
-    lcd.print(ch);
-    delay(500);
-    }
-  // turn off automatic scrolling
+  for(int i = 0; i < sub1.length();i++){
+    lcd.print(sub1.charAt(i));
+    Serial.print(sub1.charAt(i));
+    delay(400);
+  }
   lcd.noAutoscroll();
-  */
+  ///////////////////////////////*/
+  lcd.setCursor(16,0);
+  lcd.autoscroll();
+  for(int i = 0; i < str.length();i++){
+    lcd.print(str.charAt(i));
+    Serial.print(str.charAt(i));
+    delay(400);
+  }
+  Serial.println("");
+  lcd.noAutoscroll();
 }
