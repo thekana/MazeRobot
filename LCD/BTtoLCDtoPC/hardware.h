@@ -733,22 +733,27 @@ class serial_api
  * Bluetooth about the maze. Student to design the class.
  */
 class maze_layout_message {
-private:
-  int rows;
-  int cols;
-  String data;
 public:
+	int rows;
+	int cols;
+	String vWall;
+	String hWall;
+
 	maze_layout_message() {
 		rows = 0;
 		cols = 0;
 	}
+	maze_layout_message(String const &msg){
+		setMessage(msg);
+	}
 	void setMessage(String const &msg) {
-    rows = msg.charAt(0) - '0';
-    cols = msg.charAt(1) - '0';
-    data = msg.substring(2);
+		rows = msg.charAt(0) - '0';
+		cols = msg.charAt(1) - '0';
+		hWall = msg.substring(2,msg.indexOf('!'));
+		vWall = msg.substring(msg.indexOf('!')+1);
 	}
 	String toString() {
-		String str = String("Maze size is " + String(rows) + "x" + String(cols) + " Encoded Msg:" + data);
+		String str = String("Maze size is " + String(rows) + "x" + String(cols) + " Encoded Msg hWall & vWall:" + hWall + " & " + vWall );
 		return str;
 	}
 };
@@ -756,13 +761,49 @@ public:
 /**
  * \brief The maze_layout class holds the parsed layout of the maze.
  */
-//class maze_layout;
+class maze_layout{
+private:
+	int hWall[4][9];
+	int vWall[5][8];
+	int rows;
+	int cols;
+public:
+	maze_layout(int rows, int cols, String const &h, String const &v) {
+		this->rows = rows;
+		this->cols = cols;
+		fillHorizontal(h);
+		fillVertical(v);
+	}
+	void fillHorizontal(String const& h) {
+		for (int i = 0; i < rows - 1; i++) {
+			for (int j = 0; j < cols; j++) {
+				hWall[i][j] = h.charAt(cols*i + j) - '0';
+				Serial.print(hWall[i][j]);
+			}
+			Serial.print("\n");
+		}
+	}
+	void fillVertical(String const& v) {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols - 1; j++) {
+				vWall[i][j] = v.charAt((cols - 1)*i + j) - '0';
+				Serial.print(vWall[i][j]);
+			}
+			Serial.print("\n");
+		}
+	}
+};
 
 /**
  * \brief The receive_maze_layout function is called to receive the layout of
  * the maze via Bluetooth. \return the message encoding the maze layout.
+ * Use with Mega only
  */
-//auto receive_maze_layout () -> maze_layout_message;
+//auto receive_maze_layout () -> maze_layout_message{
+////  String str = Serial1.readString();
+////  maze_layout_message result(str);
+////  return result;
+//};
 
 /**
  * \brief cell_location class describe the position of a cell.
@@ -804,7 +845,7 @@ public:
  * \brief The parse_maze_layout function parses the message received from
  * Bluetooth into maze_layout. \return the parsed layout of the maze.
  */
-//auto parse_maze_layout (maze_layout_message maze) -> maze_layout;
+auto parse_maze_layout (maze_layout_message maze) -> maze_layout;
 
 /**
  * \brief The display class is used to display messages on an I2C LCD display.

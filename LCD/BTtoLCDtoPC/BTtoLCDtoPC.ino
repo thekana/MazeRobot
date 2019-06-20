@@ -59,8 +59,10 @@ void loop()
       waitBTInput();
       c = "";
       c = BT.readString();
+      c.remove(c.length()-1);
       mazeMesg.setMessage(c);
       Serial.println(mazeMesg.toString());
+	    hardware::maze_layout layout = hardware::parse_maze_layout(mazeMesg);
     }
     c = "";
     clearBTbuffer();
