@@ -11,13 +11,18 @@ SoftwareSerial BT(2, 3);
 // Include NewLiquidCrystal Library for I2C
 #include <LiquidCrystal_I2C.h>
 
+// Include personal library
+#include "hardware.h"
+#include "hardware_definition.h"
+
 // Define LCD pinout
 const int  en = 2, rw = 1, rs = 0, d4 = 4, d5 = 5, d6 = 6, d7 = 7, bl = 3;
 
 // Define I2C Address - change if reqiuired
 const int i2c_addr = 0x3F;
-
+hardware::cell_location cell(1, 3, 1, 1, 1, 1);
 LiquidCrystal_I2C lcd(i2c_addr, en, rw, rs, d4, d5, d6, d7, bl, POSITIVE);
+
 //////////////////////////////////////////////
 void setup()  
 {
@@ -29,9 +34,13 @@ void setup()
   BT.println("Hello from Arduino");
   Serial.begin(9600);
   Serial.println("Waiting");
+  
   lcd.begin(16,2);
   lcd.clear();
   lcd.setCursor(0,0);
+  lcd.print("HELLO");
+  lcd.setCursor(0,1);
+  lcd.print("WORLD");
 }
 char a; // stores incoming character from other device
 char b;
@@ -39,7 +48,6 @@ String c;
 void loop() 
 {
   if (BT.available())
-  // if text arrived in from BT serial...
   {
     if (BT.peek()=='1'){
       digitalWrite(LED_BUILTIN, HIGH);
@@ -53,12 +61,12 @@ void loop()
     } else {
       c = BT.readString();
       Serial.println(c);
+	    Serial.println(cell.toString());
       delay(10);
       lcdPrintRoutine(c);
     }
     c = "";
     clearBTbuffer();
-    // you can add more "if" statements with other characters to add more commands
   }
   if (Serial.available()){
     b = Serial.read();
@@ -77,14 +85,27 @@ void lcdPrintRoutine(String str){
   lcd.clear();
   lcd.setCursor(0,0);
   str.remove(str.length()-1);
-  lcd.print(str);
-  delay(1500);
+  if (str.length() <= 15){
+    lcd.print(str);
+    delay(500);
+    return;
+  }
+   /* Split into two lines
+  lcd.print(str.substring(0,16));
+  lcd.setCursor(0,1);
+  lcd.print(str.substring(16));
+  */
+  //char buff[20];
+  //sub.toCharArray(buff,str.length()-15);
+
+  /*
   lcd.autoscroll();
   // print from 0 to 9:
-  for (int thisChar = 0; thisChar < 10; thisChar++) {
-    lcd.print(thisChar+1);
+  for (auto ch : buff) {
+    lcd.print(ch);
     delay(500);
     }
   // turn off automatic scrolling
   lcd.noAutoscroll();
+  */
 }

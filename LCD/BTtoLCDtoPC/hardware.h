@@ -1,9 +1,10 @@
 #pragma once
 // __DO_NOT_CHANGE_THIS_FILE__
 #define MTRN_HARDWARE_VERSION 1.0
-
+#include "Arduino.h"
 #include "type_traits.h"
 #include "units.h"
+#include <WString.h>
 // ReSharper disable once CppUnusedIncludeDirective
 #include <stdint.h>    // NOLINT(modernize-deprecated-headers, hicpp-deprecated-headers)
 // ReSharper disable once CppUnusedIncludeDirective
@@ -730,29 +731,60 @@ class serial_api
  * \brief The maze_layout_message class holds the message received from
  * Bluetooth about the maze. Student to design the class.
  */
-class maze_layout_message;
+//class maze_layout_message;
 
 /**
  * \brief The maze_layout class holds the parsed layout of the maze.
  */
-class maze_layout;
+//class maze_layout;
 
 /**
  * \brief The receive_maze_layout function is called to receive the layout of
  * the maze via Bluetooth. \return the message encoding the maze layout.
  */
-auto receive_maze_layout () -> maze_layout_message;
+//auto receive_maze_layout () -> maze_layout_message;
 
 /**
  * \brief cell_location class describe the position of a cell.
  */
-class cell_location;
+class cell_location {
+private:
+	int x;
+	int y;
+	int w;
+	int s;
+	int a;
+	int d;
+public:
+	cell_location(int x, int y, int w, int a, int s, int d) {
+		this->x = x;
+		this->y = y;
+		this->w = w;
+		this->s = s;
+		this->a = a;
+		this->d = d;
+   
+	}
+	int getX() { return this->x; }
+	int getY() { return this->y; }
+	int closeW() { return this->w; }
+	int closeA() { return this->a; }
+	int closeS() { return this->s; }
+	int closeD() { return this->d; }
+	String toString() {
+		String str = String("Cell Location object with X,Y " + String(getX()));
+		return str;
+	}
+	void print() {
+		Serial.println("From class cell location");
+	}
+};
 
 /**
  * \brief The parse_maze_layout function parses the message received from
  * Bluetooth into maze_layout. \return the parsed layout of the maze.
  */
-auto parse_maze_layout (maze_layout_message maze) -> maze_layout;
+//auto parse_maze_layout (maze_layout_message maze) -> maze_layout;
 
 /**
  * \brief The display class is used to display messages on an I2C LCD display.
@@ -807,7 +839,7 @@ class display
      * \param cell is the cell to be printed.
      * \return number of char printed.
      */
-    static auto print (maze_layout maze, cell_location cell) -> size_t;
+    //static auto print (maze_layout maze, cell_location cell) -> size_t;
 
     /**
      * \brief clear the lcd display.
