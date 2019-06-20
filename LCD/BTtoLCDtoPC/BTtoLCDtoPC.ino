@@ -53,7 +53,7 @@ void loop()
     Serial.print(c);    //if not println must send string with LF from phone
     //Serial.println(cell.toString());
     delay(10);
-    //lcdPrintRoutine(c);
+    lcdPrintRoutine(c);
     if ( c.equals("MAZE\n")){
       Serial.println("In Maze Constructor Mode");
       waitBTInput();
@@ -63,6 +63,7 @@ void loop()
       mazeMesg.setMessage(c);
       Serial.println(mazeMesg.toString());
 	    hardware::maze_layout layout = hardware::parse_maze_layout(mazeMesg);
+      layout.print();
     }
     c = "";
     clearBTbuffer();

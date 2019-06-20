@@ -5,11 +5,11 @@
  --- --- ---
 
  --- --- ---
-|           |
+|   |
      ---    
 |       |   |
  --- --- ---
-
+ --- --- ---
 pseudo code:
 for i row in HorizontalMat:
 	print i row;

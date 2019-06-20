@@ -792,6 +792,42 @@ public:
 			Serial.print("\n");
 		}
 	}
+
+	void print() {
+		for (int i = 0; i <= rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (i == 0 || i == rows) {
+					Serial.print(" ---");
+				}
+				else {
+					if (hWall[i - 1][j]) {
+						Serial.print(" ---");
+					}
+					else {
+						Serial.print("    ");
+					}
+				}
+			}
+			Serial.print("\n");
+			if (i == rows) {
+				break;
+			}
+			for (int k = 0; k <= cols; k++) {
+				if (k == 0 || k == cols) {
+					Serial.print("|   ");
+				}
+				else {
+					if (vWall[i][k - 1]) {
+						Serial.print("|   ");
+					}
+					else {
+						Serial.print("    ");
+					}
+				}
+			}
+			Serial.print("\n");
+		}
+	}
 };
 
 /**
