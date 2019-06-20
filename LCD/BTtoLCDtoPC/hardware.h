@@ -5,6 +5,7 @@
 #include "type_traits.h"
 #include "units.h"
 #include <WString.h>
+
 // ReSharper disable once CppUnusedIncludeDirective
 #include <stdint.h>    // NOLINT(modernize-deprecated-headers, hicpp-deprecated-headers)
 // ReSharper disable once CppUnusedIncludeDirective
@@ -731,7 +732,26 @@ class serial_api
  * \brief The maze_layout_message class holds the message received from
  * Bluetooth about the maze. Student to design the class.
  */
-//class maze_layout_message;
+class maze_layout_message {
+private:
+  int rows;
+  int cols;
+  String data;
+public:
+	maze_layout_message() {
+		rows = 0;
+		cols = 0;
+	}
+	void setMessage(String const &msg) {
+    rows = msg.charAt(0) - '0';
+    cols = msg.charAt(1) - '0';
+    data = msg.substring(2);
+	}
+	String toString() {
+		String str = String("Maze size is " + String(rows) + "x" + String(cols) + " Encoded Msg:" + data);
+		return str;
+	}
+};
 
 /**
  * \brief The maze_layout class holds the parsed layout of the maze.

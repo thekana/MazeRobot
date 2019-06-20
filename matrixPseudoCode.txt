@@ -1,0 +1,19 @@
+ --- --- ---
+|           |
+ --- --- ---
+|       |   |
+ --- --- ---
+
+ --- --- ---
+|           |
+     ---    
+|       |   |
+ --- --- ---
+
+pseudo code:
+for i row in HorizontalMat:
+	print i row;
+	if i == MAX_row { break; }
+	print i row of Verticle mat;
+	i++;
+end:

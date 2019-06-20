@@ -21,15 +21,15 @@ const int  en = 2, rw = 1, rs = 0, d4 = 4, d5 = 5, d6 = 6, d7 = 7, bl = 3;
 // Define I2C Address - change if reqiuired
 const int i2c_addr = 0x3F;
 hardware::cell_location cell(6, 9, 1, 1, 1, 1);
+hardware::maze_layout_message mazeMesg;
 LiquidCrystal_I2C lcd(i2c_addr, en, rw, rs, d4, d5, d6, d7, bl, POSITIVE);
 
 //////////////////////////////////////////////
 void setup()  
 {
-  // set digital pin to control as an output
-  pinMode(LED_BUILTIN, OUTPUT);
   // set the data rate for the SoftwareSerial port
   BT.begin(9600);
+  BT.setTimeout(1000);
   // Send test message to other device
   BT.println("Hello from Arduino");
   Serial.begin(9600);
@@ -49,21 +49,18 @@ void loop()
 {
   if (BT.available())
   {
-    if (BT.peek()=='1'){
-      digitalWrite(LED_BUILTIN, HIGH);
-      BT.println("LED on");
-    }else if (BT.peek()=='2'){
-      digitalWrite(LED_BUILTIN, LOW);
-      BT.println("LED off");
-    }else if (BT.peek()=='?'){
-      BT.println("Send '1' to turn LED on");
-      BT.println("Send '2' to turn LED on");
-    } else {
+    c = BT.readString();
+    Serial.print(c);    //if not println must send string with LF from phone
+    //Serial.println(cell.toString());
+    delay(10);
+    //lcdPrintRoutine(c);
+    if ( c.equals("MAZE\n")){
+      Serial.println("In Maze Constructor Mode");
+      waitBTInput();
+      c = "";
       c = BT.readString();
-      Serial.print(c);    //if not println must send string with LF from phone
-	    Serial.println(cell.toString());
-      delay(10);
-      lcdPrintRoutine(c);
+      mazeMesg.setMessage(c);
+      Serial.println(mazeMesg.toString());
     }
     c = "";
     clearBTbuffer();
@@ -118,4 +115,8 @@ void lcdPrintRoutine(String str){
   }
   Serial.println("");
   lcd.noAutoscroll();
+}
+void waitBTInput()
+{
+  while(!BT.available()){}
 }
