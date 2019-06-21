@@ -8,7 +8,8 @@
  
  
 #include <SoftwareSerial.h>
-SoftwareSerial BTserial(2, 3); // RX | TX
+#define BTserial Serial1
+// SoftwareSerial BTserial(2, 3); // RX | TX
 // Connect the HC-06 TX to the Arduino RX on pin 2. 
 // Connect the HC-06 RX to the Arduino TX on pin 3 through a voltage divider.
 // 
@@ -16,11 +17,11 @@ SoftwareSerial BTserial(2, 3); // RX | TX
  
 void setup() 
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("Enter AT commands:");
  
     // HC-06 default serial speed is 9600
-    BTserial.begin(9600);  
+    BTserial.begin(115200);  
 }
 char a;
 void loop()
