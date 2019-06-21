@@ -1,6 +1,6 @@
-#include <SoftwareSerial.h>
-SoftwareSerial BT(2, 3);
-// #define BT Serial1
+//#include <SoftwareSerial.h>
+//SoftwareSerial BT(2, 3);
+#define BT Serial1
 // creates a "virtual" serial port/UART
 // connect BT module TX to D2
 // connect BT module RX to D3
@@ -9,7 +9,7 @@ SoftwareSerial BT(2, 3);
 // Include Wire Library for I2C
 #include <Wire.h>
 // Include NewLiquidCrystal Library for I2C
-#include <LiquidCrystal_I2C.h>
+#include "LiquidCrystal_I2C.h"
 
 // Include personal library
 #include "hardware.h"
@@ -28,11 +28,11 @@ LiquidCrystal_I2C lcd(i2c_addr, en, rw, rs, d4, d5, d6, d7, bl, POSITIVE);
 void setup()  
 {
   // set the data rate for the SoftwareSerial port
-  BT.begin(9600);
+  BT.begin(115200);
   BT.setTimeout(1000);
   // Send test message to other device
   BT.println("Hello from Arduino");
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Waiting");
   
   lcd.begin(16,2);
