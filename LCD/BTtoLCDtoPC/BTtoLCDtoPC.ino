@@ -1,6 +1,6 @@
 //#include <SoftwareSerial.h>
 //SoftwareSerial BT(2, 3);
-#define BT Serial1
+#define BT Serial2
 // creates a "virtual" serial port/UART
 // connect BT module TX to D2
 // connect BT module RX to D3
@@ -60,6 +60,7 @@ void loop()
       c = "";
       c = BT.readString();
       c.remove(c.length()-1);
+      Serial.println(c);
       mazeMesg.setMessage(c);
       Serial.println(mazeMesg.toString());
 	    hardware::maze_layout layout = hardware::parse_maze_layout(mazeMesg);
