@@ -13,33 +13,33 @@ using remove_reference_t = typename remove_reference<T>::type;
 template <class T>
 struct remove_reference
 {
-    typedef T type;
+  typedef T type;
 };
 template <class T>
 struct remove_reference<T &>
 {
-    typedef T type;
+  typedef T type;
 };
 template <class T>
-struct remove_reference<T &&>
+struct remove_reference < T && >
 {
-    typedef T type;
+  typedef T type;
 };
 
 template <class T, T v>
 struct integral_constant
 {
-    static constexpr T value = v;
-    typedef T value_type;
-    typedef integral_constant type;    // using injected-class-name
-    constexpr operator value_type () const noexcept
-    {
-        return value;
-    }
-    constexpr value_type operator() () const noexcept
-    {
-        return value;
-    }    // since c++14
+  static constexpr T value = v;
+  typedef T value_type;
+  typedef integral_constant type;    // using injected-class-name
+  constexpr operator value_type () const noexcept
+  {
+    return value;
+  }
+  constexpr value_type operator() () const noexcept
+  {
+    return value;
+  }    // since c++14
 };
 template <bool B>
 using bool_constant = integral_constant<bool, B>;
@@ -80,7 +80,7 @@ struct enable_if
 template <class T>
 struct enable_if<true, T>
 {
-    typedef T type;
+  typedef T type;
 };
 
 template <bool B, class T = void>
@@ -101,7 +101,7 @@ struct non_type_parameter;
 template <class a, a i, template <a> class u>
 struct non_type_parameter<a, u<i>>
 {
-    static constexpr a value = i;
+  static constexpr a value = i;
 };
 
 // template <class a, class u>
@@ -109,7 +109,7 @@ struct non_type_parameter<a, u<i>>
 
 template <typename tag, class non_type_arg_t, template <non_type_arg_t> class t>
 using check_tag
-    = is_same<tag, t<non_type_parameter<non_type_arg_t, tag>::value>>;
+  = is_same<tag, t<non_type_parameter<non_type_arg_t, tag>::value>>;
 
 // template<class T, template <class> class U>
 // constexpr bool is_instance_v<U<T>, U> = is_instance<U<T>, U>::value;
@@ -117,15 +117,15 @@ using check_tag
 template <class T>
 T && forward (typename remove_reference<T>::type & t) noexcept
 {
-    return static_cast<T &&> (t);
+  return static_cast < T && > (t);
 }
 
 template <class T>
 T && forward (typename remove_reference<T>::type && t) noexcept
 {
-    static_assert (!is_lvalue_reference<T>::value,
-        "Can not forward an rvalue as an lvalue.");
-    return static_cast<T &&> (t);
+  static_assert (!is_lvalue_reference<T>::value,
+                 "Can not forward an rvalue as an lvalue.");
+  return static_cast < T && > (t);
 }
 
 //#pragma once

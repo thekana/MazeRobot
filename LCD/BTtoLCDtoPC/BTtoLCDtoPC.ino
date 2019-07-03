@@ -25,7 +25,7 @@ hardware::maze_layout_message mazeMesg;
 LiquidCrystal_I2C lcd(i2c_addr, en, rw, rs, d4, d5, d6, d7, bl, POSITIVE);
 
 //////////////////////////////////////////////
-void setup()  
+void setup()
 {
   // set the data rate for the SoftwareSerial port
   BT.begin(115200);
@@ -34,18 +34,18 @@ void setup()
   BT.println("Hello from Arduino");
   Serial.begin(115200);
   Serial.println("Waiting");
-  
-  lcd.begin(16,2);
+
+  lcd.begin(16, 2);
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("HELLO");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("WORLD");
 }
 char a; // stores incoming character from other device
 char b;
 String c;
-void loop() 
+void loop()
 {
   if (BT.available())
   {
@@ -54,65 +54,65 @@ void loop()
     //Serial.println(cell.toString());
     delay(10);
     lcdPrintRoutine(c);
-    if ( c.equals("MAZE\n")){
+    if ( c.equals("MAZE\n")) {
       Serial.println("In Maze Constructor Mode");
       waitBTInput();
       c = "";
       c = BT.readString();
-      c.remove(c.length()-1);
+      c.remove(c.length() - 1);
       Serial.println(c);
       mazeMesg.setMessage(c);
       Serial.println(mazeMesg.toString());
-	    hardware::maze_layout layout = hardware::parse_maze_layout(mazeMesg);
+      hardware::maze_layout layout = hardware::parse_maze_layout(mazeMesg);
       layout.print();
     }
     c = "";
     clearBTbuffer();
   }
-  if (Serial.available()){
+  if (Serial.available()) {
     b = Serial.read();
     BT.write(b);
     Serial.flush();
   }
 }
 
-void clearBTbuffer(){
-  while(BT.available()){
+void clearBTbuffer() {
+  while (BT.available()) {
     BT.read();
   }
 }
 
-void lcdPrintRoutine(String str){
+void lcdPrintRoutine(String str) {
   lcd.clear();
-  lcd.setCursor(0,0);
-  str.remove(str.length()-1);
-  if (str.length() <= 15){
+  lcd.setCursor(0, 0);
+  str.remove(str.length() - 1);
+  if (str.length() <= 15) {
     lcd.print(str);
     delay(500);
     return;
   }
   ///////////////////////////////
-   /* Split into two lines
-  lcd.print(str.substring(0,16));
-  lcd.setCursor(0,1);
-  lcd.print(str.substring(16));
+  /* Split into two lines
+    lcd.print(str.substring(0,16));
+    lcd.setCursor(0,1);
+    lcd.print(str.substring(16));
   */
   //////////////////////////////
   /*lcd.print(str.substring(0,16));
-  delay(1500);
-  String sub1 = str.substring(16);
-  Serial.println(sub1);
-  lcd.autoscroll();
-  for(int i = 0; i < sub1.length();i++){
+    delay(1500);
+    String sub1 = str.substring(16);
+    Serial.println(sub1);
+    lcd.autoscroll();
+    for(int i = 0; i < sub1.length();i++){
     lcd.print(sub1.charAt(i));
     Serial.print(sub1.charAt(i));
     delay(400);
-  }
-  lcd.noAutoscroll();
-  ///////////////////////////////*/
-  lcd.setCursor(16,0);
+    }
+    lcd.noAutoscroll();
+    ///////////////////////////////*/
+  lcd.setCursor(16, 0);
   lcd.autoscroll();
-  for(int i = 0; i < str.length();i++){
+  for (int i = 0; i < str.length(); i++) {
     lcd.print(str.charAt(i));
     Serial.print(str.charAt(i));
     delay(400);
@@ -122,5 +122,5 @@ void lcdPrintRoutine(String str){
 }
 void waitBTInput()
 {
-  while(!BT.available()){}
+  while (!BT.available()) {}
 }
