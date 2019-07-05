@@ -96,7 +96,7 @@ class new_maze_layout {
         index++;
         // Now update the cell data
         // int data = decimal * 10 + digit;
-        // BITMASK N-S-E-W
+        // BITMASK E-S-W-N
         cells[i][j][0] = (data & B1000) >> 3;
         cells[i][j][1] = (data & B0100) >> 2;
         cells[i][j][2] = (data & B0010) >> 1;
@@ -107,22 +107,22 @@ class new_maze_layout {
 
     void updateAdjCells(int i, int j, int data) {
       if ( i == 0 ) {
-        cells[i + 1][j][0] = cells[i][j][1];
+        cells[i + 1][j][0] = cells[i][j][2];
       }
       if ( i == 4 ) {
-        cells[i - 1][j][1] = cells[i][j][0];
+        cells[i - 1][j][2] = cells[i][j][0];
       }
       if ( j == 0 ) {
-        cells[i][j + 1][3] =  cells[i][j][2];
+        cells[i][j + 1][3] =  cells[i][j][1];
       }
       if ( j == 8 ) {
-        cells[i][j - 1][2] =  cells[i][j][3];
+        cells[i][j - 1][1] =  cells[i][j][3];
       }
       if ( i > 0 && i < 4 && j > 0 && j < 8 ) {
-        cells[i + 1][j][0] = cells[i][j][1];
-        cells[i - 1][j][1] = cells[i][j][0];
-        cells[i][j - 1][2] =  cells[i][j][3];
-        cells[i][j + 1][3] =  cells[i][j][2];
+        cells[i + 1][j][0] = cells[i][j][2];
+        cells[i - 1][j][2] = cells[i][j][0];
+        cells[i][j + 1][3] =  cells[i][j][1];
+        cells[i][j - 1][1] =  cells[i][j][3];
       }
     }
     bool hasEastWall(int v) {
@@ -141,10 +141,10 @@ class new_maze_layout {
         Serial.print("|"); // left most wall
         for (int j = 0; j < cols - 1; j++) {
           Serial.print(statusCells[i][j]);
-          if (cells[i][j][2] == -1) {
+          if (cells[i][j][1] == -1) {
             Serial.print("*");
           } else {
-            if (cells[i][j][2] == 1) {
+            if (cells[i][j][1] == 1) {
               Serial.print("|");
             } else {
               Serial.print(" ");
@@ -158,10 +158,10 @@ class new_maze_layout {
           break;
         }
         for (int j = 0; j < cols; j++) {
-          if (cells[i][j][1] == -1) {
+          if (cells[i][j][2] == -1) {
             Serial.print(" ***");
           } else {
-            if (cells[i][j][1] == 1) {
+            if (cells[i][j][2] == 1) {
               Serial.print(" ---");
             } else {
               Serial.print("    ");
@@ -178,6 +178,7 @@ class new_maze_layout {
 };
 
 maze_layout_message maze;
+new_maze_layout lay("");
 
 void setup()
 {
@@ -193,14 +194,17 @@ void loop()
     //maze.setMessage(c);
     //maze_layout layout(maze.rows, maze.cols, maze.hWall, maze.vWall);
     //layout.print();
-    new_maze_layout lay(c);
+    lay.fillCells(c);
     lay.printNew();
   }
 }
 
-// N-S-E-W e.g. All 4 walls is F in HEX 1111
+// ESWN e.g. All 4 walls is F in HEX 1111
 // Give Cell position 00F
-//00F
+//   E
+//  N S
+//   W
+// 00F
 // --- --- --- --- --- --- --- --- ---
 //| S |   *   *   *   *   *   *   *   |
 // --- *** *** *** *** *** *** *** ***
