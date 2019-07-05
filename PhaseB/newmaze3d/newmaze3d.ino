@@ -5,13 +5,12 @@
 
 Maze *lay = new Maze("");
 Floodfill *ff = new Floodfill(lay);
-LinkedList<Path*> pathList = LinkedList<Path*>();
-
+//LinkedList<Path*> pathList = LinkedList<Path*>();
+LinkedList<Node*> path = LinkedList<Node*>();
 void setup()
 {
   Serial.begin(9600);
   Serial.println("Hello");
-  pathList.add(new Path()); // added 1 path to the list
 }
 
 void loop()
@@ -29,44 +28,38 @@ void loop()
       Serial.print("Is maze sufficiently explored? ");
       Serial.println(ff->sufficientlyExplored());
     }
-    else if (c.startsWith("P")) {
+    else if (c.startsWith("p")) {
       ff->printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     }
-    else if (c.startsWith("S")) {
+    else if (c.startsWith("s")) {
       Serial.println(c.substring(3));
       lay->updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
       lay->print();
     }
-    else if (c.startsWith("M")) {
+    else if (c.startsWith("m")) {
       createPath();
-      pathList.get(0)->print();
+	  for (int i = 0; i < path.size(); i++) {
+		  path.get(i)->print();
+	  }
     }
     else {
       lay->fillCells(c);
       lay->print();
     }
-    //maze.setMessage(c);
-    //maze_layout layout(maze.rows, maze.cols, maze.hWall, maze.vWall);
-    //layout.print();
   }
 }
 
-void newPath() {
-  pathList.add(new Path());
-}
-
 void createPath() {
-  Path * currP = pathList.get(0);
+
   Head h = lay->getHeading();   // starting heading
   Node * currN = nullptr;
   Node * toDelete = nullptr;
+  LinkedList<Node *> stack = LinkedList<Node *>();	// Have a stack to keep all possible nodes we can traverse
   // move towards the neighbouring cells that has less than 1
   int currX = lay->getStartX();
   int currY = lay->getStartY();
   int currV = ff->getCell(currX, currY);
   int movement = 1;
-  // Have a stack to keep all possible nodes we can traverse
-  LinkedList<Node *> stack = LinkedList<Node *>();
   while (movement != 0) {
     movement = 0;
     // for all cells neighbouring curr cells
@@ -103,7 +96,6 @@ void createPath() {
     if (stack.size() != 0) {
       int minTurn = 100;
       int minTurnIndex = 0;
-	  Serial.println(stack.size());
       for (int i = 0; i < stack.size(); i++) {
         if (minTurn > stack.get(i)->getTurn()) {
           minTurn = stack.get(i)->getTurn();
@@ -113,7 +105,7 @@ void createPath() {
       // Done looping through remove minTurnIndex
       currN = stack.remove(minTurnIndex);
       // Add to path
-      currP->add(currN);
+      path.add(currN);
       // Update values for the next iteration
       currX = currN->getX();
       currY = currN->getY();
@@ -130,6 +122,11 @@ void createPath() {
       }
     }
   }
+  while (stack.size() > 0) {
+	  toDelete = stack.pop();
+	  delete toDelete;
+  }
+  stack.clear();
 }
 // ESWN e.g. All 4 walls is F in HEX 1111
 // Give Cell position 00F

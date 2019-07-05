@@ -14,7 +14,7 @@
 #define LinkedList_h
 
 #include <stddef.h>
-
+//#include <Arduino.h>
 template<class T>
 struct ListNode
 {
@@ -139,6 +139,7 @@ LinkedList<T>::~LinkedList()
   last = NULL;
   _size = 0;
   isCached = false;
+  //Serial.println("LinkedList destroyed");
 }
 
 /*
