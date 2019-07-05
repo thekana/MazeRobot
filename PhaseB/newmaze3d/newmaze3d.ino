@@ -43,14 +43,14 @@ int x2i(char *s)
   }
   return x;
 }
+
 class new_maze_layout {
-  private:
+  public:
     int cells[5][9][4];
     String statusCells[5][9];
     int rows = 5;
     int cols = 9;
 
-  public:
     new_maze_layout(String const &h) {
       this->rows = 5;
       this->cols = 9;
@@ -176,10 +176,46 @@ class new_maze_layout {
       Serial.print("\n");
     }
 };
-
+class FloodFill {
+  private:
+    new_maze_layout *maze;
+    int cell[5][9];
+    int rows = 5;
+    int cols = 9;
+    int noWallsPathCount;
+    int wallsPathCount;
+    bool wall = true;
+  public:
+    FloodFill(new_maze_layout *maze = nullptr) {
+      this->maze = maze;
+    }
+    void AssumeNoWalls() {
+      this->wall = false;
+    }
+    void AssumeWalls() {
+      this->wall = true;
+    }
+    void doFloodFill() {
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          this->cell[i][j] = 50;
+        }
+      }
+      this->cell[2][4] = 0;
+      int currExploredValue = 0;
+      int mazeValueChange = 1;
+      while (mazeValueChange != 0) {
+        
+      }
+    }
+    void print() {
+      maze->printNew();
+    }
+};
 maze_layout_message maze;
-new_maze_layout lay("");
-
+new_maze_layout *lay = new new_maze_layout("");
+FloodFill ff(lay);
+//new_maze_layout lay("");
 void setup()
 {
   Serial.begin(9600);
@@ -194,8 +230,8 @@ void loop()
     //maze.setMessage(c);
     //maze_layout layout(maze.rows, maze.cols, maze.hWall, maze.vWall);
     //layout.print();
-    lay.fillCells(c);
-    lay.printNew();
+    lay->fillCells(c);
+    ff.print();
   }
 }
 
