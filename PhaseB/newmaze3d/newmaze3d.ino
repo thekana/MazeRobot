@@ -106,16 +106,18 @@ class new_maze_layout {
     }
 
     void updateAdjCells(int i, int j, int data) {
-      if ( i == 0 ) {
+      if ( i >= 0 && i < 4 ) {
+        // can go down
         cells[i + 1][j][0] = cells[i][j][2];
       }
-      if ( i == 4 ) {
+      if ( i <= 4 && i > 0 ) {
+        // can go up
         cells[i - 1][j][2] = cells[i][j][0];
       }
-      if ( j == 0 ) {
+      if ( j >= 0 && j < 8 ) {
         cells[i][j + 1][3] =  cells[i][j][1];
       }
-      if ( j == 8 ) {
+      if ( j <= 8 && j > 0 ) {
         cells[i][j - 1][1] =  cells[i][j][3];
       }
       if ( i > 0 && i < 4 && j > 0 && j < 8 ) {
@@ -286,10 +288,15 @@ void loop()
   if (Serial.available()) {
     String c = Serial.readString();
     Serial.println(c);
-    if (c == "flood") {
+    if (c.startsWith("f")) {
       ff.AssumeNoWalls();
       ff.doFloodFill();
       ff.print();
+      ff.AssumeWalls();
+      ff.doFloodFill();
+      ff.print();
+    } else if (c.startsWith("P")){
+      ff.printCell(c.charAt(1)-'0',c.charAt(2)-'0');
     } else {
       lay->fillCells(c);
       lay->printNew();
@@ -308,7 +315,7 @@ void loop()
 // 00B01002A03A04E116109
 // 00B01002A03A04E11610920021A22412913C235
 // 00B01002A03A04E11610920021A22412913C23530531B32433540341A42243244A
-// 00B01002A03A04E11610920021A22412913C23530531B32433540341A42243244A456358343249
+// 00B01802A03A04E11610920021A22412913C23530531B32433540341A42243244A456358343249
 // --- --- --- --- --- --- --- --- ---
 //| S |   *   *   *   *   *   *   *   |
 // --- *** *** *** *** *** *** *** ***
