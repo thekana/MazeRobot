@@ -205,11 +205,70 @@ class FloodFill {
       int currExploredValue = 0;
       int mazeValueChange = 1;
       while (mazeValueChange != 0) {
-        
+        mazeValueChange = 0;
+        for (int i = 0; i < rows; i++) {
+          for (int j = 0; j < cols; j++) {
+            if (cell[i][j] == currExploredValue) {
+              Serial.print("I is: ");Serial.print(i);Serial.print(" J is: ");Serial.print(j);Serial.print(" Curr is: ");Serial.print(currExploredValue);
+              Serial.print("\n");
+              for (int k = 0; k < 4 ; k++) {
+                // Check unexplored wall assumption
+                if (maze->cells[i][j][k] == -1) {
+                  // unexplored wall assume no walls
+                  if ( !wall ) {
+                    // do update
+                    mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
+                  }
+                } else if (maze->cells[i][j][k] == 0) {
+                  Serial.print("I is: ");Serial.print(i);Serial.print(" J is: ");Serial.print(j);Serial.print(" K is: ");Serial.print(k);
+                  Serial.print("\n");
+                  mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
+                }
+              }
+            }
+          }
+        }
+        currExploredValue++;
+      }
+    }
+    int incrementNeighbour(int i, int j, int k, int value) {
+      if (k == 0) {
+        i = i - 1;
+      } else if (k == 1) {
+        j = j + 1;
+      } else if (k == 2) {
+        i = i + 1;
+      } else {
+        j = j - 1;
+      }
+      if (cell[i][j] == 50) {
+        cell[i][j] = value + 1;
+        return 1;
+      } else {
+        return 0;
       }
     }
     void print() {
-      maze->printNew();
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          Serial.print(cell[i][j]);
+          Serial.print("\t");
+        }
+        Serial.print("\n");
+      }
+      Serial.print("\n");
+      printCell(4, 4);
+      printCell(4, 5);
+      printCell(0, 4);
+      printCell(0, 5);
+      printCell(1, 5);
+      printCell(1, 4);
+    }
+    void printCell(int i, int j) {
+      for (int k = 0; k < 4 ; k++) {
+        Serial.print(maze->cells[i][j][k]);
+      }
+      Serial.print("\n");
     }
 };
 maze_layout_message maze;
@@ -227,11 +286,17 @@ void loop()
   if (Serial.available()) {
     String c = Serial.readString();
     Serial.println(c);
+    if (c == "flood") {
+      ff.AssumeNoWalls();
+      ff.doFloodFill();
+      ff.print();
+    } else {
+      lay->fillCells(c);
+      lay->printNew();
+    }
     //maze.setMessage(c);
     //maze_layout layout(maze.rows, maze.cols, maze.hWall, maze.vWall);
     //layout.print();
-    lay->fillCells(c);
-    ff.print();
   }
 }
 
@@ -240,7 +305,10 @@ void loop()
 //   E
 //  N S
 //   W
-// 00F
+// 00B01002A03A04E116109
+// 00B01002A03A04E11610920021A22412913C235
+// 00B01002A03A04E11610920021A22412913C23530531B32433540341A42243244A
+// 00B01002A03A04E11610920021A22412913C23530531B32433540341A42243244A456358343249
 // --- --- --- --- --- --- --- --- ---
 //| S |   *   *   *   *   *   *   *   |
 // --- *** *** *** *** *** *** *** ***
