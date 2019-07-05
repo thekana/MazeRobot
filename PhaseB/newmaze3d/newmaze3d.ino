@@ -56,7 +56,7 @@ class new_maze_layout {
       this->cols = 9;
       initializeCells();  // -1 is unexplored
       initializeStatusCells(); // 4 spaces
-      fillCells(h);
+      //fillCells(h);
       updateStatusCells();
     }
     void initializeCells() {
@@ -64,6 +64,18 @@ class new_maze_layout {
         for (int j = 0; j < 9; j++) {
           for (int k = 0; k < 4; k++) {
             cells[i][j][k] = -1;
+            if (i == 0) {
+              cells[i][j][0] = 1;
+            }
+            if (i == 4) {
+              cells[i][j][2] = 1;
+            }
+            if (j == 0) {
+              cells[i][j][3] = 1;
+            }
+            if (j == 8) {
+              cells[i][j][1] = 1;
+            }
           }
         }
       }
@@ -211,7 +223,7 @@ class FloodFill {
         for (int i = 0; i < rows; i++) {
           for (int j = 0; j < cols; j++) {
             if (cell[i][j] == currExploredValue) {
-              Serial.print("I is: ");Serial.print(i);Serial.print(" J is: ");Serial.print(j);Serial.print(" Curr is: ");Serial.print(currExploredValue);
+              Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" Curr is: "); Serial.print(currExploredValue);
               Serial.print("\n");
               for (int k = 0; k < 4 ; k++) {
                 // Check unexplored wall assumption
@@ -222,7 +234,7 @@ class FloodFill {
                     mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
                   }
                 } else if (maze->cells[i][j][k] == 0) {
-                  Serial.print("I is: ");Serial.print(i);Serial.print(" J is: ");Serial.print(j);Serial.print(" K is: ");Serial.print(k);
+                  Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" K is: "); Serial.print(k);
                   Serial.print("\n");
                   mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
                 }
@@ -295,8 +307,8 @@ void loop()
       ff.AssumeWalls();
       ff.doFloodFill();
       ff.print();
-    } else if (c.startsWith("P")){
-      ff.printCell(c.charAt(1)-'0',c.charAt(2)-'0');
+    } else if (c.startsWith("P")) {
+      ff.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     } else {
       lay->fillCells(c);
       lay->printNew();
