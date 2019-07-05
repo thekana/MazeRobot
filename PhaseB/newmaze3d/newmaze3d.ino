@@ -1,30 +1,5 @@
 #include <Wire.h>
 
-class maze_layout_message {
-  public:
-    int rows;
-    int cols;
-    String vWall;
-    String hWall;
-
-    maze_layout_message() {
-      rows = 0;
-      cols = 0;
-    }
-    maze_layout_message(String const &msg) {
-      setMessage(msg);
-    }
-    void setMessage(String const &msg) {
-      rows = msg.charAt(0) - '0';
-      cols = msg.charAt(1) - '0';
-      hWall = msg.substring(2, msg.indexOf('!'));
-      vWall = msg.substring(msg.indexOf('!') + 1);
-    }
-    String toString() {
-      String str = String("Maze size is " + String(rows) + "x" + String(cols) + " Encoded Msg hWall & vWall:" + hWall + " & " + vWall );
-      return str;
-    }
-};
 int x2i(char *s)
 {
   int x = 0;
@@ -56,8 +31,7 @@ class new_maze_layout {
       this->cols = 9;
       initializeCells();  // -1 is unexplored
       initializeStatusCells(); // 4 spaces
-      //fillCells(h);
-      updateStatusCells();
+      statusCells[2][4] = " X ";  // mark goal
     }
     void initializeCells() {
       for (int i = 0; i < 5 ; i++) {
@@ -83,17 +57,18 @@ class new_maze_layout {
     void initializeStatusCells() {
       for (int i = 0; i < 5 ; i++) {
         for (int j = 0; j < 9; j++) {
-          // set every cells to -1
+          // set every cells to 4 spaces
           statusCells[i][j] = "   ";
         }
       }
     }
 
-    void updateStatusCells() {
+    void updateStatusCells(int i, int j, String const&h) {
       // to update these cells with path
       // data and start/end
-      statusCells[2][4] = " X ";
-      statusCells[0][0] = " S ";
+      statusCells[i][j] = String(" " + h + " ");
+      //      Serial.print("Updated");
+      //      Serial.print(i);Serial.print(j);Serial.println(h);
     }
     void fillCells(String const& h) {
       int index = 0;
@@ -138,12 +113,6 @@ class new_maze_layout {
         cells[i][j + 1][3] =  cells[i][j][1];
         cells[i][j - 1][1] =  cells[i][j][3];
       }
-    }
-    bool hasEastWall(int v) {
-      return (v & B0010);
-    }
-    bool hasSouthWall(int v) {
-      return (v & B0100);
     }
     void printNew() {
       for (int j = 0; j < cols; j++) {
@@ -223,8 +192,8 @@ class FloodFill {
         for (int i = 0; i < rows; i++) {
           for (int j = 0; j < cols; j++) {
             if (cell[i][j] == currExploredValue) {
-              Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" Curr is: "); Serial.print(currExploredValue);
-              Serial.print("\n");
+              //              Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" Curr is: "); Serial.print(currExploredValue);
+              //              Serial.print("\n");
               for (int k = 0; k < 4 ; k++) {
                 // Check unexplored wall assumption
                 if (maze->cells[i][j][k] == -1) {
@@ -234,8 +203,8 @@ class FloodFill {
                     mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
                   }
                 } else if (maze->cells[i][j][k] == 0) {
-                  Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" K is: "); Serial.print(k);
-                  Serial.print("\n");
+                  //                  Serial.print("I is: "); Serial.print(i); Serial.print(" J is: "); Serial.print(j); Serial.print(" K is: "); Serial.print(k);
+                  //                  Serial.print("\n");
                   mazeValueChange = mazeValueChange | incrementNeighbour(i, j, k, cell[i][j]);
                 }
               }
@@ -271,12 +240,6 @@ class FloodFill {
         Serial.print("\n");
       }
       Serial.print("\n");
-      printCell(4, 4);
-      printCell(4, 5);
-      printCell(0, 4);
-      printCell(0, 5);
-      printCell(1, 5);
-      printCell(1, 4);
     }
     void printCell(int i, int j) {
       for (int k = 0; k < 4 ; k++) {
@@ -285,10 +248,9 @@ class FloodFill {
       Serial.print("\n");
     }
 };
-maze_layout_message maze;
+
 new_maze_layout *lay = new new_maze_layout("");
 FloodFill ff(lay);
-//new_maze_layout lay("");
 void setup()
 {
   Serial.begin(9600);
@@ -309,6 +271,10 @@ void loop()
       ff.print();
     } else if (c.startsWith("P")) {
       ff.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
+    } else if (c.startsWith("S")) {
+      Serial.println(c.substring(3));
+      lay->updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
+      lay->printNew();
     } else {
       lay->fillCells(c);
       lay->printNew();
