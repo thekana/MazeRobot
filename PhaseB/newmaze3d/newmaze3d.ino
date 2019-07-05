@@ -25,7 +25,8 @@ class new_maze_layout {
     String statusCells[5][9];
     int rows = 5;
     int cols = 9;
-
+    int startX = 0;
+    int startY = 0;
     new_maze_layout(String const &h) {
       this->rows = 5;
       this->cols = 9;
@@ -213,6 +214,11 @@ class FloodFill {
         }
         currExploredValue++;
       }
+      if (wall) {
+        wallsPathCount = cell[maze->startX][maze->startY];
+      } else {
+        noWallsPathCount = cell[maze->startX][maze->startY];
+      }
     }
     int incrementNeighbour(int i, int j, int k, int value) {
       if (k == 0) {
@@ -247,6 +253,9 @@ class FloodFill {
       }
       Serial.print("\n");
     }
+    bool sufficientlyExplored() {
+      return wallsPathCount == noWallsPathCount;
+    }
 };
 
 new_maze_layout *lay = new new_maze_layout("");
@@ -269,6 +278,8 @@ void loop()
       ff.AssumeWalls();
       ff.doFloodFill();
       ff.print();
+      Serial.print("Is maze sufficiently explored? ");
+      Serial.println(ff.sufficientlyExplored());
     } else if (c.startsWith("P")) {
       ff.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     } else if (c.startsWith("S")) {
