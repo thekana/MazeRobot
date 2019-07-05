@@ -20,6 +20,13 @@ int x2i(char *s)
   }
   return x;
 }
+enum heading {
+  EAST = 0,
+  SOUTH = 1,
+  WEST = 2,
+  NORTH = 3
+};
+typedef enum heading Head;
 
 class Maze {
   private:
@@ -29,6 +36,7 @@ class Maze {
     int cols = 9;
     int startX = 0;
     int startY = 0;
+    Head head;
   public:
     Maze(String const &h) {
       this->rows = 5;
@@ -69,6 +77,15 @@ class Maze {
     void updateStatusCells(int i, int j, String const&h) {
       // to update these cells with path
       // data and start/end
+      if(h == "E"){
+        head = EAST;
+      } else if (h == "S"){
+        head = SOUTH;
+      } else if (h == "W"){
+        head = WEST;
+      } else if (h == "N"){
+        head = NORTH;
+      }
       statusCells[i][j] = String(" " + h + " ");
       // Serial.print("Updated");
       // Serial.print(i);Serial.print(j);Serial.println(h);
@@ -116,13 +133,13 @@ class Maze {
         cells[i][j - 1][1] =  cells[i][j][3];
       }
     }
-    int getCellData(int i, int j, int k) {
+    int getCellData(int i, int j, int k){
       return cells[i][j][k];
     }
-    int getStartX() {
+    int getStartX(){
       return startX;
     }
-    int getStartY() {
+    int getStartY(){
       return startY;
     }
     void print() {
@@ -168,6 +185,9 @@ class Maze {
         Serial.print(" ---"); // Print closing bottom walls
       }
       Serial.print("\n");
+    }
+    Head getHeading(){
+      return head;
     }
 };
 #endif

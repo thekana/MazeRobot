@@ -98,5 +98,8 @@ class Floodfill {
     bool sufficientlyExplored() {
       return wallsPathCount == noWallsPathCount;
     }
+    int getCell(int i, int j){
+      return cell[i][j];
+    }
 };
 #endif
