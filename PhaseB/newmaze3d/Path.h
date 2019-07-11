@@ -5,29 +5,29 @@
 #include <Arduino.h>
 class Node {
   private:
-    int x;
-    int y;
-    int v;  //value
-    int t;
+    byte x;
+    byte y;
+    byte v;  //value
+    byte t;
     Head from;
   public:
-    Node(int x, int y, int v, int t, int k) {
+    Node(byte x, byte y, byte v, byte t, byte k) {
       this->x = x;
       this->y = y;
       this->v = v;
       this->t = t;
       this->from = (Head)k;
     }
-    int getX() {
+    byte getX() {
       return x;
     }
-    int getY() {
+    byte getY() {
       return y;
     }
-    int getValue() {
+    byte getValue() {
       return v;
     }
-    int getTurn() {
+    byte getTurn() {
       return t;
     }
     Head getHead() {
@@ -47,7 +47,7 @@ class Node {
 
 class Path {
   public:
-    int turn = 0;
+    byte turn = 0;
     LinkedList<Node*> path;
     Path() {
       path = LinkedList<Node*>();
@@ -56,7 +56,7 @@ class Path {
       path.add(n);
     }
     void print() {
-      for (int i = 0; i < path.size(); i++) {
+      for (byte i = 0; i < path.size(); i++) {
         path.get(i)->print();
       }
     }

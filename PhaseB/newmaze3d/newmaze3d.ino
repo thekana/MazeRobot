@@ -6,7 +6,7 @@
 Maze *maze = new Maze("");
 Floodfill *flood = new Floodfill(maze);
 LinkedList<Node*> path = LinkedList<Node*>();
-LinkedList<int> *commands = new LinkedList<int>();
+LinkedList<char> *commands = new LinkedList<char>();
 void setup()
 {
   Serial.begin(9600);
@@ -25,7 +25,7 @@ void loop()
       flood->AssumeWalls();
       flood->doFloodfill();
       flood->print();
-      Serial.print("Is maze sufficiently explored? ");
+      Serial.print("SufficientlyExplored? ");
       Serial.println(flood->sufficientlyExplored());
     }
     else if (c.startsWith("p")) {
@@ -38,31 +38,38 @@ void loop()
     }
     else if (c.startsWith("m")) {
       createPath();
-      for (int i = 0; i < path.size(); i++) {
+      for (byte i = 0; i < path.size(); i++) {
         path.get(i)->print();
-        int num = path.get(i)->getValue();
+        byte num = path.get(i)->getValue();
         num = abs(flood->getCell(0, 0) - num);
         // Add to maze for printing
         maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
       }
       // first add forward
-      commands->add(1);
-      for (int i = 1; i < path.size(); i++) {
-        commands->add(1);
+      for (byte i = 0; i < path.size(); i++) {
+        commands->add('F');
         if (i == path.size() - 1) {
           continue;
         }
-        if (path.get(i)->getHead() > path.get(i + 1)->getHead()) {
-          commands->add(2);
+        if (path.get(i)->getHead() == 0 && path.get(i + 1)->getHead() == 3){
+          commands->add('L'); // left
+        } else if (path.get(i)->getHead() == 0 && path.get(i + 1)->getHead() == 1){
+          commands->add('R'); // right 
+        } else if (path.get(i)->getHead() == 3 && path.get(i + 1)->getHead() == 0){
+          commands->add('R'); // right 
+        } else if (path.get(i)->getHead() == 3 && path.get(i + 1)->getHead() == 2){
+          commands->add('L'); // left
+        } else if (path.get(i)->getHead() > path.get(i + 1)->getHead()) {
+          commands->add('L'); // left
         } else if (path.get(i)->getHead() < path.get(i + 1)->getHead()) {
-          commands->add(3);
+          commands->add('R'); // right
         }
       }
       maze->print();
       Serial.println("Commands");
-      for (int i = 0; i < commands->size(); i++) {
+      for (byte i = 0; i < commands->size(); i++) {
         Serial.print(commands->get(i));
-        Serial.print("\t");
+        Serial.print("  ");
       }
       Serial.println("");
     }
@@ -81,19 +88,19 @@ void createPath() {
   Node * toDelete = nullptr;
   LinkedList<Node *> stack = LinkedList<Node *>();	// Have a stack to keep all possible nodes we can traverse
   // move towards the neighbouring cells that has less than 1
-  int currX = maze->getStartX();
-  int currY = maze->getStartY();
-  int currV = flood->getCell(currX, currY);
-  int movement = 1;
+  byte currX = maze->getStartX();
+  byte currY = maze->getStartY();
+  byte currV = flood->getCell(currX, currY);
+  byte movement = 1;
   while (movement != 0) {
     movement = 0;
     // for all cells neighbouring curr cells
     // add valid cells to stack
-    for (int k = 0; k < 4; k++) {
+    for (byte k = 0; k < 4; k++) {
       if (maze->getCellData(currX, currY, k) == 0) {
         // No wall here. Find out the cell Pose
-        int tmpX = currX;
-        int tmpY = currY;
+        byte tmpX = currX;
+        byte tmpY = currY;
         if (k == 0) {
           tmpX--;
         }
@@ -106,7 +113,7 @@ void createPath() {
         if (k == 3) {
           tmpY--;
         }
-        int nextV = flood->getCell(tmpX, tmpY);
+        byte nextV = flood->getCell(tmpX, tmpY);
         if ((currV - nextV) == 1) {
           // We want CurrV - nextCell = 1
           // this is the right cell add to stack
@@ -119,9 +126,9 @@ void createPath() {
     // (If possible)
     // And clear the stack
     if (stack.size() != 0) {
-      int minTurn = 100;
-      int minTurnIndex = 0;
-      for (int i = 0; i < stack.size(); i++) {
+      byte minTurn = 100;
+      byte minTurnIndex = 0;
+      for (byte i = 0; i < stack.size(); i++) {
         if (minTurn > stack.get(i)->getTurn()) {
           minTurn = stack.get(i)->getTurn();
           minTurnIndex = i;

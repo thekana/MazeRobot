@@ -2,9 +2,9 @@
 #define MAZE_H
 #include <Arduino.h>
 
-int x2i(char *s)
+byte x2i(char *s)
 {
-  int x = 0;
+  byte x = 0;
   for (;;) {
     char c = *s;
     if (c >= '0' && c <= '9') {
@@ -30,26 +30,26 @@ typedef enum heading Head;
 
 class Maze {
   private:
-    int cells[5][9][4];
+    byte cells[5][9][4];
     String statusCells[5][9];
-    int rows = 5;
-    int cols = 9;
-    int startX = 0;
-    int startY = 0;
+    byte rows = 5;
+    byte cols = 9;
+    byte startX = 0;
+    byte startY = 0;
     Head head;
   public:
     Maze(String const &h) {
       this->rows = 5;
       this->cols = 9;
-      initializeCells();  // -1 is unexplored
+      initializeCells();  // 2 is unexplored
       initializeStatusCells(); // 4 spaces
       statusCells[2][4] = " X ";  // mark goal
     }
     void initializeCells() {
-      for (int i = 0; i < 5 ; i++) {
-        for (int j = 0; j < 9; j++) {
-          for (int k = 0; k < 4; k++) {
-            cells[i][j][k] = -1;
+      for (byte i = 0; i < 5 ; i++) {
+        for (byte j = 0; j < 9; j++) {
+          for (byte k = 0; k < 4; k++) {
+            cells[i][j][k] = 2; // 2 is unexplored
             if (i == 0) {
               cells[i][j][0] = 1;
             }
@@ -67,14 +67,14 @@ class Maze {
       }
     }
     void initializeStatusCells() {
-      for (int i = 0; i < 5 ; i++) {
-        for (int j = 0; j < 9; j++) {
+      for (byte i = 0; i < 5 ; i++) {
+        for (byte j = 0; j < 9; j++) {
           // set every cells to 4 spaces
           statusCells[i][j] = "   ";
         }
       }
     }
-    void updateStatusCells(int i, int j, String const&h) {
+    void updateStatusCells(byte i, byte j, String const&h) {
       // to update these cells with path
       // data and start/end
       if (h == "E") {
@@ -90,7 +90,7 @@ class Maze {
       //      Serial.print("Updated");
       //      Serial.print(i); Serial.print(j); Serial.println(statusCells[i][j]);
     }
-    void addPath(int i, int j, int val) {
+    void addPath(byte i, byte j, byte val) {
       Serial.println(val);
       String space = " ";
       String str = String(val);
@@ -101,18 +101,18 @@ class Maze {
       statusCells[i][j] = space;
     }
     void fillCells(String const& h) {
-      int index = 0;
-      int len = h.length();
+      byte index = 0;
+      byte len = h.length();
       while (index < len) {
-        int i = h.charAt(index) - '0';
+        byte i = h.charAt(index) - '0';
         index++;
-        int j = h.charAt(index) - '0';
+        byte j = h.charAt(index) - '0';
         index++;
         char a = h.charAt(index);
-        int data = x2i(&a);
+        byte data = x2i(&a);
         index++;
         // Now update the cell data
-        // int data = decimal * 10 + digit;
+        // byte data = decimal * 10 + digit;
         // BITMASK E-S-W-N
         cells[i][j][0] = (data & B1000) >> 3;
         cells[i][j][1] = (data & B0100) >> 2;
@@ -121,7 +121,7 @@ class Maze {
         updateAdjCells(i, j, data);
       }
     }
-    void updateAdjCells(int i, int j, int data) {
+    void updateAdjCells(byte i, byte j, byte data) {
       if ( i >= 0 && i < 4 ) {
         // can go down
         cells[i + 1][j][0] = cells[i][j][2];
@@ -143,26 +143,26 @@ class Maze {
         cells[i][j - 1][1] =  cells[i][j][3];
       }
     }
-    int getCellData(int i, int j, int k) {
+    byte getCellData(byte i, byte j, byte k) {
       return cells[i][j][k];
     }
-    int getStartX() {
+    byte getStartX() {
       return startX;
     }
-    int getStartY() {
+    byte getStartY() {
       return startY;
     }
     void print() {
-      for (int j = 0; j < cols; j++) {
+      for (byte j = 0; j < cols; j++) {
         Serial.print(" ---"); // Print top walls
       }
       Serial.print("\n");
-      for (int i = 0; i < rows; i++) {
+      for (byte i = 0; i < rows; i++) {
         // Print Vertical;
         Serial.print("|"); // left most wall
-        for (int j = 0; j < cols - 1; j++) {
+        for (byte j = 0; j < cols - 1; j++) {
           Serial.print(statusCells[i][j]);
-          if (cells[i][j][1] == -1) {
+          if (cells[i][j][1] == 2) {
             Serial.print("*");
           } else {
             if (cells[i][j][1] == 1) {
@@ -178,8 +178,8 @@ class Maze {
         if (i == 4) {
           break;
         }
-        for (int j = 0; j < cols; j++) {
-          if (cells[i][j][2] == -1) {
+        for (byte j = 0; j < cols; j++) {
+          if (cells[i][j][2] == 2) {
             Serial.print(" ***");
           } else {
             if (cells[i][j][2] == 1) {
@@ -191,7 +191,7 @@ class Maze {
         }
         Serial.print("\n");
       }
-      for (int j = 0; j < cols; j++) {
+      for (byte j = 0; j < cols; j++) {
         Serial.print(" ---"); // Print closing bottom walls
       }
       Serial.print("\n");
