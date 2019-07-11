@@ -5,8 +5,8 @@
 
 Maze *maze = new Maze("");
 Floodfill *flood = new Floodfill(maze);
-//LinkedList<Path*> pathList = LinkedList<Path*>();
 LinkedList<Node*> path = LinkedList<Node*>();
+LinkedList<int> *commands = new LinkedList<int>();
 void setup()
 {
   Serial.begin(9600);
@@ -42,9 +42,29 @@ void loop()
         path.get(i)->print();
         int num = path.get(i)->getValue();
         num = abs(flood->getCell(0, 0) - num);
+        // Add to maze for printing
         maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
       }
+      // first add forward
+      commands->add(1);
+      for (int i = 1; i < path.size(); i++) {
+        commands->add(1);
+        if (i == path.size() - 1) {
+          continue;
+        }
+        if (path.get(i)->getHead() > path.get(i + 1)->getHead()) {
+          commands->add(2);
+        } else if (path.get(i)->getHead() < path.get(i + 1)->getHead()) {
+          commands->add(3);
+        }
+      }
       maze->print();
+      Serial.println("Commands");
+      for (int i = 0; i < commands->size(); i++) {
+        Serial.print(commands->get(i));
+        Serial.print("\t");
+      }
+      Serial.println("");
     }
     else {
       maze->fillCells(c);
@@ -127,11 +147,11 @@ void createPath() {
       }
     }
   }
-    clearList(&stack);
+  clearList(&stack);
 }
 
-void clearList(LinkedList<Node*> *list){
-  while(list->size()>0){
+void clearList(LinkedList<Node*> *list) {
+  while (list->size() > 0) {
     Node * toDelete = list->pop();
     delete toDelete;
   }
