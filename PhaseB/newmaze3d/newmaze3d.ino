@@ -54,7 +54,8 @@ void loop()
 }
 
 void createPath() {
-
+  //Clear path
+  clearList(&path);
   Head h = maze->getHeading();   // starting heading
   Node * currN = nullptr;
   Node * toDelete = nullptr;
@@ -126,11 +127,15 @@ void createPath() {
       }
     }
   }
-  while (stack.size() > 0) {
-    toDelete = stack.pop();
+    clearList(&stack);
+}
+
+void clearList(LinkedList<Node*> *list){
+  while(list->size()>0){
+    Node * toDelete = list->pop();
     delete toDelete;
   }
-  stack.clear();
+  list->clear();
 }
 // ESWN e.g. All 4 walls is F in HEX 1111
 // Give Cell position 00F
