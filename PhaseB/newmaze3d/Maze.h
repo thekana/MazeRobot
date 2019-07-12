@@ -87,6 +87,8 @@ class Maze {
         head = NORTH;
       }
       statusCells[i][j] = String(" " + h + " ");
+      startX = i;
+      startY = j;
       //      Serial.print("Updated");
       //      Serial.print(i); Serial.print(j); Serial.println(statusCells[i][j]);
     }

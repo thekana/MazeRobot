@@ -41,7 +41,7 @@ void loop()
       for (byte i = 0; i < path.size(); i++) {
         path.get(i)->print();
         byte num = path.get(i)->getValue();
-        num = abs(flood->getCell(0, 0) - num);
+        num = abs(flood->getCell(maze->getStartX(), maze->getStartY()) - num);
         // Add to maze for printing
         maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
       }
