@@ -11,7 +11,7 @@ private:
   byte y;
   byte v; //value
   byte t;
-  Head from;
+  Heading from;
 
 public:
   Node(byte x, byte y, byte v, byte t, byte k)
@@ -20,7 +20,7 @@ public:
     this->y = y;
     this->v = v;
     this->t = t;
-    this->from = (Head)k;
+    this->from = (Heading)k;
   }
   byte getX()
   {
@@ -38,15 +38,15 @@ public:
   {
     return t;
   }
-  Head getHead()
+  Heading getHead()
   {
     return from;
   }
   void print()
   {
-      Serial.print(F(("X "));
+      Serial.print(F("X "));
       Serial.print(x);
-      Serial.print(F((" Y "));
+      Serial.print(F(" Y "));
       Serial.print(y);
       Serial.print(F(" Val "));
       Serial.print(v);

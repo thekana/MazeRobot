@@ -36,8 +36,8 @@ enum Heading
 class Maze
 {
 private:
-  byte cells[5][9] = {0};
-  byte exploredWalls[5][9] = {0};
+  byte cells[5][9] = {{0}};
+  byte exploredWalls[5][9] = {{0}};
   String statusCells[5][9];
   byte rows = 5;
   byte cols = 9;
@@ -199,7 +199,7 @@ public:
   }
   byte getCellData(byte i, byte j, byte k)
   {
-    return cells[i][j][k];
+    return 0;
   }
   byte getStartX()
   {
@@ -279,7 +279,7 @@ public:
   }
   boolean hasWall(int i, int j, int h)
   {
-    return (cells[i][j] & (1 << h))
+    return (cells[i][j] & (1 << h));
   }
 };
 #endif
