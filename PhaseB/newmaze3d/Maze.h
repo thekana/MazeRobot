@@ -25,14 +25,13 @@ byte x2i(char *s)
   }
   return x;
 }
-enum heading
+enum Heading
 {
   EAST = 3,
   SOUTH = 2,
   WEST = 1,
   NORTH = 0
 };
-typedef enum heading Head;
 
 class Maze
 {
@@ -44,7 +43,7 @@ private:
   byte cols = 9;
   byte startX = 0;
   byte startY = 0;
-  Head head;
+  Heading head;
 
 public:
   Maze(String const &h)
@@ -61,19 +60,19 @@ public:
       {
         if (i == 0)
         {
-          cells[i][j] |= (1 << 3);
+          cells[i][j] |= (1 << EAST);
         }
         if (i == 4)
         {
-          cells[i][j] |= (1 << 1);
+          cells[i][j] |= (1 << WEST);
         }
         if (j == 0)
         {
-          cells[i][j] |= (1 << 0);
+          cells[i][j] |= (1 << NORTH);
         }
         if (j == 8)
         {
-          cells[i][j] |= (1 << 2);
+          cells[i][j] |= (1 << SOUTH);
         }
       }
     }
@@ -157,41 +156,41 @@ public:
     if (i >= 0 && i < 4)
     {
       // EAST <--> WEST
-      cells[i + 1][j] |= ((cells[i][j] & (1 << 1)) << 2);
+      cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
       exploredWalls[i + 1][j] |= (1 << 3);
       //cells[i + 1][j][0] = cells[i][j][2];
     }
     if (i <= 4 && i > 0)
     {
       // WEST <--> EAST
-      cells[i - 1][j] |= ((cells[i][j] & (1 << 3)) >> 2);
+      cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
       exploredWalls[i - 1][j] |= (1 << 1);
       //cells[i - 1][j][2] = cells[i][j][0];
     }
     if (j >= 0 && j < 8)
     {
       // NORTH <--> SOUTH
-      cells[i][j + 1] |= ((cells[i][j] & (1 << 2)) >> 2);
+      cells[i][j + 1] |= ((cells[i][j] & (1 << SOUTH)) >> 2);
       exploredWalls[i][j + 1] |= (1 << 0);
       //cells[i][j + 1][3] = cells[i][j][1];
     }
     if (j <= 8 && j > 0)
     {
       // SOUTH <--> NORTH
-      cells[i][j - 1] |= ((cells[i][j] & (1 << 0)) << 2);
+      cells[i][j - 1] |= ((cells[i][j] & (1 << NORTH)) << 2);
       exploredWalls[i][j - 1] |= (1 << 2);
       //cells[i][j - 1][1] = cells[i][j][3];
     }
     if (i > 0 && i < 4 && j > 0 && j < 8)
     {
-      cells[i + 1][j] |= ((cells[i][j] & (1 << 1)) << 2);
-      cells[i - 1][j] |= ((cells[i][j] & (1 << 3)) >> 2);
-      cells[i][j + 1] |= ((cells[i][j] & (1 << 2)) >> 2);
-      cells[i][j - 1] |= ((cells[i][j] & (1 << 0)) << 2);
-      exploredWalls[i + 1][j] |= (1 << 3);
-      exploredWalls[i - 1][j] |= (1 << 1);
-      exploredWalls[i][j + 1] |= (1 << 0);
-      exploredWalls[i][j - 1] |= (1 << 2);
+      cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
+      cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
+      cells[i][j + 1] |= ((cells[i][j] & (1 << SOUTH)) >> 2);
+      cells[i][j - 1] |= ((cells[i][j] & (1 << NORTH)) << 2);
+      exploredWalls[i + 1][j] |= (1 << EAST);
+      exploredWalls[i - 1][j] |= (1 << WEST);
+      exploredWalls[i][j + 1] |= (1 << NORTH);
+      exploredWalls[i][j - 1] |= (1 << SOUTH);
       // cells[i + 1][j][0] = cells[i][j][2];
       // cells[i - 1][j][2] = cells[i][j][0];
       // cells[i][j + 1][3] = cells[i][j][1];
@@ -224,14 +223,14 @@ public:
       for (byte j = 0; j < cols - 1; j++)
       {
         Serial.print(statusCells[i][j]);
-        // if not explored
-        if (!(exploredWalls[i][j] & (1 << 2))
+        // if south wall not explored
+        if (!(exploredWalls[i][j] & (1 << SOUTH)))
         {
           Serial.print("*");
         }
         else
         {
-          if (cells[i][j][1] == 1)
+          if (hasWall(i, j, SOUTH))
           {
             Serial.print("|");
           }
@@ -250,13 +249,13 @@ public:
       }
       for (byte j = 0; j < cols; j++)
       {
-        if (cells[i][j][2] == 2)
+        if (!(exploredWalls[i][j] & (1 << WEST)))
         {
           Serial.print(F(" ***"));
         }
         else
         {
-          if (cells[i][j][2] == 1)
+          if (hasWall(i, j, WEST))
           {
             Serial.print(F(" ---"));
           }
@@ -274,9 +273,13 @@ public:
     }
     Serial.print("\n");
   }
-  Head getHeading()
+  Heading getHeading()
   {
     return head;
+  }
+  boolean hasWall(int i, int j, int h)
+  {
+    return (cells[i][j] & (1 << h))
   }
 };
 #endif
