@@ -1,7 +1,7 @@
 #ifndef FLOODFILL_H
 #define FLOODFILL_H
 #include "Maze.h"
-
+#include <avr/pgmspace.h>
 class Floodfill {
   private:
     Maze *maze;

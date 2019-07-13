@@ -1,7 +1,7 @@
 #ifndef MAZE_H
 #define MAZE_H
 #include <Arduino.h>
-
+#include <avr/pgmspace.h>
 byte x2i(char *s)
 {
   byte x = 0;
@@ -156,7 +156,7 @@ class Maze {
     }
     void print() {
       for (byte j = 0; j < cols; j++) {
-        Serial.print(" ---"); // Print top walls
+        Serial.print(F(" ---")); // Print top walls
       }
       Serial.print("\n");
       for (byte i = 0; i < rows; i++) {
@@ -182,19 +182,19 @@ class Maze {
         }
         for (byte j = 0; j < cols; j++) {
           if (cells[i][j][2] == 2) {
-            Serial.print(" ***");
+            Serial.print(F(" ***"));
           } else {
             if (cells[i][j][2] == 1) {
-              Serial.print(" ---");
+              Serial.print(F(" ---"));
             } else {
-              Serial.print("    ");
+              Serial.print(F("    "));
             }
           }
         }
         Serial.print("\n");
       }
       for (byte j = 0; j < cols; j++) {
-        Serial.print(" ---"); // Print closing bottom walls
+        Serial.print(F(" ---")); // Print closing bottom walls
       }
       Serial.print("\n");
     }

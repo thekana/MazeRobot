@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <avr/pgmspace.h>
 #include "Maze.h"
 #include "Floodfill.h"
 #include "Path.h"
@@ -25,7 +26,7 @@ void loop()
       flood->AssumeWalls();
       flood->doFloodfill();
       flood->print();
-      Serial.print("SufficientlyExplored? ");
+      Serial.print(F("SufficientlyExplored? "));
       Serial.println(flood->sufficientlyExplored());
     }
     else if (c.startsWith("p")) {
