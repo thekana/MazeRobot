@@ -25,18 +25,18 @@ void loop()
     Serial.println(c);
     if (c.startsWith("f"))
     {
-      // flood->AssumeNoWalls();
-      // flood->doFloodfill();
-      // flood->print();
-      // flood->AssumeWalls();
-      // flood->doFloodfill();
-      // flood->print();
-      // Serial.print(F("Is maze sufficiently explored? "));
-      // Serial.println(flood->sufficientlyExplored());
+      flood->AssumeNoWalls();
+      flood->doFloodfill();
+      flood->print();
+      flood->AssumeWalls();
+      flood->doFloodfill();
+      flood->print();
+      Serial.print(F("Is maze sufficiently explored? "));
+      Serial.println(flood->sufficientlyExplored());
     }
     else if (c.startsWith("p"))
     {
-      // flood->printCell(c.charAt(1) - '0', c.charAt(2) - '0');
+      flood->printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     }
     else if (c.startsWith("s"))
     {
@@ -46,21 +46,21 @@ void loop()
     }
     else if (c.startsWith("m"))
     {
-      // createPath();
-      // for (byte i = 0; i < path.size(); i++)
-      // {
-      //   path.get(i)->print();
-      //   byte num = path.get(i)->getValue();
-      //   num = abs(flood->getCell(maze->getStartX(), maze->getStartY()) - num);
-      //   // Add to maze for printing
-      //   maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
-      // }
-      // // first add forward then turn
-      // // We need to reset commandCount before doing so
-      // resetCommand();
-      // fillCommandArray();
-      // maze->print();
-      // printCommand();
+      createPath();
+      for (byte i = 0; i < path.size(); i++)
+      {
+        path.get(i)->print();
+        byte num = path.get(i)->getValue();
+        num = abs(flood->getCell(maze->getStartX(), maze->getStartY()) - num);
+        // Add to maze for printing
+        maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
+      }
+      // first add forward then turn
+      // We need to reset commandCount before doing so
+      resetCommand();
+      fillCommandArray();
+      maze->print();
+      printCommand();
     }
     else
     {
@@ -90,7 +90,7 @@ void createPath()
     // add valid cells to stack
     for (byte k = 0; k < 4; k++)
     {
-      if (maze->getCellData(currX, currY, k) == 0)
+      if (maze->hasWall(currX, currY, k) == 0)
       {
         // No wall here. Find out the cell Pose
         byte tmpX = currX;

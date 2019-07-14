@@ -197,10 +197,6 @@ public:
       // cells[i][j - 1][1] = cells[i][j][3];
     }
   }
-  byte getCellData(byte i, byte j, byte k)
-  {
-    return 0;
-  }
   byte getStartX()
   {
     return startX;
@@ -279,7 +275,13 @@ public:
   }
   boolean hasWall(int i, int j, int h)
   {
+    // return true if the wall exists
     return (cells[i][j] & (1 << h));
+  }
+  boolean isWalledExplored(int i, int j, int h)
+  {
+    // return true if the wall has been explored
+    return (exploredWalls[i][j] & (1 << h));
   }
 };
 #endif
