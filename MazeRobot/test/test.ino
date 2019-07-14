@@ -46,14 +46,36 @@ void loop() {
 
 void callback1(void)
 {
-    counterA++;
+    if(hardware::pins::left_encoder_a::read() != hardware::pins::left_encoder_b::read())
+    {
+        counterA++;
+    }
+    else
+    {
+         counterA--;
+    }
     Serial.print("CounterA is: ");
-    Serial.println(counterA);
+    Serial.print(counterA);
+    Serial.print(" A is: ");
+    Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
+    Serial.print(" B is: ");
+    Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
 }
 
 void callback2(void)
 {
-	counterB++;
-	Serial.print("CounterB is:");
-	Serial.println(counterB);
+  	if(hardware::pins::right_encoder_a::read() != hardware::pins::right_encoder_b::read())
+    {
+  	    counterB++;
+    }
+    else
+    {
+        counterB--;
+    }
+  	Serial.print("CounterB is: ");
+  	Serial.print(counterB);
+    Serial.print(" A is: ");
+    Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
+    Serial.print(" B is: ");
+    Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
 }
