@@ -4,10 +4,9 @@
 #include "Floodfill.h"
 #include "Path.h"
 
-Maze *maze = new Maze();
-Floodfill *flood = new Floodfill(maze);
+Maze maze;
+Floodfill flood(&maze);
 LinkedList<Node *> path = LinkedList<Node *>();
-//LinkedList<char> *commands = new LinkedList<char>();
 char commands[40]; // for storing commands
 byte commandCount = 0;
 
@@ -25,47 +24,46 @@ void loop()
     Serial.println(c);
     if (c.startsWith("f"))
     {
-      flood->AssumeNoWalls();
-      flood->doFloodfill();
-      flood->print();
-      flood->AssumeWalls();
-      flood->doFloodfill();
-      flood->print();
+      flood.AssumeNoWalls();
+      flood.doFloodfill();
+      flood.print();
+      flood.AssumeWalls();
+      flood.doFloodfill();
+      flood.print();
       Serial.print(F("Is maze sufficiently explored? "));
-      Serial.println(flood->sufficientlyExplored());
+      Serial.println(flood.sufficientlyExplored());
     }
     else if (c.startsWith("p"))
     {
-      flood->printCell(c.charAt(1) - '0', c.charAt(2) - '0');
+      flood.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     }
     else if (c.startsWith("s"))
     {
       Serial.println(c.substring(3));
-      maze->updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
-      maze->print();
+      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
+      maze.print();
     }
     else if (c.startsWith("m"))
     {
       createPath();
       for (byte i = 0; i < path.size(); i++)
       {
-        //path.get(i)->print();
         byte num = path.get(i)->getValue();
-        num = abs(flood->getCell(maze->getStartI(), maze->getStartJ()) - num);
+        num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
         // Add to maze for printing
-        maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
+        maze.addPath(path.get(i)->getX(), path.get(i)->getY(), num);
       }
       // first add forward then turn
       // We need to reset commandCount before doing so
       resetCommand();
       fillCommandArray();
-      maze->print();
+      maze.print();
       printCommand();
     }
     else
     {
-      maze->fillCells(F("00B01802A03A04E11610920121A22412913C23530531B32433540341A42243244A456358343249"));
-      maze->print();
+      maze.fillCells(c);
+      maze.print();
     }
   }
 }
@@ -74,14 +72,14 @@ void createPath()
 {
   //Clear path
   clearList(&path);
-  Heading h = maze->getHeading(); // starting heading
+  Heading h = maze.getHeading(); // starting heading
   Node *currN = nullptr;
   Node *toDelete = nullptr;
   LinkedList<Node *> stack = LinkedList<Node *>(); // Have a stack to keep all possible nodes we can traverse
   // move towards the neighbouring cells that has less than 1
-  byte currI = maze->getStartI();
-  byte currJ = maze->getStartJ();
-  byte currV = flood->getCell(currI, currJ);
+  byte currI = maze.getStartI();
+  byte currJ = maze.getStartJ();
+  byte currV = flood.getCell(currI, currJ);
   boolean movement = true;
   while (movement)
   {
@@ -90,7 +88,7 @@ void createPath()
     // add valid cells to stack
     for (byte k = 0; k < 4; k++)
     {
-      if (maze->hasWall(currI, currJ, k) == 0)
+      if (maze.hasWall(currI, currJ, k) == 0)
       {
         // No wall here. Find out the cell Pose
         byte tmpI = currI;
@@ -112,7 +110,7 @@ void createPath()
         default:
           break;
         }
-        byte nextV = flood->getCell(tmpI, tmpJ);
+        byte nextV = flood.getCell(tmpI, tmpJ);
         if ((currV - nextV) == 1)
         {
           // We want CurrV - nextCell = 1

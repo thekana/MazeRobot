@@ -113,6 +113,7 @@ public:
     {
       head = NORTH;
     }
+    statusCells[startI][startJ] = "   ";
     statusCells[i][j] = String(" " + h + " ");
     startI = i;
     startJ = j;
