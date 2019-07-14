@@ -3,6 +3,9 @@
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 
+#define ROWS 5
+#define COLS 9
+
 byte x2i(char *s)
 {
   byte x = 0;
@@ -36,11 +39,9 @@ enum Heading
 class Maze
 {
 private:
-  byte cells[5][9] = {{0}};
-  byte exploredWalls[5][9] = {{0}};
-  String statusCells[5][9];
-  byte rows = 5;
-  byte cols = 9;
+  byte cells[ROWS][COLS] = {{0}};
+  byte exploredWalls[ROWS][COLS] = {{0}};
+  String statusCells[ROWS][COLS];
   byte startI = 0;
   byte startJ = 0;
   Heading head;
@@ -63,7 +64,7 @@ public:
           cells[i][j] |= (1 << EAST);
           exploredWalls[i][j] |= (1 << EAST);
         }
-        if (i == rows - 1)
+        if (i == ROWS - 1)
         {
           cells[i][j] |= (1 << WEST);
           exploredWalls[i][j] |= (1 << WEST);
@@ -73,7 +74,7 @@ public:
           cells[i][j] |= (1 << NORTH);
           exploredWalls[i][j] |= (1 << NORTH);
         }
-        if (j == cols - 1)
+        if (j == COLS - 1)
         {
           cells[i][j] |= (1 << SOUTH);
           exploredWalls[i][j] |= (1 << SOUTH);
@@ -159,43 +160,24 @@ public:
       // EAST <--> WEST
       cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
       exploredWalls[i + 1][j] |= (1 << 3);
-      //cells[i + 1][j][0] = cells[i][j][2];
     }
     if (i <= 4 && i > 0)
     {
       // WEST <--> EAST
       cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
       exploredWalls[i - 1][j] |= (1 << 1);
-      //cells[i - 1][j][2] = cells[i][j][0];
     }
     if (j >= 0 && j < 8)
     {
       // NORTH <--> SOUTH
       cells[i][j + 1] |= ((cells[i][j] & (1 << SOUTH)) >> 2);
       exploredWalls[i][j + 1] |= (1 << 0);
-      //cells[i][j + 1][3] = cells[i][j][1];
     }
     if (j <= 8 && j > 0)
     {
       // SOUTH <--> NORTH
       cells[i][j - 1] |= ((cells[i][j] & (1 << NORTH)) << 2);
       exploredWalls[i][j - 1] |= (1 << 2);
-      //cells[i][j - 1][1] = cells[i][j][3];
-    }
-    if (i > 0 && i < 4 && j > 0 && j < 8)
-    {
-      cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
-      cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
-      cells[i][j + 1] |= ((cells[i][j] & (1 << SOUTH)) >> 2);
-      cells[i][j - 1] |= ((cells[i][j] & (1 << NORTH)) << 2);
-      exploredWalls[i + 1][j] |= (1 << EAST);
-      exploredWalls[i - 1][j] |= (1 << WEST);
-      exploredWalls[i][j + 1] |= (1 << NORTH);
-      exploredWalls[i][j - 1] |= (1 << SOUTH);
-      // cells[i + 1][j][0] = cells[i][j][2];
-      // cells[i - 1][j][2] = cells[i][j][0];
-      // cells[i][j + 1][3] = cells[i][j][1];
-      // cells[i][j - 1][1] = cells[i][j][3];
     }
   }
   byte getStartI()
@@ -208,16 +190,16 @@ public:
   }
   void print()
   {
-    for (byte j = 0; j < cols; j++)
+    for (byte j = 0; j < COLS; j++)
     {
       Serial.print(F(" ---")); // Print top walls
     }
     Serial.print("\n");
-    for (byte i = 0; i < rows; i++)
+    for (byte i = 0; i < ROWS; i++)
     {
       // Print Vertical;
       Serial.print("|"); // left most wall
-      for (byte j = 0; j < cols - 1; j++)
+      for (byte j = 0; j < COLS - 1; j++)
       {
         Serial.print(statusCells[i][j]);
         // if south wall not explored
@@ -237,14 +219,14 @@ public:
           }
         }
       }
-      Serial.print(statusCells[i][cols - 1]);
+      Serial.print(statusCells[i][COLS - 1]);
       Serial.print("|"); // right most wall
       Serial.print("\n");
       if (i == 4)
       {
         break;
       }
-      for (byte j = 0; j < cols; j++)
+      for (byte j = 0; j < COLS; j++)
       {
         if (!(exploredWalls[i][j] & (1 << WEST)))
         {
@@ -264,7 +246,7 @@ public:
       }
       Serial.print("\n");
     }
-    for (byte j = 0; j < cols; j++)
+    for (byte j = 0; j < COLS; j++)
     {
       Serial.print(F(" ---")); // Print closing bottom walls
     }

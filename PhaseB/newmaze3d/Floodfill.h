@@ -7,9 +7,7 @@ class Floodfill
 {
 private:
   Maze *maze;
-  byte cell[5][9];
-  byte rows = 5;
-  byte cols = 9;
+  byte cell[ROWS][COLS];
   byte noWallsPathCount;
   byte wallsPathCount;
   bool wallAssumption = true;
@@ -29,22 +27,22 @@ public:
   }
   void doFloodfill()
   {
-    for (byte i = 0; i < rows; i++)
+    for (byte i = 0; i < ROWS; i++)
     {
-      for (byte j = 0; j < cols; j++)
+      for (byte j = 0; j < COLS; j++)
       {
         cell[i][j] = MAX_CELL_VALUE;
       }
     }
-    cell[2][4] = 0;
+    cell[2][4] = 0; // goal is always here
     byte currExploredValue = 0;
     byte mazeValueChange = 1;
     while (mazeValueChange != 0)
     {
       mazeValueChange = 0;
-      for (byte i = 0; i < rows; i++)
+      for (byte i = 0; i < ROWS; i++)
       {
-        for (byte j = 0; j < cols; j++)
+        for (byte j = 0; j < COLS; j++)
         {
           if (cell[i][j] == currExploredValue)
           {
@@ -112,9 +110,9 @@ public:
   }
   void print()
   {
-    for (byte i = 0; i < rows; i++)
+    for (byte i = 0; i < ROWS; i++)
     {
-      for (byte j = 0; j < cols; j++)
+      for (byte j = 0; j < COLS; j++)
       {
         Serial.print(cell[i][j]);
         Serial.print("\t");
