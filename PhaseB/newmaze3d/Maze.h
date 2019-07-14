@@ -41,12 +41,12 @@ private:
   String statusCells[5][9];
   byte rows = 5;
   byte cols = 9;
-  byte startX = 0;
-  byte startY = 0;
+  byte startI = 0;
+  byte startJ = 0;
   Heading head;
 
 public:
-  Maze(String const &h)
+  Maze()
   {
     initializeCells();         // 2 is unexplored
     initializeStatusCells();   // 4 spaces
@@ -61,18 +61,22 @@ public:
         if (i == 0)
         {
           cells[i][j] |= (1 << EAST);
+          exploredWalls[i][j] |= (1 << EAST);
         }
-        if (i == 4)
+        if (i == rows - 1)
         {
           cells[i][j] |= (1 << WEST);
+          exploredWalls[i][j] |= (1 << WEST);
         }
         if (j == 0)
         {
           cells[i][j] |= (1 << NORTH);
+          exploredWalls[i][j] |= (1 << NORTH);
         }
-        if (j == 8)
+        if (j == cols - 1)
         {
           cells[i][j] |= (1 << SOUTH);
+          exploredWalls[i][j] |= (1 << SOUTH);
         }
       }
     }
@@ -109,14 +113,11 @@ public:
       head = NORTH;
     }
     statusCells[i][j] = String(" " + h + " ");
-    startX = i;
-    startY = j;
-    //      Serial.print("Updated");
-    //      Serial.print(i); Serial.print(j); Serial.println(statusCells[i][j]);
+    startI = i;
+    startJ = j;
   }
   void addPath(byte i, byte j, byte val)
   {
-    Serial.println(val);
     String space = " ";
     String str = String(val);
     space.concat(str);
@@ -197,13 +198,13 @@ public:
       // cells[i][j - 1][1] = cells[i][j][3];
     }
   }
-  byte getStartX()
+  byte getStartI()
   {
-    return startX;
+    return startI;
   }
-  byte getStartY()
+  byte getStartJ()
   {
-    return startY;
+    return startJ;
   }
   void print()
   {

@@ -4,7 +4,7 @@
 #include "Floodfill.h"
 #include "Path.h"
 
-Maze *maze = new Maze("");
+Maze *maze = new Maze();
 Floodfill *flood = new Floodfill(maze);
 LinkedList<Node *> path = LinkedList<Node *>();
 //LinkedList<char> *commands = new LinkedList<char>();
@@ -49,9 +49,9 @@ void loop()
       createPath();
       for (byte i = 0; i < path.size(); i++)
       {
-        path.get(i)->print();
+        //path.get(i)->print();
         byte num = path.get(i)->getValue();
-        num = abs(flood->getCell(maze->getStartX(), maze->getStartY()) - num);
+        num = abs(flood->getCell(maze->getStartI(), maze->getStartJ()) - num);
         // Add to maze for printing
         maze->addPath(path.get(i)->getX(), path.get(i)->getY(), num);
       }
@@ -64,7 +64,7 @@ void loop()
     }
     else
     {
-      maze->fillCells(c);
+      maze->fillCells(F("00B01802A03A04E11610920121A22412913C23530531B32433540341A42243244A456358343249"));
       maze->print();
     }
   }
@@ -79,50 +79,50 @@ void createPath()
   Node *toDelete = nullptr;
   LinkedList<Node *> stack = LinkedList<Node *>(); // Have a stack to keep all possible nodes we can traverse
   // move towards the neighbouring cells that has less than 1
-  byte currX = maze->getStartX();
-  byte currY = maze->getStartY();
-  byte currV = flood->getCell(currX, currY);
-  byte movement = 1;
-  while (movement != 0)
+  byte currI = maze->getStartI();
+  byte currJ = maze->getStartJ();
+  byte currV = flood->getCell(currI, currJ);
+  boolean movement = true;
+  while (movement)
   {
-    movement = 0;
+    movement = false;
     // for all cells neighbouring curr cells
     // add valid cells to stack
     for (byte k = 0; k < 4; k++)
     {
-      if (maze->hasWall(currX, currY, k) == 0)
+      if (maze->hasWall(currI, currJ, k) == 0)
       {
         // No wall here. Find out the cell Pose
-        byte tmpX = currX;
-        byte tmpY = currY;
-        if (k == 0)
+        byte tmpI = currI;
+        byte tmpJ = currJ;
+        switch (k)
         {
-          tmpX--;
+        case NORTH:
+          tmpJ--;
+          break;
+        case SOUTH:
+          tmpJ++;
+          break;
+        case EAST:
+          tmpI--;
+          break;
+        case WEST:
+          tmpI++;
+          break;
+        default:
+          break;
         }
-        if (k == 1)
-        {
-          tmpY++;
-        }
-        if (k == 2)
-        {
-          tmpX++;
-        }
-        if (k == 3)
-        {
-          tmpY--;
-        }
-        byte nextV = flood->getCell(tmpX, tmpY);
+        byte nextV = flood->getCell(tmpI, tmpJ);
         if ((currV - nextV) == 1)
         {
           // We want CurrV - nextCell = 1
           // this is the right cell add to stack
-          stack.add(new Node(tmpX, tmpY, nextV, abs(h - k) % 2, k));
+          stack.add(new Node(tmpI, tmpJ, nextV, abs(h - k) % 2, k));
         }
       }
     }
     // At this point we should have all the cells to consider
-    // Among these cells we pick the one that does not require turning
-    // (If possible)
+    // Among these cells we pick the one that does not require turning (If possible)
     // And clear the stack
     if (stack.size() != 0)
     {
@@ -141,8 +141,8 @@ void createPath()
       // Add to path
       path.add(currN);
       // Update values for the next iteration
-      currX = currN->getX();
-      currY = currN->getY();
+      currI = currN->getX();
+      currJ = currN->getY();
       currV = currN->getValue();
       h = currN->getHead();
       // Free all elems in stack
@@ -151,7 +151,7 @@ void createPath()
         toDelete = stack.pop();
         delete toDelete;
       }
-      movement = 1;
+      movement = true;
       if (currV == 0)
       {
         break;
@@ -160,7 +160,6 @@ void createPath()
   }
   clearList(&stack);
 }
-
 void clearList(LinkedList<Node *> *list)
 {
   while (list->size() > 0)
@@ -183,29 +182,29 @@ void fillCommandArray()
     {
       continue;
     }
-    if (path.get(i)->getHead() == 0 && path.get(i + 1)->getHead() == 3)
+    if (path.get(i)->getHead() == NORTH && path.get(i + 1)->getHead() == EAST)
     {
-      addCommand(commandCount, 'L'); // left
+      addCommand(commandCount, 'R');
     }
-    else if (path.get(i)->getHead() == 0 && path.get(i + 1)->getHead() == 1)
+    else if (path.get(i)->getHead() == NORTH && path.get(i + 1)->getHead() == WEST)
     {
-      addCommand(commandCount, 'R'); // right
+      addCommand(commandCount, 'L');
     }
-    else if (path.get(i)->getHead() == 3 && path.get(i + 1)->getHead() == 0)
+    else if (path.get(i)->getHead() == EAST && path.get(i + 1)->getHead() == NORTH)
     {
-      addCommand(commandCount, 'R'); // right
+      addCommand(commandCount, 'L');
     }
-    else if (path.get(i)->getHead() == 3 && path.get(i + 1)->getHead() == 2)
+    else if (path.get(i)->getHead() == EAST && path.get(i + 1)->getHead() == SOUTH)
     {
-      addCommand(commandCount, 'L'); // left
+      addCommand(commandCount, 'R');
     }
     else if (path.get(i)->getHead() > path.get(i + 1)->getHead())
     {
-      addCommand(commandCount, 'L'); // left
+      addCommand(commandCount, 'R');
     }
     else if (path.get(i)->getHead() < path.get(i + 1)->getHead())
     {
-      addCommand(commandCount, 'R'); // right
+      addCommand(commandCount, 'L');
     }
   }
 }

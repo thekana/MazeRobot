@@ -2,6 +2,7 @@
 #define FLOODFILL_H
 #include "Maze.h"
 #include <avr/pgmspace.h>
+#define MAX_CELL_VALUE 50
 class Floodfill
 {
 private:
@@ -32,7 +33,7 @@ public:
     {
       for (byte j = 0; j < cols; j++)
       {
-        cell[i][j] = 50;
+        cell[i][j] = MAX_CELL_VALUE;
       }
     }
     cell[2][4] = 0;
@@ -73,11 +74,11 @@ public:
     }
     if (wallAssumption)
     {
-      wallsPathCount = cell[maze->getStartX()][maze->getStartY()];
+      wallsPathCount = cell[maze->getStartI()][maze->getStartJ()];
     }
     else
     {
-      noWallsPathCount = cell[maze->getStartX()][maze->getStartY()];
+      noWallsPathCount = cell[maze->getStartI()][maze->getStartJ()];
     }
   }
   byte incrementNeighbour(byte i, byte j, byte k, byte value)
@@ -85,21 +86,21 @@ public:
     switch (k)
     {
     case NORTH:
-      j = j - 1;
+      j--;
       break;
     case SOUTH:
-      j = j + 1;
+      j++;
       break;
     case EAST:
-      i = i - 1;
+      i--;
       break;
     case WEST:
-      i = i + 1;
+      i++;
       break;
     default:
       break;
     }
-    if (cell[i][j] == 50)
+    if (cell[i][j] == MAX_CELL_VALUE)
     {
       cell[i][j] = value + 1;
       return 1;
@@ -124,10 +125,19 @@ public:
   }
   void printCell(byte i, byte j)
   {
-    for (byte k = 0; k < 4; k++)
+    byte k = 4;
+    do
     {
+      k--;
       Serial.print(maze->hasWall(i, j, k));
-    }
+    } while (k);
+    Serial.print("\n");
+    k = 4;
+    do
+    {
+      k--;
+      Serial.print(maze->isWalledExplored(i, j, k));
+    } while (k);
     Serial.print("\n");
   }
   bool sufficientlyExplored()
