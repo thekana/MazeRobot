@@ -58,66 +58,66 @@ namespace hardware
  * pins.
  * \tparam pin is the digital I/O pin owned by the class instantiation.
  */
-template <pin_t pin>
-class digital_pin
-{
-    public:
-    /**
-     * \brief pin_number assigned to the instantiation of digital_pin
-     */
-    static constexpr auto pin_number = pin;
+    template <pin_t pin>
+    class digital_pin
+    {
+        public:
+        /**
+         * \brief pin_number assigned to the instantiation of digital_pin
+         */
+        static constexpr auto pin_number = pin;
 
-    /**
-     * \brief The config_io_mode method set I/O mode to the digital pin.
-     * Should be called to set the correct mode before any I/O activity.
-     * \param mode is the desired I/O mode.
-     */
-    static auto config_io_mode (io_mode mode) -> void;
+        /**
+         * \brief The config_io_mode method set I/O mode to the digital pin.
+         * Should be called to set the correct mode before any I/O activity.
+         * \param mode is the desired I/O mode.
+         */
+        static auto config_io_mode (io_mode mode) -> void;
 
-    /**
-     * \brief The read method returns the current pin input.
-     * \return the input logic level.
-     */
-    static auto read () -> logic_level;
+        /**
+         * \brief The read method returns the current pin input.
+         * \return the input logic level.
+         */
+        static auto read () -> logic_level;
 
-    /**
-     * \brief The write method set digital pin output to mode.
-     * \param level is the logic level to set the digital pin to.
-     */
-    static auto write (logic_level level) -> void;
+        /**
+         * \brief The write method set digital pin output to mode.
+         * \param level is the logic level to set the digital pin to.
+         */
+        static auto write (logic_level level) -> void;
 
-    /**
-     * \brief The high method set digital output level to high.
-     */
-    static auto high () -> void;
+        /**
+         * \brief The high method set digital output level to high.
+         */
+        static auto high () -> void;
 
-    /**
-     * \brief The low method set digital output level to low.
-     */
-    static auto low () -> void;
+        /**
+         * \brief The low method set digital output level to low.
+         */
+        static auto low () -> void;
 
-    /**
-     * \brief The pwm_write method writes an analog voltage out as PWM wave.
-     * This function does not check if the pin is capable of PWM.
-     * Uno pin 3, 5, 6, 9, 10, 11. Mega: 2 - 13 and 44 - 46.
-     * PWM at 490Hz except pin 5 and 6 are 980Hz.
-     * \param duty_cycle value between 0.0 and 100.0 representing is the PWM
-     * duty cycle of 0% to 100%.
-     */
-    static auto pwm_write (units::percentage duty_cycle) -> void;
+        /**
+         * \brief The pwm_write method writes an analog voltage out as PWM wave.
+         * This function does not check if the pin is capable of PWM.
+         * Uno pin 3, 5, 6, 9, 10, 11. Mega: 2 - 13 and 44 - 46.
+         * PWM at 490Hz except pin 5 and 6 are 980Hz.
+         * \param duty_cycle value between 0.0 and 100.0 representing is the PWM
+         * duty cycle of 0% to 100%.
+         */
+        static auto pwm_write (units::percentage duty_cycle) -> void;
 
-    /**
-     * \brief pulse_length measures the duration of a pulse in microseconds.
-     * With either rising or falling edge as trigger.
-     * \param state HIGH for rising edge trigger, LOW for falling edge trigger
-     * start.
-     * \param timeout in microseconds
-     * \return pulse length in
-     * microseconds.
-     */
-    static auto pulse_length (logic_level state = logic_level::high,
-        units::microseconds timeout = 1000000_us) -> units::microseconds;
-};
+        /**
+         * \brief pulse_length measures the duration of a pulse in microseconds.
+         * With either rising or falling edge as trigger.
+         * \param state HIGH for rising edge trigger, LOW for falling edge trigger
+         * start.
+         * \param timeout in microseconds
+         * \return pulse length in
+         * microseconds.
+         */
+        static auto pulse_length (logic_level state = logic_level::high,
+            units::microseconds timeout = 1000000_us) -> units::microseconds;
+    };
 
 /**
  * \brief The analog_reference type represents all possible analog read
@@ -299,6 +299,12 @@ class wheel : public encoder<pin_a, pin_b>
     static auto position () -> units::millimeters;
 };
 }    // namespace hardware
+
+
+
+
+
+
 
 namespace hardware
 {

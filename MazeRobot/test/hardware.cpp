@@ -113,7 +113,7 @@ auto hardware::motor<pin_a, pin_b>::forward (units::percentage velocity) -> void
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::backward (units::percentage velocity) -> void
 {
-	pin_a::write(FORWARD);
+	pin_a::write(BACKWARD);
     pin_b::pwm_write(velocity);
 }
 
@@ -144,8 +144,10 @@ auto hardware::wheel<pin_a, pin_b>::position () -> units::millimeters
 template class hardware::digital_pin<22U>;
 template class hardware::motor<hardware::pins::M1, hardware::pins::E1>;
 template class hardware::motor<hardware::pins::M2, hardware::pins::E2>;
+template class hardware::digital_pin<2U>;
 template class hardware::interrupt<hardware::digital_pin<2U>>;
 template class hardware::digital_pin<8U>;
+template class hardware::digital_pin<3U>;
 template class hardware::interrupt<hardware::digital_pin<3U>>;
 template class hardware::digital_pin<9U>;
 template class hardware::encoder<hardware::pins::left_encoder_a, hardware::pins::left_encoder_b>;

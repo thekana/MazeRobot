@@ -3,6 +3,9 @@
 extern int counterA;
 extern int counterB;
 
+int goalA=0;
+int goalB=0;
+
 using namespace hardware::pins;
 
 void setup() {
@@ -30,13 +33,29 @@ void setup() {
     hardware::right_encoder::enable();
     hardware::pins::right_encoder_a::attach_interrupt(&callback2, hardware::interrupt_mode::change);
     hardware::right_motor::enable();
-    units::percentage half_speed(50);
+    units::percentage half_speed(35);
     hardware::right_motor::backward(half_speed);
     delay(5000);
     hardware::right_motor::stop();
     distance = hardware::right_wheel::position();
     Serial.println(distance.count());
-    
+
+    goalA=720;
+    counterA=0;
+    goalB=1800;
+    counterB=0;
+
+//    if(goalA>0)
+//        hardware::left_motor::forward(half_speed);
+//    else if (goalA<0)
+//        hardware::left_motor::backward(half_speed);
+
+    //delay(5000);
+
+    if(goalB>0)
+        hardware::right_motor::forward(half_speed);
+    else if (goalB<0)
+        hardware::right_motor::backward(half_speed);
 }
 
 void loop() {
@@ -46,14 +65,38 @@ void loop() {
 
 void callback1(void)
 {
-    counterA++;
+    if(hardware::pins::left_encoder_a::read()==hardware::pins::left_encoder_b::read())
+    {
+        counterA--;
+    }
+    else
+    {
+        counterA++;
+    }
     Serial.print("CounterA is: ");
     Serial.println(counterA);
+    if(goalA!=0 && counterA==goalA*24/360)
+    {
+        hardware::left_motor::stop();
+        goalA=0;
+    }
 }
 
 void callback2(void)
 {
-	counterB++;
+    if(hardware::pins::right_encoder_a::read()==hardware::pins::right_encoder_b::read())
+    {
+        counterB--;
+    }
+    else
+    {
+        counterB++;
+    }
 	Serial.print("CounterB is:");
 	Serial.println(counterB);
+    if(goalB!=0 && counterB==goalB*24/360)
+    {
+        hardware::right_motor::stop();
+        goalB=0;
+    }
 }
