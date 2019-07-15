@@ -65,16 +65,20 @@ void loop() {
 
 void callback1(void)
 {
-    if(hardware::pins::left_encoder_a::read()==hardware::pins::left_encoder_b::read())
-    {
-        counterA--;
-    }
-    else
+    if(hardware::pins::left_encoder_a::read() != hardware::pins::left_encoder_b::read())
     {
         counterA++;
     }
+    else
+    {
+         counterA--;
+    }
     Serial.print("CounterA is: ");
-    Serial.println(counterA);
+    Serial.print(counterA);
+    Serial.print(" A is: ");
+    Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
+    Serial.print(" B is: ");
+    Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
     if(goalA!=0 && counterA==goalA*24/360)
     {
         hardware::left_motor::stop();
@@ -84,16 +88,20 @@ void callback1(void)
 
 void callback2(void)
 {
-    if(hardware::pins::right_encoder_a::read()==hardware::pins::right_encoder_b::read())
+  	if(hardware::pins::right_encoder_a::read() != hardware::pins::right_encoder_b::read())
     {
-        counterB--;
+  	    counterB++;
     }
     else
     {
-        counterB++;
+        counterB--;
     }
-	Serial.print("CounterB is:");
-	Serial.println(counterB);
+  	Serial.print("CounterB is: ");
+  	Serial.print(counterB);
+    Serial.print(" A is: ");
+    Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
+    Serial.print(" B is: ");
+    Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
     if(goalB!=0 && counterB==goalB*24/360)
     {
         hardware::right_motor::stop();
