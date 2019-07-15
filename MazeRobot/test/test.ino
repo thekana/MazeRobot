@@ -20,9 +20,9 @@ void setup() {
  //    hardware::led::low();
  //    Serial.println("Finish!");
 
-    goalA=250;
+    goalA=1500;
     counterA=0;
-    goalB=250;
+    goalB=1500;
     counterB=0;
 
     hardware::left_encoder::enable();
@@ -90,7 +90,7 @@ void callback1(void)
     Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
-    if(goalA!=0 && counterA==goalA*24/135)
+    if(goalA!=0 && counterA==goalA/135*24)
     {
         hardware::left_motor::stop();
         goalA=0;
@@ -113,7 +113,7 @@ void callback2(void)
     Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
-    if(goalB!=0 && counterB==goalB*24/135)
+    if(goalB!=0 && counterB==goalB/135*24)
     {
         hardware::right_motor::stop();
         goalB=0;
