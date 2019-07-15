@@ -14,36 +14,47 @@ void setup() {
     while (! Serial);
     Serial.println("hello");
 	  
-	hardware::led::config_io_mode(hardware::io_mode::output);
-    hardware::led::high();
-    delay(2000);
-    hardware::led::low();
-    Serial.println("Finish!");
+	// hardware::led::config_io_mode(hardware::io_mode::output);
+ //    hardware::led::high();
+ //    delay(2000);
+ //    hardware::led::low();
+ //    Serial.println("Finish!");
+
+    goalA=250;
+    counterA=0;
+    goalB=250;
+    counterB=0;
 
     hardware::left_encoder::enable();
     hardware::pins::left_encoder_a::attach_interrupt(&callback1, hardware::interrupt_mode::change);
     hardware::left_motor::enable();
-    units::percentage full_speed(100);
-    hardware::left_motor::forward(full_speed);
-    delay(5000);
-    hardware::left_motor::stop();
-    units::millimeters distance = hardware::left_wheel::position();
-    Serial.println(distance.count());
-
     hardware::right_encoder::enable();
     hardware::pins::right_encoder_a::attach_interrupt(&callback2, hardware::interrupt_mode::change);
     hardware::right_motor::enable();
-    units::percentage half_speed(35);
-    hardware::right_motor::backward(half_speed);
-    delay(5000);
-    hardware::right_motor::stop();
-    distance = hardware::right_wheel::position();
-    Serial.println(distance.count());
+    units::percentage test_speed(50);
+    hardware::left_motor::forward(test_speed);
+    hardware::right_motor::forward(test_speed);
 
-    goalA=720;
-    counterA=0;
-    goalB=1800;
-    counterB=0;
+
+    // hardware::left_encoder::enable();
+    // hardware::pins::left_encoder_a::attach_interrupt(&callback1, hardware::interrupt_mode::change);
+    // hardware::left_motor::enable();
+    // units::percentage full_speed(100);
+    // hardware::left_motor::forward(full_speed);
+    // delay(5000);
+    // hardware::left_motor::stop();
+    // units::millimeters distance = hardware::left_wheel::position();
+    // Serial.println(distance.count());
+
+    // hardware::right_encoder::enable();
+    // hardware::pins::right_encoder_a::attach_interrupt(&callback2, hardware::interrupt_mode::change);
+    // hardware::right_motor::enable();
+    // units::percentage half_speed(35);
+    // hardware::right_motor::backward(half_speed);
+    // delay(5000);
+    // hardware::right_motor::stop();
+    // distance = hardware::right_wheel::position();
+    // Serial.println(distance.count());
 
 //    if(goalA>0)
 //        hardware::left_motor::forward(half_speed);
@@ -52,10 +63,10 @@ void setup() {
 
     //delay(5000);
 
-    if(goalB>0)
-        hardware::right_motor::forward(half_speed);
-    else if (goalB<0)
-        hardware::right_motor::backward(half_speed);
+//    if(goalB>0)
+//        hardware::right_motor::forward(half_speed);
+//    else if (goalB<0)
+//        hardware::right_motor::backward(half_speed);
 }
 
 void loop() {
@@ -79,7 +90,7 @@ void callback1(void)
     Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
-    if(goalA!=0 && counterA==goalA*24/360)
+    if(goalA!=0 && counterA==goalA*24/135)
     {
         hardware::left_motor::stop();
         goalA=0;
@@ -102,7 +113,7 @@ void callback2(void)
     Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
-    if(goalB!=0 && counterB==goalB*24/360)
+    if(goalB!=0 && counterB==goalB*24/135)
     {
         hardware::right_motor::stop();
         goalB=0;
