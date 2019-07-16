@@ -6,7 +6,12 @@ using namespace hardware;
 using namespace hardware::pins;
 
 void sensorSetup() {
-	while (!Serial); // wait for Leonardo enumeration, others continue immediately
+	#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    Wire.begin();
+    Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+  #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+    Fastwire::setup(400, true);
+  #endif
 	sonar<sonar_trigger, sonar_echo>::enable();
 	// setup lidar
 	left_lidar_enable::config_io_mode(io_mode::output);
@@ -22,7 +27,7 @@ void sensorSetup() {
 		Serial.println("IMU success");
 	}
 	else {
-		Serial.println("IMu failed");
+		Serial.println("IMU failed");
 	}
 }
 

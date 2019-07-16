@@ -12,7 +12,7 @@ float Yaw;
 
 void setup() {
     // put your setup code here, to run once:
-    Serial.begin(19200);
+    Serial.begin(115200);
     while (! Serial);
     Serial.println("Serial setup finish!");
 
@@ -29,7 +29,7 @@ void setup() {
     // setup map
 
     // Wait 5 seconds and main loop start
-    delay(5000);
+    delay(1000);
 }
 
 void loop() {

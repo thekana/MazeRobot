@@ -206,7 +206,7 @@ auto imu::enable()->bool{
 
   mpu->setXGyroOffset(-131);   //Roll offset
   mpu->setYGyroOffset(104);    //pitch offset
-  mpu->setZGyroOffset(72);      //Yaw offset
+  mpu->setZGyroOffset(145);      //Yaw offset
   mpu->setXAccelOffset(-2838); // 1688 factory default for my test chip
   mpu->setYAccelOffset(-1500); // 1688 factory default for my test chip
   mpu->setZAccelOffset(1736); // 1688 factory default for my test chip
@@ -242,7 +242,7 @@ auto imu::enable()->bool{
 
 auto imu::update()->bool{
    // if programming failed, don't try to do anything
-  if (!dmpReady) return false;
+  if (!dmpReady) return;
 
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt && fifoCount < packetSize) {
