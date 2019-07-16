@@ -128,7 +128,8 @@ auto digital_pin<pin>::pwm_write(units::percentage duty_cycle) -> void {
 
 template<pin_t pin>
 auto digital_pin<pin>::pulse_length(logic_level state = logic_level::high,
-	units::microseconds timeout = 1000000_us)->units::microseconds {
+	units::microseconds timeout = 1000000_us)->units::microseconds 
+{
   long duration = pulseIn(pin_number,HIGH,1000000);
 	return units::microseconds(duration);
 }
@@ -241,7 +242,7 @@ auto imu::enable()->bool{
 
 auto imu::update()->bool{
    // if programming failed, don't try to do anything
-  if (!dmpReady) return;
+  if (!dmpReady) return false;
 
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt && fifoCount < packetSize) {
@@ -386,10 +387,13 @@ auto hardware::wheel<pin_a, pin_b>::position () -> units::millimeters
 }
 
 template class hardware::digital_pin<22U>;
+template class hardware::digital_pin<23U>;
 template class hardware::motor<hardware::pins::M1, hardware::pins::E1>;
 template class hardware::motor<hardware::pins::M2, hardware::pins::E2>;
+template class hardware::digital_pin<2U>;
 template class hardware::interrupt<hardware::digital_pin<2U>>;
 template class hardware::digital_pin<8U>;
+template class hardware::digital_pin<3U>;
 template class hardware::interrupt<hardware::digital_pin<3U>>;
 template class hardware::digital_pin<9U>;
 template class hardware::encoder<hardware::pins::left_encoder_a, hardware::pins::left_encoder_b>;
