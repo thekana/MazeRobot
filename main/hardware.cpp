@@ -399,9 +399,11 @@ template class hardware::wheel<hardware::pins::right_encoder_a, hardware::pins::
 
 template class lidar<lidar_tag<0>>;
 template class lidar<lidar_tag<1>>;
+template class digital_pin<38>;
+template class digital_pin<39>;
 template class digital_pin<48>;
 template class digital_pin<49>;
 template class digital_pin<18>;
 template class analog_pin<digital_pin<38>>;
 template class analog_pin<digital_pin<39>>;
-template class sonar<analog_pin<digital_pin<38>>,analog_pin<digital_pin<39>>>;
+template class sonar<sonar_trigger,sonar_echo>;
