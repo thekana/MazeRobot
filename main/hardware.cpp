@@ -358,7 +358,7 @@ auto hardware::motor<pin_a, pin_b>::forward (units::percentage velocity) -> void
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::backward (units::percentage velocity) -> void
 {
-    pin_a::write(FORWARD);
+    pin_a::write(BACKWARD);
     pin_b::pwm_write(velocity);
 }
 
