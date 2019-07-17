@@ -48,7 +48,9 @@ void loop() {
 
 
     // 0. Read from bluetooth? Any command?
-    if(motion_mode != MOTION_STOP) return;
+    if(motion_mode != MOTION_STOP && motion_mode != MOTION_FORWARD) return;
+
+    int current_mode = motion_mode;
 
     // 1. perception
 
@@ -83,7 +85,22 @@ void loop() {
     // Serial.println("**********************");
     // count++;
     // delay(5000);
-    turning();
+    if (motion_mode >= MOTION_LEFT)
+    {
+        turning();
+    }
+    else if (current_mode == MOTION_STOP && motion_mode == MOTION_FORWARD)
+    {
+        // function for forward
+    }
+    else if (current_mode == MOTION_FORWARD && motion_mode == MOTION_FORWARD)
+    {
+        // pass the sensors' data to locomotion
+    }
+    else
+    {
+        Serial.println("Motion status not recognized!");
+    }
 
 
     // Test code
