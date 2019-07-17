@@ -102,6 +102,22 @@ void callback1(void)
     }
 }
 
+void forward(int ncells, double distance_f, double distance_l, double distance_r)
+{
+    goalA=250;
+    counterA=0;
+    goalB=250;
+    counterB=0;
+    units::percentage test_speed(50);
+    hardware::left_motor::forward(test_speed);
+    hardware::right_motor::forward(test_speed);
+}
+
+void forward_updating(double distance_f, double distance_l, double distance_r)
+{
+    
+}
+
 void callback2(void)
 {
   	if(hardware::pins::right_encoder_a::read() != hardware::pins::right_encoder_b::read())
