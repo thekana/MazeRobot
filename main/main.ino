@@ -9,6 +9,8 @@ using namespace hardware;
 using namespace hardware::pins;
 
 float Yaw;
+//Variable that indicate the car to move , stop(0), front(1), left_turning(2), right_turning(3), back_turning(4)
+int motion_mode = 0;
 
 void setup() {
     // put your setup code here, to run once:
@@ -37,8 +39,6 @@ void loop() {
     double distance_f, distance_l, distance_r;
     //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise
     int lfr[3];
-    //Variable that indicate the car to move front(0), left(1), right(2), back(3)
-    int move_dir = 0;
     //Varianle that indicate which direction (East(1), South(2), West(3),North(4)) the car is facing
     int face_dir = 0;
     //Array be used to determine whether there is al wall at East, South, West and North
@@ -75,6 +75,8 @@ void loop() {
 
 
     // 3. Give command to locomotion
+    motion_mode = MOTION_LEFT;
+    turning();
 
 
     // Test code

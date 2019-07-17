@@ -10,6 +10,7 @@
 
 extern int counterA;
 extern int counterB;
+extern int motion_mode;
 
 int goalA=0;
 int goalB=0;

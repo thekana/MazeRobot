@@ -9,6 +9,12 @@
 #pragma once
 #include "hardware.h"
 
+#define MOTION_STOP    0
+#define MOTION_FORWARD 1
+#define MOTION_LEFT    2
+#define MOTION_RIGHT   3
+#define MOTION_BACK    4
+
 /**
  * @brief Set up all leds
  *
