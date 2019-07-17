@@ -292,6 +292,19 @@ auto imu::update()->bool{
   return true;  
 }
 
+//simply update 400 times until imu become stable
+auto imu::stabilize()->void{
+  int update_count = 0;
+  while(true){
+    if(update_count == 400){
+      break;  
+    }else{
+      imu::update();
+      update_count++;
+    }
+  }
+}
+
 auto imu::yaw()->float{
   mpu->dmpGetQuaternion(&q, fifoBuffer);
   mpu->dmpGetGravity(&gravity, &q);

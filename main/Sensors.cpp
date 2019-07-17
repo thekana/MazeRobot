@@ -25,6 +25,9 @@ void sensorSetup() {
 	//setup imu
 	if (imu::enable()) {
 		Serial.println("IMU success");
+    Serial.println("IMU stablizing...");
+    imu::stabilize();
+    Serial.println("IMU stablize");
 	}
 	else {
 		Serial.println("IMU failed");
