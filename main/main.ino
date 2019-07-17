@@ -10,7 +10,9 @@ using namespace hardware::pins;
 
 float Yaw;
 //Variable that indicate the car to move , stop(0), front(1), left_turning(2), right_turning(3), back_turning(4)
-int motion_mode = 0;
+int motion_mode = MOTION_STOP;
+
+int count=2;
 
 void setup() {
     // put your setup code here, to run once:
@@ -46,7 +48,7 @@ void loop() {
 
 
     // 0. Read from bluetooth? Any command?
-
+    if(motion_mode != MOTION_STOP) return;
 
     // 1. perception
 
@@ -75,17 +77,22 @@ void loop() {
 
 
     // 3. Give command to locomotion
-    motion_mode = MOTION_LEFT;
+    
+    // motion_mode = count;
+    // Serial.print(count);
+    // Serial.println("**********************");
+    // count++;
+    // delay(5000);
     turning();
 
 
     // Test code
-    Serial.print("Front: ");
-    Serial.print(distance_f);
-    Serial.print(" Left: ");
-    Serial.print(distance_l);
-    Serial.print(" Right: ");
-    Serial.print(distance_r);
-    Serial.print(" Yaw: ");
-    Serial.println(Yaw);
+    // Serial.print("Front: ");
+    // Serial.print(distance_f);
+    // Serial.print(" Left: ");
+    // Serial.print(distance_l);
+    // Serial.print(" Right: ");
+    // Serial.print(distance_r);
+    // Serial.print(" Yaw: ");
+    // Serial.println(Yaw);
 }

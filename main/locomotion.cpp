@@ -37,6 +37,45 @@ void locomotion_setup(void)
     hardware::right_encoder::enable();
     hardware::pins::right_encoder_a::attach_interrupt(&callback2, hardware::interrupt_mode::change);
     hardware::right_motor::enable();
+
+}
+
+void turning(void)
+{
+    if(motion_mode == MOTION_LEFT)
+    {
+        goalA=-68;
+        counterA=0;
+        goalB=68;
+        counterB=0;
+        units::percentage test_speed(50);
+        hardware::left_motor::backward(test_speed);
+        hardware::right_motor::forward(test_speed);
+    }
+    else if (motion_mode == MOTION_RIGHT)
+    {
+        goalA=68;
+        counterA=0;
+        goalB=-68;
+        counterB=0;
+        units::percentage test_speed(50);
+        hardware::left_motor::forward(test_speed);
+        hardware::right_motor::backward(test_speed);
+    }
+    else if (motion_mode == MOTION_BACK)
+    {
+        goalA=-141;
+        counterA=0;
+        goalB=141;
+        counterB=0;
+        units::percentage test_speed(50);
+        hardware::left_motor::backward(test_speed);
+        hardware::right_motor::forward(test_speed);
+    }
+    else
+    {
+        Serial.println("Warning: Motion mode not properly setup in turning!");
+    }
 }
 
 void callback1(void)
@@ -55,10 +94,11 @@ void callback1(void)
     Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
-    if(goalA!=0 && counterA==goalA/135*24)
+    if(goalA!=0 && counterA==(int)(goalA/5.625)) // 135/24=5.625
     {
         hardware::left_motor::stop();
         goalA=0;
+        if (goalB==0) motion_mode = MOTION_STOP;
     }
 }
 
@@ -78,9 +118,10 @@ void callback2(void)
     Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
     Serial.print(" B is: ");
     Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
-    if(goalB!=0 && counterB==goalB/135*24)
+    if(goalB!=0 && counterB==(int)(goalB/5.625))
     {
         hardware::right_motor::stop();
         goalB=0;
+        if (goalA==0) motion_mode = MOTION_STOP;
     }
 }

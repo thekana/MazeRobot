@@ -36,3 +36,14 @@ void leds_setup(void);
  * @note Including two motors, two encoders and their four pins
  * */
 void locomotion_setup(void);
+
+/**
+ * @brief Set locomotion mode to turning, including turn left/right/back
+ *
+ * @param 
+ *
+ * @return 
+ *
+ * @note Read the request from global variable motion_mode
+ * */
+void turning(void);
