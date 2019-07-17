@@ -47,3 +47,25 @@ void locomotion_setup(void);
  * @note Read the request from global variable motion_mode
  * */
 void turning(void);
+
+/**
+ * @brief Set locomotion mode to going forward
+ *
+ * @param 
+ *
+ * @return 
+ *
+ * @note Set the mode to go forward for ncells
+ * */
+void forward(int ncells, double distance_f, double distance_l, double distance_r);
+
+/**
+ * @brief Send the distance data to locomotion module
+ *
+ * @param 
+ *
+ * @return 
+ *
+ * @note Send the distance data to locomotion module
+ * */
+void forward_updating(double distance_f, double distance_l, double distance_r);

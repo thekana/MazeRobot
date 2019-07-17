@@ -80,6 +80,8 @@ void loop() {
 
     // 3. Give command to locomotion
     
+    motion_mode = MOTION_FORWARD;
+    delay(5000);
     // motion_mode = count;
     // Serial.print(count);
     // Serial.println("**********************");
@@ -91,7 +93,7 @@ void loop() {
     }
     else if (current_mode == MOTION_STOP && motion_mode == MOTION_FORWARD)
     {
-        // function for forward
+        forward(1, distance_f, distance_l, distance_r);
     }
     else if (current_mode == MOTION_FORWARD && motion_mode == MOTION_FORWARD)
     {
