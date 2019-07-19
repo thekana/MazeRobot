@@ -6,15 +6,22 @@
  *
  * @note 
  * */
-#include <cstdlib>
+#include <stdlib.h>
+
 #include "locomotion.h"
 
-#define THRESHOLD_LEFT  40
-#define THRESHOLD_RIGHT 40
+#define bluetooth Serial3
+#define MIN_THRESHOLD_LEFT  55.0
+#define MAX_THRESHOLD_LEFT  65.0
+#define MIN_THRESHOLD_RIGHT 55.0
+#define MAX_THRESHOLD_RIGHT 65.0
 
 extern int counterA;
 extern int counterB;
 extern int motion_mode;
+
+static int counterA_history = 0;
+static int counterB_history = 0;
 
 int goalA=0;
 int goalB=0;
@@ -91,8 +98,10 @@ void forward(int ncells, double distance_f, double distance_l, double distance_r
 {
     goalA = ncells*250;
     counterA = 0;
+    counterA_history = 0;
     goalB = ncells*250;
     counterB = 0;
+    counterB_history = 0;
     vLeft=50.0;
     vRight=50.0;
     apply_speed();
@@ -100,7 +109,7 @@ void forward(int ncells, double distance_f, double distance_l, double distance_r
 
 void forward_updating(double distance_f, double distance_l, double distance_r)
 {
-
+    motor_controller(distance_f, distance_l, distance_r);
 }
 
 /**
@@ -114,8 +123,8 @@ void forward_updating(double distance_f, double distance_l, double distance_r)
  * */
 void apply_speed(void)
 {
-    units::percentage left_speed(std::abs(vLeft));
-    units::percentage right_speed(std::abs(vRight));
+    units::percentage left_speed(abs(vLeft));
+    units::percentage right_speed(abs(vRight));
     
     if (vLeft >= 0)
         hardware::left_motor::forward(left_speed);
@@ -139,11 +148,53 @@ void apply_speed(void)
  * */
 void motor_controller(double distance_f, double distance_l, double distance_r)
 {
-    // Goto mild controller depending on counters
-    if( (distance_l < distance_l > THRESHOLD_LEFT && distance_r > THRESHOLD_RIGHT))
+    // brake
+    if (distance_f < 55.0)
     {
-
+        vLeft=0.0;
+        vRight=0.0;
+        apply_speed();
+        goalA=0;
+        goalB=0;
+        motion_mode = MOTION_STOP;
+        bluetooth.println("Set to motion stop in brake");
+        goto print_out;
     }
+    // Goto mild controller depending on counters
+    if( (distance_l < MAX_THRESHOLD_LEFT && distance_l > MIN_THRESHOLD_LEFT) 
+        || (distance_r < MAX_THRESHOLD_RIGHT && distance_r > MIN_THRESHOLD_RIGHT))
+    {
+        if ((counterB-counterB_history) >=20)
+        {
+            vLeft += ((counterB-counterB_history)-(counterA-counterA_history))/2.0;
+            counterA_history = counterA;
+            counterB_history = counterB;
+        }
+    }
+
+    double offset = 0.0;
+    if(distance_l+distance_r < 140)
+        offset = (distance_r-distance_l)/2.0;
+    else if (distance_l < 140)
+        offset = 60.0 - distance_l;
+    else if (distance_r < 140)
+        offset = distance_r - 60.0;
+
+    vLeft += offset/10.0;
+
+    vLeft = max(min(vLeft, 100.0), -100.0);
+
+print_out:
+    bluetooth.print(distance_l);
+    bluetooth.print("**");
+    bluetooth.print(vLeft);
+    bluetooth.print("**");
+    bluetooth.print(distance_f);
+    bluetooth.print("**");
+    bluetooth.print(vRight);
+    bluetooth.print("**");
+    bluetooth.print(distance_r);
+    bluetooth.println("**");
 }
 
 void callback1(void)
@@ -156,17 +207,21 @@ void callback1(void)
     {
          counterA--;
     }
-    Serial.print("CounterA is: ");
-    Serial.print(counterA);
-    Serial.print(" A is: ");
-    Serial.print((unsigned int)hardware::pins::left_encoder_a::read());
-    Serial.print(" B is: ");
-    Serial.println((unsigned int)hardware::pins::left_encoder_b::read());
+    // bluetooth.print("CounterA is: ");
+    // bluetooth.print(counterA);
+    // bluetooth.print(" A is: ");
+    // bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
+    // bluetooth.print(" B is: ");
+    // bluetooth.println((unsigned int)hardware::pins::left_encoder_b::read());
     if(goalA!=0 && counterA==(int)(goalA/5.625)) // 135/24=5.625
     {
         hardware::left_motor::stop();
         goalA=0;
-        if (goalB==0) motion_mode = MOTION_STOP;
+        if (goalB==0) 
+        {
+            motion_mode = MOTION_STOP;
+            bluetooth.println("Set to motion stop in callback1");
+        }
     }
 }
 
@@ -180,16 +235,20 @@ void callback2(void)
     {
         counterB--;
     }
-  	Serial.print("CounterB is: ");
-  	Serial.print(counterB);
-    Serial.print(" A is: ");
-    Serial.print((unsigned int)hardware::pins::right_encoder_a::read());
-    Serial.print(" B is: ");
-    Serial.println((unsigned int)hardware::pins::right_encoder_b::read());
+  	// bluetooth.print("CounterB is: ");
+  	// bluetooth.print(counterB);
+   //  bluetooth.print(" A is: ");
+   //  bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
+   //  bluetooth.print(" B is: ");
+   //  bluetooth.println((unsigned int)hardware::pins::right_encoder_b::read());
     if(goalB!=0 && counterB==(int)(goalB/5.625))
     {
         hardware::right_motor::stop();
         goalB=0;
-        if (goalA==0) motion_mode = MOTION_STOP;
+        if (goalA==0) 
+        {
+            motion_mode = MOTION_STOP;
+            bluetooth.println("Set to motion stop in callback2");
+        }
     }
 }

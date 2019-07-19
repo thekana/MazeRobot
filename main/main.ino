@@ -5,6 +5,7 @@
 #endif
 #include "Sensors.h"
 #include "locomotion.h"
+#define bluetooth Serial3
 using namespace hardware;
 using namespace hardware::pins;
 
@@ -14,9 +15,16 @@ int motion_mode = MOTION_STOP;
 
 int count=2;
 
+int start=0;
+
 void setup() {
     // put your setup code here, to run once:
     Serial.begin(115200);
+    bluetooth.begin(115200);
+    bluetooth.setTimeout(100);
+
+    bluetooth.println("Hello world!");
+
     while (! Serial);
     Serial.println("Serial setup finish!");
 
@@ -37,6 +45,16 @@ void setup() {
 }
 
 void loop() {
+    if(bluetooth.available() > 0)
+    {
+        String c = bluetooth.readString();
+        if(c.equals("12\n")) start=1;
+        Serial.print(c);
+        Serial.print(start);
+    }
+
+    
+
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
     //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise
@@ -79,9 +97,36 @@ void loop() {
 
 
     // 3. Give command to locomotion
+    // bluetooth.print(lfr[0]);
+    // bluetooth.print("******");
+    // bluetooth.print(lfr[1]);
+    // bluetooth.print("******");
+    // bluetooth.println(lfr[2]);
+
+    if(!start) return;
     
-    motion_mode = MOTION_FORWARD;
-    delay(5000);
+    if (motion_mode == MOTION_STOP)
+    {
+        // delay(500);
+        if(lfr[1]==0)
+        { 
+            bluetooth.println("Forward");
+            motion_mode=MOTION_FORWARD;
+        }
+        else if(lfr[0]==0) 
+        {
+            bluetooth.println("Left");
+            motion_mode=MOTION_LEFT;
+        }
+        else if(lfr[2]==0) 
+        {
+            bluetooth.println("Right");
+            motion_mode=MOTION_RIGHT;
+        }
+    }
+
+    // motion_mode = MOTION_FORWARD;
+    // delay(5000);
     // motion_mode = count;
     // Serial.print(count);
     // Serial.println("**********************");
@@ -93,25 +138,23 @@ void loop() {
     }
     else if (current_mode == MOTION_STOP && motion_mode == MOTION_FORWARD)
     {
-        forward(1, distance_f, distance_l, distance_r);
+        forward(10, distance_f, distance_l, distance_r);
     }
     else if (current_mode == MOTION_FORWARD && motion_mode == MOTION_FORWARD)
     {
-        // pass the sensors' data to locomotion
+        forward_updating(distance_f, distance_l, distance_r);
     }
     else
     {
         Serial.println("Motion status not recognized!");
     }
-
-
     // Test code
-    // Serial.print("Front: ");
-    // Serial.print(distance_f);
-    // Serial.print(" Left: ");
-    // Serial.print(distance_l);
-    // Serial.print(" Right: ");
-    // Serial.print(distance_r);
+    bluetooth.print("Front: ");
+    bluetooth.print(distance_f);
+    bluetooth.print(" Left: ");
+    bluetooth.print(distance_l);
+    bluetooth.print(" Right: ");
+    bluetooth.println(distance_r);
     // Serial.print(" Yaw: ");
     // Serial.println(Yaw);
 }
