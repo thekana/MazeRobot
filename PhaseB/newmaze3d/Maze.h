@@ -82,6 +82,7 @@ public:
       }
     }
   }
+  // reseting maze
   void initializeStatusCells()
   {
     for (byte i = 0; i < 5; i++)
@@ -97,6 +98,8 @@ public:
   {
     // to update these cells with path
     // data and start/end
+    initializeStatusCells();
+    statusCells[2][4] = " X ";
     if (h == "E")
     {
       head = EAST;
