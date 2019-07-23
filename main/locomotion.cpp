@@ -11,10 +11,10 @@
 #include "locomotion.h"
 
 #define bluetooth Serial3
-#define MIN_THRESHOLD_LEFT  55.0
-#define MAX_THRESHOLD_LEFT  65.0
-#define MIN_THRESHOLD_RIGHT 55.0
-#define MAX_THRESHOLD_RIGHT 65.0
+#define MIN_THRESHOLD_LEFT  50.0
+#define MAX_THRESHOLD_LEFT  70.0
+#define MIN_THRESHOLD_RIGHT 50.0
+#define MAX_THRESHOLD_RIGHT 70.0
 
 extern int counterA;
 extern int counterB;
@@ -28,6 +28,7 @@ int goalB=0;
 
 static double vLeft=0;
 static double vRight=0;
+static double last_offset=0;
 
 static void apply_speed(void);
 static void motor_controller(double distance_f, double distance_l, double distance_r);
@@ -167,6 +168,8 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
         if ((counterB-counterB_history) >=20)
         {
             vLeft += ((counterB-counterB_history)-(counterA-counterA_history))/2.0;
+            bluetooth.print("Counter add up: ");
+            bluetooth.println(((counterB-counterB_history)-(counterA-counterA_history))/2.0);
             counterA_history = counterA;
             counterB_history = counterB;
         }
@@ -180,9 +183,18 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
     else if (distance_r < 140)
         offset = distance_r - 60.0;
 
-    vLeft += offset/10.0;
+    double update = 0.5*offset + abs(offset)*offset/200 + (offset-last_offset);
+    vLeft = 50.0 + update;
+    bluetooth.print("Sensor add up: ");
+    bluetooth.println(update);
+
+    last_offset = offset;
 
     vLeft = max(min(vLeft, 100.0), -100.0);
+
+    apply_speed();
+
+    // bluetooth.println("Here");
 
 print_out:
     bluetooth.print(distance_l);

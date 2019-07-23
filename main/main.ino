@@ -54,7 +54,6 @@ void loop() {
     }
 
     
-
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
     //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise
@@ -105,25 +104,34 @@ void loop() {
 
     if(!start) return;
     
+    int ncells = 0;
     if (motion_mode == MOTION_STOP)
     {
-        // delay(500);
-        if(lfr[1]==0)
-        { 
-            bluetooth.println("Forward");
-            motion_mode=MOTION_FORWARD;
-        }
-        else if(lfr[0]==0) 
-        {
-            bluetooth.println("Left");
-            motion_mode=MOTION_LEFT;
-        }
-        else if(lfr[2]==0) 
-        {
-            bluetooth.println("Right");
-            motion_mode=MOTION_RIGHT;
-        }
+        // Assign other values here
+        motion_mode = MOTION_FORWARD;
     }
+
+    // A simple obstacle avoidance behaviour
+    // if (motion_mode == MOTION_STOP)
+    // {
+    //     delay(500);
+    //     if(lfr[1]==0)
+    //     { 
+    //         bluetooth.println("Forward");
+    //         motion_mode=MOTION_FORWARD;
+    //     }
+    //     else if(lfr[0]==0) 
+    //     {
+    //         bluetooth.println("Left");
+    //         motion_mode=MOTION_LEFT;
+    //     }
+    //     else if(lfr[2]==0) 
+    //     {
+    //         bluetooth.println("Right");
+    //         motion_mode=MOTION_RIGHT;
+    //     }
+    // }
+
 
     // motion_mode = MOTION_FORWARD;
     // delay(5000);
@@ -138,7 +146,7 @@ void loop() {
     }
     else if (current_mode == MOTION_STOP && motion_mode == MOTION_FORWARD)
     {
-        forward(10, distance_f, distance_l, distance_r);
+        forward(ncells, distance_f, distance_l, distance_r);
     }
     else if (current_mode == MOTION_FORWARD && motion_mode == MOTION_FORWARD)
     {
@@ -149,12 +157,12 @@ void loop() {
         Serial.println("Motion status not recognized!");
     }
     // Test code
-    bluetooth.print("Front: ");
-    bluetooth.print(distance_f);
-    bluetooth.print(" Left: ");
-    bluetooth.print(distance_l);
-    bluetooth.print(" Right: ");
-    bluetooth.println(distance_r);
+    // bluetooth.print("Front: ");
+    // bluetooth.print(distance_f);
+    // bluetooth.print(" Left: ");
+    // bluetooth.print(distance_l);
+    // bluetooth.print(" Right: ");
+    // bluetooth.println(distance_r);
     // Serial.print(" Yaw: ");
     // Serial.println(Yaw);
 }
