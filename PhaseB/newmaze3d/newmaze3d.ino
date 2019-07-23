@@ -60,6 +60,9 @@ void loop()
       maze.print();
       printCommand();
     }
+    else if (c.startsWith("o")){
+      maze.markAsExplored();
+    }
     else
     {
       maze.fillCells(c);

@@ -82,6 +82,17 @@ public:
       }
     }
   }
+
+  void markAsExplored(){
+    for (byte i = 0; i < 5; i++)
+    {
+      for (byte j = 0; j < 9; j++)
+      {
+        // set every cells to 4 spaces
+        exploredWalls[i][j] = 0xF;
+      }
+    }
+  }
   // reseting maze
   void initializeStatusCells()
   {
