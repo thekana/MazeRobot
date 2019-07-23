@@ -104,33 +104,33 @@ void loop() {
 
     if(!start) return;
     
-    int ncells = 0;
-    if (motion_mode == MOTION_STOP)
-    {
-        // Assign other values here
-        motion_mode = MOTION_FORWARD;
-    }
-
-    // A simple obstacle avoidance behaviour
+    int ncells = 10;
     // if (motion_mode == MOTION_STOP)
     // {
-    //     delay(500);
-    //     if(lfr[1]==0)
-    //     { 
-    //         bluetooth.println("Forward");
-    //         motion_mode=MOTION_FORWARD;
-    //     }
-    //     else if(lfr[0]==0) 
-    //     {
-    //         bluetooth.println("Left");
-    //         motion_mode=MOTION_LEFT;
-    //     }
-    //     else if(lfr[2]==0) 
-    //     {
-    //         bluetooth.println("Right");
-    //         motion_mode=MOTION_RIGHT;
-    //     }
+    //     // Assign other values here
+    //     motion_mode = MOTION_FORWARD;
     // }
+
+    // A simple obstacle avoidance behaviour
+    if (motion_mode == MOTION_STOP)
+    {
+        delay(500);
+        if(lfr[1]==0)
+        { 
+            bluetooth.println("Forward");
+            motion_mode=MOTION_FORWARD;
+        }
+        else if(lfr[0]==0) 
+        {
+            bluetooth.println("Left");
+            motion_mode=MOTION_LEFT;
+        }
+        else if(lfr[2]==0) 
+        {
+            bluetooth.println("Right");
+            motion_mode=MOTION_RIGHT;
+        }
+    }
 
 
     // motion_mode = MOTION_FORWARD;
