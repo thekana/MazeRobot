@@ -14,13 +14,15 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("Hello");
+  Serial3.begin(9600);
+  Serial3.println("Ready");
 }
 
 void loop()
 {
-  if (Serial.available())
+  if (Serial3.available())
   {
-    String c = Serial.readString();
+    String c = Serial3.readString();
     Serial.println(c);
     if (c.startsWith("f"))
     {
