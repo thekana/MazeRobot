@@ -169,7 +169,7 @@ void loop() {
         }
     }
     
-    if(!motion_queue.isEmpty())
+    if(motion_mode==MOTION_STOP && !motion_queue.isEmpty())
     {
         motion_queue.pop(&motion_mode);
         if (motion_mode==MOTION_FORWARD) ncells=1;
