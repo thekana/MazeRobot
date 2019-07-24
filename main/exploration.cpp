@@ -277,7 +277,7 @@ void floodFillUpdate(coord currCoord, int heading, int *lfr) {
   }
 }
 
-void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, int *cellCount, int *heading)
+void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, int *cellCount, byte *heading)
 {
 	if(*startStep == 2)
     {

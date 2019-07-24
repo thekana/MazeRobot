@@ -28,6 +28,7 @@ coord curCoord = {0,0};
 long current = 0;
 long timeIntervel = 0;
 byte heading = 0;
+String keyword;
 
 int start = 0;
 
@@ -52,16 +53,7 @@ void setup() {
     
     //setup Sensors
     sensorSetup();
-    bluetooth.println("Enter short or long side...");
-    while (bluetooth.available()==0){delay(100);} // empty buffer    
-//  while (bluetooth.available()==0){delay(100);} // empty buffer
-    if(bluetooth.available() > 0){
-      keyword = bluetooth.readString();
-      if(keyword.equals("s\n"))
-        heading = 4;
-      bluetooth.print("Heading = ");bluetooth.println(heading);
-    }
-    bluetooth.println("End setup!");
+   
 //    delay(1000);
     // setup map
     
@@ -78,8 +70,13 @@ void loop() {
         Serial.print(start);
         if(c.equals("s\n") || c.equals("l\n")) 
         {
-            String keyword;
+//            String keyword;
             keyword = c;
+            if(keyword.equals("s\n")){
+              heading = 4;  
+            }else if(keyword.equals("l\n")){
+              heading = 0;  
+            }
         }
     }
 
