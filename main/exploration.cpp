@@ -288,6 +288,7 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 *startStep = 3;
             }else if(lfr[0]==1){
                 (*cellCount)++;
+                //move forward one cell
                 bluetooth.print("CellCount: "); bluetooth.println(*cellCount);
                
             }else{
@@ -302,6 +303,7 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 *startStep = 3;
             }else if(lfr[2]==1){
                 (*cellCount)++;
+                // move forward one cell
                 bluetooth.print("CellCount: "); bluetooth.println(*cellCount);
               
             }else{
@@ -404,7 +406,7 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                   }else if(nextHeading == 8){
 //                    motion_mode = MOTION_BACK;
                   }
-      
+                  //turn then move forward one cell
                   break;
               }
 //              nextCellflag = false;
