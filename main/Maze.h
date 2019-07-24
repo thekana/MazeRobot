@@ -1,8 +1,9 @@
 #ifndef MAZE_H
 #define MAZE_H
+#define bluetooth Serial3
 #include <Arduino.h>
 
-int x2i(char *s) //convert char to int
+int x2i(char *s)
 {
   int x = 0;
   for (;;) {
@@ -29,8 +30,8 @@ enum heading {
 typedef enum heading Head;
 
 class Maze {
-  public:
-    int cells[5][9][4]; //0=north,1=east,2=south,3=west
+  private:
+    int cells[5][9][4];
     String statusCells[5][9];
     int rows = 5;
     int cols = 9;
@@ -43,7 +44,7 @@ class Maze {
       this->cols = 9;
       initializeCells();  // -1 is unexplored
       initializeStatusCells(); // 4 spaces
-      statusCells[3][5] = " X ";  // mark goal
+      statusCells[2][4] = " X ";  // mark goal
     }
     void initializeCells() {
       for (int i = 0; i < 5 ; i++) {
@@ -100,28 +101,17 @@ class Maze {
       }
       statusCells[i][j] = space;
     }
-    void fillCells(String const& h) {
-      int index = 0;
-      int len = h.length();
-      while (index < len) {
-        int i = h.charAt(index) - '0';
-        index++;
-        int j = h.charAt(index) - '0';
-        index++;
-        char a = h.charAt(index);
-        int data = x2i(&a);
-        index++;
-        // Now update the cell data
-        // int data = decimal * 10 + digit;
-        // BITMASK E-S-W-N
-        cells[i][j][0] = (data & B1000) >> 3;
-        cells[i][j][1] = (data & B0100) >> 2;
-        cells[i][j][2] = (data & B0010) >> 1;
-        cells[i][j][3] = (data & B0001) >> 0;
-        updateAdjCells(i, j, data);
-      }
+    void fillCells(int i, int j, byte data) {
+      // Now update the cell data
+      // int data = decimal * 10 + digit;
+      // BITMASK E-S-W-N
+      cells[i][j][3] = (data & B0010) >> 1;
+      cells[i][j][2] = (data & B0100) >> 2;
+      cells[i][j][1] = (data & B1000) >> 3;
+      cells[i][j][0] = (data & B0001) >> 0;
+      updateAdjCells(i, j);
     }
-    void updateAdjCells(int i, int j, int data) {
+    void updateAdjCells(int i, int j) {
       if ( i >= 0 && i < 4 ) {
         // can go down
         cells[i + 1][j][0] = cells[i][j][2];
@@ -154,47 +144,47 @@ class Maze {
     }
     void print() {
       for (int j = 0; j < cols; j++) {
-        Serial.print(" ---"); // Print top walls
+        bluetooth.print(" ---"); // Print top walls
       }
-      Serial.print("\n");
+      bluetooth.print("\n");
       for (int i = 0; i < rows; i++) {
         // Print Vertical;
-        Serial.print("|"); // left most wall
+        bluetooth.print("|"); // left most wall
         for (int j = 0; j < cols - 1; j++) {
-          Serial.print(statusCells[i][j]);
+          bluetooth.print("   ");
           if (cells[i][j][1] == -1) {
-            Serial.print("*");
+            bluetooth.print("*");
           } else {
             if (cells[i][j][1] == 1) {
-              Serial.print("|");
+              bluetooth.print("|");
             } else {
-              Serial.print(" ");
+              bluetooth.print(" ");
             }
           }
         }
-        Serial.print(statusCells[i][cols - 1]);
-        Serial.print("|"); // right most wall
-        Serial.print("\n");
+        bluetooth.print("   ");
+        bluetooth.print("|"); // right most wall
+        bluetooth.print("\n");
         if (i == 4) {
           break;
         }
         for (int j = 0; j < cols; j++) {
           if (cells[i][j][2] == -1) {
-            Serial.print(" ***");
+            bluetooth.print(" ***");
           } else {
             if (cells[i][j][2] == 1) {
-              Serial.print(" ---");
+              bluetooth.print(" ---");
             } else {
-              Serial.print("    ");
+              bluetooth.print("    ");
             }
           }
         }
-        Serial.print("\n");
+        bluetooth.print("\n");
       }
       for (int j = 0; j < cols; j++) {
-        Serial.print(" ---"); // Print closing bottom walls
+        bluetooth.print(" ---"); // Print closing bottom walls
       }
-      Serial.print("\n");
+      bluetooth.print("\n");
     }
     Head getHeading() {
       return head;

@@ -96,7 +96,7 @@ auto digital_pin<pin>::read()->logic_level {
   }else{
     Serial.println("No input level");  
   }
-    return hl;
+	return hl;
 }
 
 template<pin_t pin>
@@ -112,26 +112,25 @@ auto digital_pin<pin>::write(logic_level level) -> void {
 
 template<pin_t pin>
 auto digital_pin<pin>::high() -> void {
-    digitalWrite(pin_number, HIGH);
+	digitalWrite(pin_number, HIGH);
 }
 
 template<pin_t pin>
 auto digital_pin<pin>::low() -> void {
-    digitalWrite(pin_number, LOW);
+	digitalWrite(pin_number, LOW);
 }
 
 template<pin_t pin>
 auto digital_pin<pin>::pwm_write(units::percentage duty_cycle) -> void {
-    double percent = units::percentage(duty_cycle).count() / 0.392;
-    analogWrite(pin_number,percent);
+	double percent = units::percentage(duty_cycle).count() / 0.392;
+	analogWrite(pin_number,percent);
 }
 
 template<pin_t pin>
 auto digital_pin<pin>::pulse_length(logic_level state = logic_level::high,
-    units::microseconds timeout = 1000000_us)->units::microseconds 
-{
+	units::microseconds timeout = 1000000_us)->units::microseconds {
   long duration = pulseIn(pin_number,HIGH,1000000);
-    return units::microseconds(duration);
+	return units::microseconds(duration);
 }
 
 template <class trigger_pin, class echo_pin>
@@ -292,19 +291,6 @@ auto imu::update()->bool{
   return true;  
 }
 
-//simply update 400 times until imu become stable
-auto imu::stabilize()->void{
-  int update_count = 0;
-  while(true){
-    if(update_count == 400){
-      break;  
-    }else{
-      imu::update();
-      update_count++;
-    }
-  }
-}
-
 auto imu::yaw()->float{
   mpu->dmpGetQuaternion(&q, fifoBuffer);
   mpu->dmpGetGravity(&gravity, &q);
@@ -324,6 +310,18 @@ auto imu::roll()->float{
   mpu->dmpGetGravity(&gravity, &q);
   mpu->dmpGetYawPitchRoll(ypr, &q, &gravity);
   return  ypr[2] * 180/M_PI;
+}
+
+auto imu::stabilize()->void{
+  int update_count = 0;
+  while(true){
+    if(update_count == 400){
+      break;  
+    }else{
+      imu::update();
+      update_count++;
+    }
+  }
 }
 
 template <typename pin>
@@ -364,14 +362,14 @@ auto hardware::motor<pin_a, pin_b>::stop () -> void
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::forward (units::percentage velocity) -> void
 {
-    pin_a::write(FORWARD);
+  pin_a::write(FORWARD);
     pin_b::pwm_write(velocity);
 }
 
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::backward (units::percentage velocity) -> void
 {
-    pin_a::write(BACKWARD);
+  pin_a::write(FORWARD);
     pin_b::pwm_write(velocity);
 }
 
@@ -416,11 +414,11 @@ template class hardware::wheel<hardware::pins::right_encoder_a, hardware::pins::
 
 template class lidar<lidar_tag<0>>;
 template class lidar<lidar_tag<1>>;
-template class digital_pin<38>;
-template class digital_pin<39>;
 template class digital_pin<48>;
 template class digital_pin<49>;
 template class digital_pin<18>;
+template class digital_pin<52>;
+template class digital_pin<53>;
 template class analog_pin<digital_pin<38>>;
 template class analog_pin<digital_pin<39>>;
-template class sonar<sonar_trigger,sonar_echo>;
+template class sonar<analog_pin<digital_pin<38>>,analog_pin<digital_pin<39>>>;
