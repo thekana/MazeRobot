@@ -44,9 +44,9 @@ public:
   }
   void print()
   {
-    Serial.print(F("X "));
+    Serial.print(F("ROW "));
     Serial.print(x);
-    Serial.print(F(" Y "));
+    Serial.print(F(" COL "));
     Serial.print(y);
     Serial.print(F(" Val "));
     Serial.print(v);

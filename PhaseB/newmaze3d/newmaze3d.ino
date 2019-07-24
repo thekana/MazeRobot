@@ -14,8 +14,8 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("Hello");
-//  Serial3.begin(9600);
-//  Serial3.println("Ready");
+  //  Serial3.begin(9600);
+  //  Serial3.println("Ready");
 }
 
 void loop()
@@ -48,7 +48,7 @@ void loop()
     else if (c.startsWith("m"))
     {
       createPath();
-      for (byte i = 0; i < path.size()-1; i++)
+      for (byte i = 0; i < path.size() - 1; i++)
       {
         byte num = path.get(i)->getValue();
         num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
@@ -62,7 +62,7 @@ void loop()
       maze.print();
       printCommand();
     }
-    else if (c.startsWith("o")){
+    else if (c.startsWith("o")) {
       maze.markAsExplored();
     }
     else
@@ -100,20 +100,20 @@ void createPath()
         byte tmpJ = currJ;
         switch (k)
         {
-        case NORTH:
-          tmpJ--;
-          break;
-        case SOUTH:
-          tmpJ++;
-          break;
-        case EAST:
-          tmpI--;
-          break;
-        case WEST:
-          tmpI++;
-          break;
-        default:
-          break;
+          case NORTH:
+            tmpJ--;
+            break;
+          case SOUTH:
+            tmpJ++;
+            break;
+          case EAST:
+            tmpI--;
+            break;
+          case WEST:
+            tmpI++;
+            break;
+          default:
+            break;
         }
         byte nextV = flood.getCell(tmpI, tmpJ);
         if ((currV - nextV) == 1)
@@ -133,12 +133,15 @@ void createPath()
       byte minTurnIndex = 0;
       for (byte i = 0; i < stack.size(); i++)
       {
-        if (minTurn > stack.get(i)->getTurn())
+        stack.get(i)->print();
+        if (minTurn > abs(stack.get(i)->getTurn() - h) % 3)
         {
           minTurn = stack.get(i)->getTurn();
           minTurnIndex = i;
         }
       }
+      Serial.print("------");
+      Serial.println(minTurnIndex);
       // Done looping through remove minTurnIndex
       currN = stack.remove(minTurnIndex);
       // Add to path
@@ -174,10 +177,16 @@ void clearList(LinkedList<Node *> *list)
 }
 
 /*
-Assuming a path exist, commands array can be filled by calling this function
+  Assuming a path exist, commands array can be filled by calling this function
 */
 void fillCommandArray()
 {
+  if (path.size() <= 0) return;
+  Heading currHead = maze.getHeading();
+  while (currHead != path.get(0)->getHead()) {
+    currHead = handleTurn(currHead, path.get(0)->getHead());
+    Serial.println(currHead);
+  }
   for (byte i = 0; i < path.size(); i++)
   {
     addCommand(commandCount, 'F');
@@ -185,30 +194,40 @@ void fillCommandArray()
     {
       continue;
     }
-    if (path.get(i)->getHead() == NORTH && path.get(i + 1)->getHead() == EAST)
-    {
-      addCommand(commandCount, 'R');
-    }
-    else if (path.get(i)->getHead() == NORTH && path.get(i + 1)->getHead() == WEST)
-    {
-      addCommand(commandCount, 'L');
-    }
-    else if (path.get(i)->getHead() == EAST && path.get(i + 1)->getHead() == NORTH)
-    {
-      addCommand(commandCount, 'L');
-    }
-    else if (path.get(i)->getHead() == EAST && path.get(i + 1)->getHead() == SOUTH)
-    {
-      addCommand(commandCount, 'R');
-    }
-    else if (path.get(i)->getHead() > path.get(i + 1)->getHead())
-    {
-      addCommand(commandCount, 'R');
-    }
-    else if (path.get(i)->getHead() < path.get(i + 1)->getHead())
-    {
-      addCommand(commandCount, 'L');
-    }
+    currHead = handleTurn(path.get(i)->getHead(), path.get(i + 1)->getHead());
+  }
+}
+
+Heading handleTurn(Heading now, Heading next) {
+  if (now == NORTH && next == EAST)
+  {
+    addCommand(commandCount, 'R');
+    return EAST;
+  }
+  else if (now == NORTH && next == WEST)
+  {
+    addCommand(commandCount, 'L');
+    return WEST;
+  }
+  else if (now == EAST && next == NORTH)
+  {
+    addCommand(commandCount, 'L');
+    return NORTH;
+  }
+  else if (now == EAST && next == SOUTH)
+  {
+    addCommand(commandCount, 'R');
+    return SOUTH;
+  }
+  else if (now > next)
+  {
+    addCommand(commandCount, 'R');
+    return now - 1;
+  }
+  else if (now < next)
+  {
+    addCommand(commandCount, 'L');
+    return now + 1;
   }
 }
 
