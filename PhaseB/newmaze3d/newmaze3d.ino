@@ -131,12 +131,20 @@ void createPath()
     {
       byte minTurn = 100;
       byte minTurnIndex = 0;
+      Serial.print("CH: ");
+      Serial.println(h);
       for (byte i = 0; i < stack.size(); i++)
       {
         stack.get(i)->print();
-        if (minTurn > abs(stack.get(i)->getTurn() - h) % 3)
+        Serial.println(stack.get(i)->getHead());
+        byte numTurn = abs(stack.get(i)->getHead() - h);
+        if (numTurn == 3) {
+          numTurn = 1; // turning correction
+        }
+        if (minTurn > numTurn)
         {
-          minTurn = stack.get(i)->getTurn();
+          Serial.println(numTurn);
+          minTurn = numTurn;
           minTurnIndex = i;
         }
       }
