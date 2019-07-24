@@ -276,85 +276,119 @@ void floodFillUpdate(coord currCoord, int heading, int *lfr) {
   }
 }
 
-/*
-INPUT: Current Robot coordinate
-OUTPUT: Update maze for learned walls
-*/
-//void floodFillUpdate(coord currCoord, coord desired) {
-//  StackList<coord> entries;
-//
-//  maze[currCoord.y][currCoord.x].walls = readCurrent();
-//  entries.push(currCoord);
-//
-//  for (int i = 0; i < sizeof(headArray); i++) {
-//    int dir = headArray[i];
-//    //If there's a wall in this dir
-//    if ((maze[currCoord.y][currCoord.x].walls & dir) == 0) {
-//      coord workingCoord = { currCoord.x,currCoord.y };
-//      switch (dir) {
-//      case 1:
-//        workingCoord.y = workingCoord.y - 1;
-//        coordUpdate(workingCoord, 2);
-//        break;
-//      case 2:
-//        workingCoord.y = workingCoord.y + 1;
-//        coordUpdate(workingCoord, 1);
-//        break;
-//      case 4:
-//        workingCoord.x = workingCoord.x + 1;
-//        coordUpdate(workingCoord, 8);
-//        break;
-//      case 8:
-//        workingCoord.x = workingCoord.x - 1;
-//        coordUpdate(workingCoord, 4);
-//        break;
-//      }
-//      //If the workingEntry is a valid entry and not a dead end, push it onto the stack
-//      if (checkBounds(workingCoord) && (!isEnd(workingCoord, desired))) {
-//        entries.push(workingCoord);
-//      }
-//    }
-//  }
-//  //While the entries stack isn't empty
-//  while (!entries.isEmpty()) {
-//    //Pop an entry from the stack
-//    coord workingEntry = entries.pop();
-//    int neighCheck = checkNeighs(workingEntry);
-//    //If the least neighbor of the working entry is not one less than the value of the working entry
-//    if (neighCheck + 1 != maze[workingEntry.y][workingEntry.x].distance) {
-//      maze[workingEntry.y][workingEntry.x].distance = neighCheck + 1;
-//      for (int i = 0; i < sizeof(headArray); i++) {
-//        int dir = headArray[i];
-//        if ((maze[workingEntry.y][workingEntry.x].walls & dir) != 0) {
-//          coord nextCoord = bearingCoord(workingEntry, dir);
-//          if (checkBounds(nextCoord)) {
-//            if (!isEnd(nextCoord, desired)) {
-//              entries.push(nextCoord);
-//            }
-//          }
-//        }
-//      }
-//    }
-//  }
-//}
+void exploration(Queue& motion_queue, int*lfr, int startStep)
+{
+	if(startStep == 2)
+    {
+        if(keyword.equals("s\n"))
+        {
+            if(lfr[2] == 0){
+                curCoord.x = X - 1;
+                startStep = 3;
+            }else if(lfr[0]==1){
+                cellCount++;
+                bluetooth.print("CellCount: "); bluetooth.println(cellCount);
+                delay(7000);
+            }else{
+                startStep = 3;
+            }
+        }
+        else if(keyword.equals("l\n"))
+        {
+            if(lfr[0]==0){
+                curCoord.x = X-1;
+                heading = 2;
+                startStep = 3;
+            }else if(lfr[2]==1){
+                cellCount++;
+                bluetooth.print("CellCount: "); bluetooth.println(cellCount);
+                delay(7000);
+            }else{
+                heading = 8;
+                startStep = 3;
+            }
+        }
+    }
+    else if(startStep == 3)
+    {
+        if(keyword.equals("s\n"))
+        {
+            if(cellCount!=0)
+            {
+                curCoord.y = cellCount;
+                for(int i=0;i<cellCount;i++)
+                {
+                    maze[i][curCoord.x].walls = 11;
+                }
+                cellCount = 0;
+    //        keyword = "";
+            }
+        }
+        else if(keyword.equals("l\n"))
+        {
+            if(cellCount!=0)
+            {
+                if(heading==8)
+                {
+                    curCoord.x = cellCount;
+        //          maze[curCoord.y][0].walls = 4;
+                    for(int i=1;i<cellCount;i++)
+                    {
+                        maze[curCoord.y][i].walls = 7;
+                    }
+                }
+                else if(heading == 2)
+                {
+                    curCoord.x = X - 1 - cellCount;
+        //          maze[curCoord.y][X-1].walls = 8;
+                    for(int i=cellCount-1;i>=0;i--)
+                    {
+                        maze[curCoord.y][X-i].walls = 13;
+                    }
+                }
+    //          maze[0][curCoord.x].walls = 2;
+                cellCount = 0;
+    //          keyword = "";
+            }
+        }
+        if(maze[curCoord.y][curCoord.x].distance != 0){
+            bluetooth.print("Current cell distance: ");  bluetooth.println(maze[curCoord.y][curCoord.x].distance);
+            bluetooth.print("front: "); bluetooth.println(distance_f);
+            bluetooth.print("left: "); bluetooth.println(distance_l);
+            bluetooth.print("right: ");bluetooth.println(distance_r);
+            bluetooth.print("Wall: ");bluetooth.print(lfr[0]);bluetooth.print(lfr[1]);bluetooth.println(lfr[2]);
+            bluetooth.print("Current cell: [");bluetooth.print(curCoord.y);
+            bluetooth.print(" "); bluetooth.print(curCoord.x);bluetooth.println("] ");
+            floodFillUpdate(curCoord, heading, lfr);
+            maze[curCoord.y][curCoord.x].marked = true;
+            mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
+            int nextHeading = orient(curCoord, heading);
+            coord nextCoord = bearingCoord(curCoord, nextHeading);
 
-//void floodFill(coord desired[]) {
-//  coord currCoord = { 0,0 };
-//  int heading = 4;
-//  /*Integer representation of heading
-//  * 1 = N
-//  * 4 = E
-//  * 2 = S
-//  * 8 = W
-//  */
-//  while (maze[currCoord.y][currCoord.x].distance != 0) {
-//    floodFillUpdate(currCoord, desired);
-//    int nextHeading = orient(currCoord, heading);
-//    coord nextCoord = bearingCoord(currCoord, nextHeading);
-//    //TODO: ADD MOVING INSTRUCTIONS HERE
-//    
-//    //This should occur as a callback of the moving finishing
-//    currCoord = nextCoord;
-//    heading = nextHeading;
-//  }
-//}
+            bluetooth.print("next cell: ["); bluetooth.print(nextCoord.y);
+            bluetooth.print(" "); bluetooth.print(nextCoord.x);bluetooth.println("] ");
+            bluetooth.print("Current heading: "); bluetooth.println(heading);
+            curCoord = nextCoord;
+            heading = nextHeading;
+
+            bluetooth.print("next heading: "); bluetooth.println(heading);
+            bluetooth.println();
+
+        }
+        else{
+            bluetooth.println("end of maze. ready to print.");
+            ledG::low();
+            ledR::high();
+            while(bluetooth.available()==0){}
+
+            //GOAL FINDED, STOP CAR, end execution
+            startStep = 4;
+        }
+    }
+    else if(startStep == 4)
+    {
+        mazePrint->print();
+        startStep = 5;
+        delay(200000);
+    }
+}
