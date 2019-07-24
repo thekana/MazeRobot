@@ -102,11 +102,11 @@ void loop() {
 
     if(map_ready)
     {
-        //planning();
+        // planning();
     }
     else
     {
-        exploration(motion_queue, lfr);
+        // exploration(motion_queue, lfr);
     }
 
 
@@ -146,7 +146,6 @@ void loop() {
     //         motion_mode=MOTION_RIGHT;
     //     }
     // }
-
 
     // motion_mode = MOTION_FORWARD;
     // delay(5000);

@@ -397,6 +397,8 @@ auto hardware::wheel<pin_a, pin_b>::position () -> units::millimeters
     return result;
 }
 
+template class hardware::digital_pin<22U>;
+template class hardware::digital_pin<23U>;
 template class hardware::motor<hardware::pins::M1, hardware::pins::E1>;
 template class hardware::motor<hardware::pins::M2, hardware::pins::E2>;
 template class hardware::digital_pin<2U>;
