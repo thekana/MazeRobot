@@ -120,7 +120,7 @@ void createPath()
         {
           // We want CurrV - nextCell = 1
           // this is the right cell add to stack
-          stack.add(new Node(tmpI, tmpJ, nextV, abs(h - k) % 2, k));
+          stack.add(new Node(tmpI, tmpJ, nextV, k));
         }
       }
     }
@@ -131,25 +131,18 @@ void createPath()
     {
       byte minTurn = 100;
       byte minTurnIndex = 0;
-      Serial.print("CH: ");
-      Serial.println(h);
       for (byte i = 0; i < stack.size(); i++)
       {
-        stack.get(i)->print();
-        Serial.println(stack.get(i)->getHead());
         byte numTurn = abs(stack.get(i)->getHead() - h);
         if (numTurn == 3) {
           numTurn = 1; // turning correction
         }
         if (minTurn > numTurn)
         {
-          Serial.println(numTurn);
           minTurn = numTurn;
           minTurnIndex = i;
         }
       }
-      Serial.print("------");
-      Serial.println(minTurnIndex);
       // Done looping through remove minTurnIndex
       currN = stack.remove(minTurnIndex);
       // Add to path
@@ -193,7 +186,6 @@ void fillCommandArray()
   Heading currHead = maze.getHeading();
   while (currHead != path.get(0)->getHead()) {
     currHead = handleTurn(currHead, path.get(0)->getHead());
-    Serial.println(currHead);
   }
   for (byte i = 0; i < path.size(); i++)
   {

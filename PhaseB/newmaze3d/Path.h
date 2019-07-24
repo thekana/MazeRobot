@@ -10,16 +10,14 @@ private:
   byte x;
   byte y;
   byte v; //value
-  byte t;
   Heading from;
 
 public:
-  Node(byte x, byte y, byte v, byte t, byte k)
+  Node(byte x, byte y, byte v, byte k)
   {
     this->x = x;
     this->y = y;
     this->v = v;
-    this->t = t;
     this->from = (Heading)k;
   }
   byte getX()
@@ -33,10 +31,6 @@ public:
   byte getValue()
   {
     return v;
-  }
-  byte getTurn()
-  {
-    return t;
   }
   Heading getHead()
   {
