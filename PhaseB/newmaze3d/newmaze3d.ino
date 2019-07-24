@@ -48,7 +48,7 @@ void loop()
     else if (c.startsWith("m"))
     {
       createPath();
-      for (byte i = 0; i < path.size(); i++)
+      for (byte i = 0; i < path.size()-1; i++)
       {
         byte num = path.get(i)->getValue();
         num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
