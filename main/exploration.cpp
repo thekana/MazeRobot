@@ -1,4 +1,5 @@
 #include "exploration.h"
+#include "locomotion.h"
 byte headArray[] = {8,4,2,1};//ESWN
 extern MazeCell maze[Y][X];
 extern coord curCoord;
@@ -279,6 +280,7 @@ void floodFillUpdate(coord currCoord, int heading, int *lfr) {
 
 void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, int *cellCount, byte *heading)
 {
+	int motion_decision = 0;
 	if(*startStep == 2)
     {
         if(keyword.equals("s\n"))
@@ -287,10 +289,11 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 curCoord.x = X - 1;
                 *startStep = 3;
             }else if(lfr[0]==1){
-                (*cellCount)++;
-                //move forward one cell
+            	//move forward one cell
+            	motion_decision = MOTION_FORWARD;
+                (*cellCount)++;                
                 bluetooth.print("CellCount: "); bluetooth.println(*cellCount);
-               
+               	
             }else{
                 *startStep = 3;
             }
@@ -302,8 +305,9 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 *heading = 2;
                 *startStep = 3;
             }else if(lfr[2]==1){
+            	// move forward one cell
+            	motion_decision = MOTION_FORWARD;
                 (*cellCount)++;
-                // move forward one cell
                 bluetooth.print("CellCount: "); bluetooth.println(*cellCount);
               
             }else{
@@ -357,45 +361,45 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
             coord nextCoord = bearingCoord(curCoord, nextHeading);
             if(*heading == nextHeading){
               //Move forward one cell
-//              motion_mode = MOTION_FORWARD;
+                motion_decision = MOTION_FORWARD;
             }else{
               switch (*heading) {
                 case 1: //N
                   if(nextHeading==2){
-//                    motion_mode = MOTION_LEFT;
+                      motion_decision = MOTION_LEFT;
                   }else if(nextHeading == 4){
-//                    motion_mode = MOTION_BACK;  
+                      motion_decision = MOTION_BACK;  
                   }else if(nextHeading == 8){
-//                    motion_mode = MOTION_RIGHT;
+                      motion_decision = MOTION_RIGHT;
                   }
                   break; 
                 case 4: //S
                   if(nextHeading==2){
-//                    motion_mode = MOTION_RIGHT;
+                      motion_decision = MOTION_RIGHT;
                   }else if(nextHeading == 8){
-//                    motion_mode = MOTION_LEFT;  
+                      motion_decision = MOTION_LEFT;  
                   }else if(nextHeading == 1){
-//                    motion_mode = MOTION_BACK;
+                      motion_decision = MOTION_BACK;
                   }
        
                   break;
                 case 8: //E
                   if(nextHeading==4){
-//                    motion_mode = MOTION_RIGHT;
+                      motion_decision = MOTION_RIGHT;
                   }else if(nextHeading == 1){
-//                    motion_mode = MOTION_LEFT;  
+                      motion_decision = MOTION_LEFT;  
                   }else if(nextHeading == 2){
-//                    motion_mode = MOTION_BACK;
+                      motion_decision = MOTION_BACK;
                   }
       
                   break;
                 case 2: //W
                   if(nextHeading==1){
-//                    motion_mode = MOTION_RIGHT;
+                      motion_decision = MOTION_RIGHT;
                   }else if(nextHeading == 4){
-//                    motion_mode = MOTION_LEFT;  
+                      motion_decision = MOTION_LEFT;  
                   }else if(nextHeading == 8){
-//                    motion_mode = MOTION_BACK;
+                      motion_decision = MOTION_BACK;
                   }
                   //turn then move forward one cell
                   break;
@@ -422,4 +426,19 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
             *startStep = 4;
         }
     }
+
+    if (!motion_queue.isEmpty())
+    {
+    	Serial3.println("Warning! Queue not empty!");
+    }
+    
+    motion_queue.push(&motion_decision);
+	bluetooth.print("Push: ");
+	bluetooth.println(motion_decision);
+	
+    if(motion_decision>=2) 
+	{
+		motion_decision = 1;
+		motion_queue.push(&motion_decision);
+	}
 }
