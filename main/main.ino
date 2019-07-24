@@ -65,9 +65,9 @@ void loop() {
     if(bluetooth.available() > 0)
     {
         String c = bluetooth.readString();
-        if(c.equals("12\n")) start=1;
+        // if(c.equals("12\n")) start=1;
         Serial.print(c);
-        Serial.print(start);
+        // Serial.print(start);
         if(c.equals("s\n") || c.equals("l\n")) 
         {
 //            String keyword;
@@ -79,7 +79,8 @@ void loop() {
             }
         }
     }
-
+    bluetooth.print("StartStep: ");
+    bluetooth.println(startStep);
 
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
@@ -89,6 +90,26 @@ void loop() {
     int face_dir = 0;
     //Array be used to determine whether there is al wall at East, South, West and North
     int ESWN[4] = {0, 0, 0, 0};
+
+    // 0. Read from bluetooth? Any command?
+
+
+    // 1. perception
+    // Read from sensors
+    //function that dectect the left, front and right wall near the car
+    //front distance (ultrasonic distance)
+    distance_f = sonar<pins::sonar_trigger, pins::sonar_echo>::distance().count();        //convert the CM to MM
+    //left distance (left lidar)
+    distance_l = lidar<lidar_tag<0>>::distance().count();
+    //right distance (right lidar)
+    distance_r = lidar<lidar_tag<1>>::distance().count();
+    carWall(distance_l, distance_f, distance_r, lfr);
+    //update IMU parameters
+    imu::update();
+    //Get IMU yaw value
+    Yaw = imu::yaw();
+    //function that records the walls near car (Ease, South, West, North)
+    ESWNWall(Yaw, lfr, ESWN, &face_dir);
 
     if(startStep==0)
     {
@@ -128,41 +149,38 @@ void loop() {
         }
     }
 
-    // 0. Read from bluetooth? Any command?
     if(motion_mode >= MOTION_LEFT || startStep < 2) return;
 
     int current_mode = motion_mode;
 
-    // 1. perception
-    // Read from sensors
-    //function that dectect the left, front and right wall near the car
-    //front distance (ultrasonic distance)
-    distance_f = sonar<pins::sonar_trigger, pins::sonar_echo>::distance().count();        //convert the CM to MM
-    //left distance (left lidar)
-    distance_l = lidar<lidar_tag<0>>::distance().count();
-    //right distance (right lidar)
-    distance_r = lidar<lidar_tag<1>>::distance().count();
-    carWall(distance_l, distance_f, distance_r, lfr);
-    //update IMU parameters
-    imu::update();
-    //Get IMU yaw value
-    Yaw = imu::yaw();
-    //function that records the walls near car (Ease, South, West, North)
-    ESWNWall(Yaw, lfr, ESWN, &face_dir);
-
 
     // 2. Localisation and planning
+    int ncells= 0;
+    if(motion_mode==MOTION_STOP)
+    {
+        if(map_ready)
+        {
+            // planning();
+             Serial.print("");
+        }
+        else
+        {
+            exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
+        }
 
-    if(map_ready)
-    {
-        // planning();
-         Serial.print("");
-    }
-    else
-    {
-         exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
+        if(!motion_queue.isEmpty())
+        {
+            motion_queue.pop(&motion_mode);
+            if (motion_mode==MOTION_FORWARD) ncells=1;
+            bluetooth.print("Pop: ");
+            bluetooth.println(motion_mode);
+            bluetooth.println("Queue not empty");
+        }
     }
      
+    // bluetooth.print("Motion mode: ");
+    // bluetooth.println(motion_mode);
+
     if(startStep == 4)
     {
       bluetooth.println("end of maze. ready to print.");
@@ -180,14 +198,6 @@ void loop() {
     // bluetooth.print("******");
     // bluetooth.println(lfr[2]);
 
-    if(!start) return;
-
-    int ncells = 0;
-    if (motion_mode == MOTION_STOP)
-    {
-        // Assign other values here
-        motion_mode = MOTION_FORWARD;
-    }
 
     // A simple obstacle avoidance behaviour
     // if (motion_mode == MOTION_STOP)
