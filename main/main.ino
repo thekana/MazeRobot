@@ -1,6 +1,6 @@
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
-#include "cppQueue.h" 
+#include "cppQueue.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
 #endif
@@ -59,7 +59,7 @@ void loop() {
         Serial.print(start);
     }
 
-    
+
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
     //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise
@@ -102,7 +102,7 @@ void loop() {
 
     if(map_ready)
     {
-        //planning();
+        // planning();
     }
     else
     {
@@ -111,12 +111,12 @@ void loop() {
          ledG::low();
          startStep = 1;
          current = millis();
-         timeIntervel = 0; 
+         timeIntervel = 0;
       }
       else if(startStep==1){
         if(timeIntervel < 2000){
           if(distance_f <= 50){
-            timeIntervel = millis() - current;  
+            timeIntervel = millis() - current;
           }else{
             current = millis();
             timeIntervel = 0;
@@ -133,7 +133,7 @@ void loop() {
           timeIntervel = millis() - current;
         }
       }else if(startStep == 2){
-        
+
         if(keyword.equals("s\n")){
           if(lfr[2] == 0){
             curCoord.x = X - 1;
@@ -143,7 +143,7 @@ void loop() {
             bluetooth.print("CellCount: "); bluetooth.println(cellCount);
             delay(7000);
           }else{
-            startStep = 3;  
+            startStep = 3;
           }
         }else if(keyword.equals("l\n")){
           if(lfr[0]==0){
@@ -153,10 +153,10 @@ void loop() {
           }else if(lfr[2]==1){
             cellCount++;
             bluetooth.print("CellCount: "); bluetooth.println(cellCount);
-            delay(7000);   
+            delay(7000);
           }else{
             heading = 8;
-            startStep = 3; 
+            startStep = 3;
           }
         }
       }else if(startStep == 3){
@@ -164,8 +164,8 @@ void loop() {
           if(cellCount!=0){
             curCoord.y = cellCount;
             for(int i=0;i<cellCount;i++){
-              maze[i][curCoord.x].walls = 11;  
-            } 
+              maze[i][curCoord.x].walls = 11;
+            }
             cellCount = 0;
     //        keyword = "";
           }
@@ -175,23 +175,23 @@ void loop() {
               curCoord.x = cellCount;
     //          maze[curCoord.y][0].walls = 4;
               for(int i=1;i<cellCount;i++){
-                maze[curCoord.y][i].walls = 7;  
-              } 
+                maze[curCoord.y][i].walls = 7;
+              }
             }else if(heading == 2){
               curCoord.x = X - 1 - cellCount;
-    //          maze[curCoord.y][X-1].walls = 8;  
+    //          maze[curCoord.y][X-1].walls = 8;
               for(int i=cellCount-1;i>=0;i--){
-                maze[curCoord.y][X-i].walls = 13;  
-              }  
-            } 
+                maze[curCoord.y][X-i].walls = 13;
+              }
+            }
     //        maze[0][curCoord.x].walls = 2;
             cellCount = 0;
     //        keyword = "";
           }
-          
+
         }
         if(maze[curCoord.y][curCoord.x].distance != 0){
-          bluetooth.print("Current cell distance: ");  bluetooth.println(maze[curCoord.y][curCoord.x].distance);  
+          bluetooth.print("Current cell distance: ");  bluetooth.println(maze[curCoord.y][curCoord.x].distance);
           bluetooth.print("front: "); bluetooth.println(distance_f);
           bluetooth.print("left: "); bluetooth.println(distance_l);
           bluetooth.print("right: ");bluetooth.println(distance_r);
@@ -203,34 +203,35 @@ void loop() {
           mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
           int nextHeading = orient(curCoord, heading);
           coord nextCoord = bearingCoord(curCoord, nextHeading);
-          
+
           bluetooth.print("next cell: ["); bluetooth.print(nextCoord.y);
-          bluetooth.print(" "); bluetooth.print(nextCoord.x);bluetooth.println("] "); 
+          bluetooth.print(" "); bluetooth.print(nextCoord.x);bluetooth.println("] ");
           bluetooth.print("Current heading: "); bluetooth.println(heading);
           curCoord = nextCoord;
           heading = nextHeading;
-          
+
           bluetooth.print("next heading: "); bluetooth.println(heading);
-          bluetooth.println();  
-    
-          delay(7000); 
+          bluetooth.println();
+
+          delay(7000);
         }else{
           bluetooth.println("end of maze. ready to print.");
           ledG::low();
           ledR::high();
           while(bluetooth.available()==0){}
-          
+
           //GOAL FINDED, STOP CAR, end execution
           startStep = 4;
-        }  
-        
+        }
+
       }else if(startStep == 4){
         mazePrint->print();
-        startStep = 5;  
+        startStep = 5;
         delay(200000);
       }else if(startStep == 5){
-        delay(100);  
+        delay(100);
       }
+        // exploration(motion_queue, lfr);
     }
 
 
@@ -242,7 +243,7 @@ void loop() {
     // bluetooth.println(lfr[2]);
 
     if(!start) return;
-    
+
     int ncells = 0;
     if (motion_mode == MOTION_STOP)
     {
@@ -255,22 +256,21 @@ void loop() {
     // {
     //     delay(500);
     //     if(lfr[1]==0)
-    //     { 
+    //     {
     //         bluetooth.println("Forward");
     //         motion_mode=MOTION_FORWARD;
     //     }
-    //     else if(lfr[0]==0) 
+    //     else if(lfr[0]==0)
     //     {
     //         bluetooth.println("Left");
     //         motion_mode=MOTION_LEFT;
     //     }
-    //     else if(lfr[2]==0) 
+    //     else if(lfr[2]==0)
     //     {
     //         bluetooth.println("Right");
     //         motion_mode=MOTION_RIGHT;
     //     }
     // }
-
 
     // motion_mode = MOTION_FORWARD;
     // delay(5000);
