@@ -355,7 +355,9 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 }
     //          maze[0][curCoord.x].walls = 2;
                 *cellCount = 0;
- true;
+            }
+        }
+        if(maze[curCoord.y][curCoord.x].distance != 0){
             mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
             int nextHeading = orient(curCoord, (*heading));
             coord nextCoord = bearingCoord(curCoord, nextHeading);
@@ -433,12 +435,12 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
     }
     
     motion_queue.push(&motion_decision);
-	bluetooth.print("Push: ");
-	bluetooth.println(motion_decision);
+	  bluetooth.print("Push: ");
+	  bluetooth.println(motion_decision);
 	
     if(motion_decision>=2) 
-	{
-		motion_decision = 1;
-		motion_queue.push(&motion_decision);
-	}
+	  {
+	  	motion_decision = 1;
+	  	motion_queue.push(&motion_decision);
+	  }
 }
