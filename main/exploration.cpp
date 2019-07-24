@@ -351,16 +351,7 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 }
     //          maze[0][curCoord.x].walls = 2;
                 *cellCount = 0;
-    //          keyword = "";
-            }
-        }
-        if(maze[curCoord.y][curCoord.x].distance != 0){
-            bluetooth.print("Current cell distance: ");  bluetooth.println(maze[curCoord.y][curCoord.x].distance);
-            bluetooth.print("Wall: ");bluetooth.print(lfr[0]);bluetooth.print(lfr[1]);bluetooth.println(lfr[2]);
-            bluetooth.print("Current cell: [");bluetooth.print(curCoord.y);
-            bluetooth.print(" "); bluetooth.print(curCoord.x);bluetooth.println("] ");
-            floodFillUpdate(curCoord, (*heading), lfr);
-//            maze[curCoord.y][curCoord.x].marked = true;
+ true;
             mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
             int nextHeading = orient(curCoord, (*heading));
             coord nextCoord = bearingCoord(curCoord, nextHeading);
