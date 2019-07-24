@@ -1,11 +1,12 @@
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
 #include "cppQueue.h"
+
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
 #endif
+
 #include "Sensors.h"
-#include "Maze.h"
 #include "locomotion.h"
 #include "exploration.h"
 #define bluetooth Serial3
@@ -26,7 +27,6 @@ Maze *mazePrint = new Maze("");
 coord curCoord = {0,0};
 long current = 0;
 long timeIntervel = 0;
-String keyword;
 
 int start = 0;
 
@@ -147,13 +147,13 @@ void loop() {
     if(map_ready)
     {
         // planning();
-        Serial.print("");
+         Serial.print("");
     }
     else
     {
-        exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
+         exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
     }
-    
+     
     if(startStep == 4)
     {
       bluetooth.println("end of maze. ready to print.");

@@ -1,8 +1,8 @@
 #include "exploration.h"
-extern byte headArray[] = {8,4,2,1};//ESWN
+byte headArray[] = {8,4,2,1};//ESWN
 extern MazeCell maze[Y][X];
 extern coord curCoord;
-extern Maze *mazePrint = new Maze("");
+extern Maze *mazePrint;
 
 //Get the most optimistic distance between two coordinates in a grid
 int calcDist(int posx, int posy, int desireX, int desireY) {
