@@ -5,6 +5,8 @@
 #include "external_VL6180X.h"
 #include "external_I2CIO.h"
 #include "Wire.h"
+#include "Maze.h"
+#include "cppQueue.h"
 #define bluetooth Serial3
 
 #include "StackList.h"
@@ -87,6 +89,6 @@ OUTPUT: Update maze for learned walls
 */
 void floodFillUpdate(coord currCoord, int heading, int *lfr);
 
-void exploration(Queue& motion_queue, int*lfr, int startStep);
+void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, int *cellCount, int *heading);
 
 #endif

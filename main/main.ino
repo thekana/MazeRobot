@@ -5,6 +5,7 @@
     #include "Wire.h"
 #endif
 #include "Sensors.h"
+#include "Maze.h"
 #include "locomotion.h"
 #include "exploration.h"
 #define bluetooth Serial3
@@ -21,12 +22,13 @@ static Queue motion_queue(sizeof(int));
 int startStep = 0;
 int cellCount = 0;
 MazeCell maze[5][9];
+Maze *mazePrint = new Maze("");
+coord curCoord = {0,0};
+long current = 0;
+long timeIntervel = 0;
+String keyword;
 
-
-int count=2;
-
-int start=0;
-
+int start = 0;
 
 void setup() {
     // put your setup code here, to run once:
@@ -65,7 +67,7 @@ void loop() {
         if(c.equals("s\n") || c.equals("l\n")) 
         {
             String keyword;
-            strcpy(keyword, c);
+            keyword = c;
         }
     }
 
@@ -145,12 +147,21 @@ void loop() {
     if(map_ready)
     {
         // planning();
+        Serial.print("");
     }
     else
     {
-        exploration(motion_queue, lfr, startStep);
+        exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
     }
-
+    if(startStep == 4)
+    {
+      bluetooth.println("end of maze. ready to print.");
+      ledG::low();
+      ledR::high();
+      mazePrint->print();
+      startStep = 5;
+      delay(200000);
+    }
 
     // 3. Give command to locomotion
     // bluetooth.print(lfr[0]);

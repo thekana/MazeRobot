@@ -40,6 +40,8 @@ namespace hardware
          */
         using sonar_trigger = analog_pin<digital_pin<38U>>;
 
+        using ledG = digital_pin<53U>;
+        using ledR = digital_pin<52U>;
         /**
          * \brief The ultrasound_echo is ultrasound echo pin connected to a1.
          */
