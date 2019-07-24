@@ -183,8 +183,8 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
     else if (distance_r < 140)
         offset = distance_r - 60.0;
 
-    // double update = 0.5*offset + abs(offset)*offset/200 + (offset-last_offset);
-    double update = offset;
+    double update = 0.5*offset + abs(offset)*offset/200 + 2*(offset-last_offset);
+    // double update = offset;
     vLeft = 50.0 + update;
     bluetooth.print("Sensor add up: ");
     bluetooth.println(update);
