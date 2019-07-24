@@ -153,6 +153,7 @@ void loop() {
     {
         exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
     }
+    
     if(startStep == 4)
     {
       bluetooth.println("end of maze. ready to print.");
