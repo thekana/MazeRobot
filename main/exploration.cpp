@@ -357,12 +357,58 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
             bluetooth.print("Wall: ");bluetooth.print(lfr[0]);bluetooth.print(lfr[1]);bluetooth.println(lfr[2]);
             bluetooth.print("Current cell: [");bluetooth.print(curCoord.y);
             bluetooth.print(" "); bluetooth.print(curCoord.x);bluetooth.println("] ");
-            floodFillUpdate(curCoord, heading, lfr);
+            floodFillUpdate(curCoord, (*heading), lfr);
 //            maze[curCoord.y][curCoord.x].marked = true;
             mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
-            int nextHeading = orient(curCoord, heading);
+            int nextHeading = orient(curCoord, (*heading));
             coord nextCoord = bearingCoord(curCoord, nextHeading);
-
+            if(*heading == nextHeading){
+              //Move forward one cell
+//              motion_mode = MOTION_FORWARD;
+            }else{
+              switch (*heading) {
+                case 1: //N
+                  if(nextHeading==2){
+//                    motion_mode = MOTION_LEFT;
+                  }else if(nextHeading == 4){
+//                    motion_mode = MOTION_BACK;  
+                  }else if(nextHeading == 8){
+//                    motion_mode = MOTION_RIGHT;
+                  }
+                  break; 
+                case 4: //S
+                  if(nextHeading==2){
+//                    motion_mode = MOTION_RIGHT;
+                  }else if(nextHeading == 8){
+//                    motion_mode = MOTION_LEFT;  
+                  }else if(nextHeading == 1){
+//                    motion_mode = MOTION_BACK;
+                  }
+       
+                  break;
+                case 8: //E
+                  if(nextHeading==4){
+//                    motion_mode = MOTION_RIGHT;
+                  }else if(nextHeading == 1){
+//                    motion_mode = MOTION_LEFT;  
+                  }else if(nextHeading == 2){
+//                    motion_mode = MOTION_BACK;
+                  }
+      
+                  break;
+                case 2: //W
+                  if(nextHeading==1){
+//                    motion_mode = MOTION_RIGHT;
+                  }else if(nextHeading == 4){
+//                    motion_mode = MOTION_LEFT;  
+                  }else if(nextHeading == 8){
+//                    motion_mode = MOTION_BACK;
+                  }
+      
+                  break;
+              }
+//              nextCellflag = false;
+            }
             bluetooth.print("next cell: ["); bluetooth.print(nextCoord.y);
             bluetooth.print(" "); bluetooth.print(nextCoord.x);bluetooth.println("] ");
             bluetooth.print("Current heading: "); bluetooth.println(*heading);
