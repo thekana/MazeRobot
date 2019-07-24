@@ -1,21 +1,27 @@
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
+#include "cppQueue.h" 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
 #endif
 #include "Sensors.h"
 #include "locomotion.h"
+#include "exploration.h"
 #define bluetooth Serial3
 using namespace hardware;
 using namespace hardware::pins;
 
+bool map_ready=false;
+
 float Yaw;
 //Variable that indicate the car to move , stop(0), front(1), left_turning(2), right_turning(3), back_turning(4)
 int motion_mode = MOTION_STOP;
+static Queue motion_queue(sizeof(int));
 
 int count=2;
 
 int start=0;
+
 
 void setup() {
     // put your setup code here, to run once:
@@ -93,6 +99,15 @@ void loop() {
 
 
     // 2. Localisation and planning
+
+    if(map_ready)
+    {
+        //planning();
+    }
+    else
+    {
+        exploration(motion_queue, lfr);
+    }
 
 
     // 3. Give command to locomotion
