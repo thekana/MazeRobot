@@ -185,8 +185,8 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
 
     double update = 0.5*offset + abs(offset)*offset/200 + (offset-last_offset);
     vLeft = 50.0 + update;
-    bluetooth.print("Sensor add up: ");
-    bluetooth.println(update);
+    // bluetooth.print("Sensor add up: ");
+    // bluetooth.println(update);
 
     last_offset = offset;
 
@@ -197,16 +197,17 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
     // bluetooth.println("Here");
 
 print_out:
-    bluetooth.print(distance_l);
-    bluetooth.print("**");
-    bluetooth.print(vLeft);
-    bluetooth.print("**");
-    bluetooth.print(distance_f);
-    bluetooth.print("**");
-    bluetooth.print(vRight);
-    bluetooth.print("**");
-    bluetooth.print(distance_r);
-    bluetooth.println("**");
+    ;
+    // bluetooth.print(distance_l);
+    // bluetooth.print("**");
+    // bluetooth.print(vLeft);
+    // bluetooth.print("**");
+    // bluetooth.print(distance_f);
+    // bluetooth.print("**");
+    // bluetooth.print(vRight);
+    // bluetooth.print("**");
+    // bluetooth.print(distance_r);
+    // bluetooth.println("**");
 }
 
 void callback1(void)
