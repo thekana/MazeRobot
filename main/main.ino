@@ -156,7 +156,7 @@ void loop() {
 
     // 2. Localisation and planning
     int ncells= 0;
-    if(motion_mode==MOTION_STOP)
+    if(motion_mode==MOTION_STOP && motion_queue.isEmpty())
     {
         if(map_ready)
         {
@@ -167,15 +167,15 @@ void loop() {
         {
             exploration(motion_queue, lfr, &startStep, keyword, &cellCount, &heading);
         }
-
-        if(!motion_queue.isEmpty())
-        {
-            motion_queue.pop(&motion_mode);
-            if (motion_mode==MOTION_FORWARD) ncells=1;
-            bluetooth.print("Pop: ");
-            bluetooth.println(motion_mode);
-            bluetooth.println("Queue not empty");
-        }
+    }
+    
+    if(!motion_queue.isEmpty())
+    {
+        motion_queue.pop(&motion_mode);
+        if (motion_mode==MOTION_FORWARD) ncells=1;
+        bluetooth.print("Pop: ");
+        bluetooth.println(motion_mode);
+        bluetooth.println("Queue not empty");
     }
      
     // bluetooth.print("Motion mode: ");
@@ -229,10 +229,12 @@ void loop() {
     // delay(5000);
     if (motion_mode >= MOTION_LEFT)
     {
+        delay(200);
         turning();
     }
     else if (current_mode == MOTION_STOP && motion_mode == MOTION_FORWARD)
     {
+        delay(200);
         forward(ncells, distance_f, distance_l, distance_r);
     }
     else if (current_mode == MOTION_FORWARD && motion_mode == MOTION_FORWARD)
