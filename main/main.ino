@@ -27,6 +27,7 @@ Maze *mazePrint = new Maze("");
 coord curCoord = {0,0};
 long current = 0;
 long timeIntervel = 0;
+byte heading = 0;
 
 int start = 0;
 
@@ -48,11 +49,22 @@ void setup() {
     // setup locomotion
     locomotion_setup();
     Serial.println("Locomotion setup finish!");
-
+    
     //setup Sensors
     sensorSetup();
+    bluetooth.println("Enter short or long side...");
+    while (bluetooth.available()==0){delay(100);} // empty buffer    
+//  while (bluetooth.available()==0){delay(100);} // empty buffer
+    if(bluetooth.available() > 0){
+      keyword = bluetooth.readString();
+      if(keyword.equals("s\n"))
+        heading = 4;
+      bluetooth.print("Heading = ");bluetooth.println(heading);
+    }
+    bluetooth.println("End setup!");
+//    delay(1000);
     // setup map
-
+    
     // Wait 5 seconds and main loop start
     delay(1000);
 }
