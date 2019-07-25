@@ -16,7 +16,8 @@ void sensorSetup() {
 	// setup lidar
 	left_lidar_enable::config_io_mode(io_mode::output);
 	right_lidar_enable::config_io_mode(io_mode::output);
-
+  ledG::config_io_mode(io_mode::output);
+  ledR::config_io_mode(io_mode::output);
 	left_lidar_enable::write(logic_level::low);
 	right_lidar_enable::write(logic_level::low);
 	lidar<lidar_tag<0>>::enable(); //left lidar

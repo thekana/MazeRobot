@@ -39,7 +39,7 @@ void setup() {
     bluetooth.setTimeout(100);
 
     bluetooth.println("Hello world!");
-
+    instantiate(); 
     while (! Serial);
     Serial.println("Serial setup finish!");
 
