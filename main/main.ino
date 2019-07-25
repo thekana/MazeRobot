@@ -13,7 +13,7 @@ float Yaw;
 //Variable that indicate the car to move , stop(0), front(1), left_turning(2), right_turning(3), back_turning(4)
 int motion_mode = MOTION_STOP;
 
-int count=2;
+int count=0;
 
 int start=0;
 
@@ -53,7 +53,7 @@ void loop() {
         Serial.print(start);
     }
 
-    
+
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
     //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise
@@ -103,7 +103,7 @@ void loop() {
     // bluetooth.println(lfr[2]);
 
     if(!start) return;
-    
+
     int ncells = 10;
     // if (motion_mode == MOTION_STOP)
     // {
@@ -116,22 +116,27 @@ void loop() {
     {
         delay(500);
         if(lfr[1]==0)
-        { 
+        {
             bluetooth.println("Forward");
             motion_mode=MOTION_FORWARD;
         }
-        else if(lfr[0]==0) 
+        else if(lfr[0]==0)
         {
             bluetooth.println("Left");
             motion_mode=MOTION_LEFT;
         }
-        else if(lfr[2]==0) 
+        else if(lfr[2]==0)
         {
             bluetooth.println("Right");
             motion_mode=MOTION_RIGHT;
         }
     }
 
+    // if (count==0)
+    // {
+    //   motion_mode = MOTION_LEFT;
+    //   count++;
+    // }
 
     // motion_mode = MOTION_FORWARD;
     // delay(5000);

@@ -4,7 +4,7 @@
  * @date 16 July 2019
  * @brief The functions for leds and locomotion system
  *
- * @note 
+ * @note
  * */
 #include <stdlib.h>
 
@@ -61,9 +61,9 @@ void turning(void)
 {
     if(motion_mode == MOTION_LEFT)
     {
-        goalA=-68;
+        goalA=-67;
         counterA=0;
-        goalB=68;
+        goalB=67;
         counterB=0;
         vLeft=-50.0;
         vRight=50.0;
@@ -71,9 +71,9 @@ void turning(void)
     }
     else if (motion_mode == MOTION_RIGHT)
     {
-        goalA=68;
+        goalA=67;
         counterA=0;
-        goalB=-68;
+        goalB=-67;
         counterB=0;
         vLeft=50.0;
         vRight=-50.0;
@@ -116,9 +116,9 @@ void forward_updating(double distance_f, double distance_l, double distance_r)
 /**
  * @brief Send the distance data to locomotion module
  *
- * @param 
+ * @param
  *
- * @return 
+ * @return
  *
  * @note Send the distance data to locomotion module
  * */
@@ -126,12 +126,12 @@ void apply_speed(void)
 {
     units::percentage left_speed(abs(vLeft));
     units::percentage right_speed(abs(vRight));
-    
+
     if (vLeft >= 0)
         hardware::left_motor::forward(left_speed);
     else
         hardware::left_motor::backward(left_speed);
-    
+
     if (vRight >= 0)
         hardware::right_motor::forward(right_speed);
     else
@@ -141,9 +141,9 @@ void apply_speed(void)
 /**
  * @brief Send the distance data to locomotion module
  *
- * @param 
+ * @param
  *
- * @return 
+ * @return
  *
  * @note Send the distance data to locomotion module
  * */
@@ -162,7 +162,7 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
         goto print_out;
     }
     // Goto mild controller depending on counters
-    if( (distance_l < MAX_THRESHOLD_LEFT && distance_l > MIN_THRESHOLD_LEFT) 
+    if( (distance_l < MAX_THRESHOLD_LEFT && distance_l > MIN_THRESHOLD_LEFT)
         || (distance_r < MAX_THRESHOLD_RIGHT && distance_r > MIN_THRESHOLD_RIGHT))
     {
         if ((counterB-counterB_history) >=20)
@@ -183,8 +183,8 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
     else if (distance_r < 140)
         offset = distance_r - 60.0;
 
-    double update = 0.5*offset + abs(offset)*offset/200 + 2*(offset-last_offset);
-    // double update = offset;
+    // double update = 0.5*offset + abs(offset)*offset/200 + 2*(offset-last_offset);
+    double update = offset;
     vLeft = 50.0 + update;
     bluetooth.print("Sensor add up: ");
     bluetooth.println(update);
@@ -220,17 +220,17 @@ void callback1(void)
     {
          counterA--;
     }
-    // bluetooth.print("CounterA is: ");
-    // bluetooth.print(counterA);
-    // bluetooth.print(" A is: ");
-    // bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
-    // bluetooth.print(" B is: ");
-    // bluetooth.println((unsigned int)hardware::pins::left_encoder_b::read());
+    bluetooth.print("CounterA is: ");
+    bluetooth.print(counterA);
+    bluetooth.print(" A is: ");
+    bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
+    bluetooth.print(" B is: ");
+    bluetooth.println((unsigned int)hardware::pins::left_encoder_b::read());
     if(goalA!=0 && counterA==(int)(goalA/5.625)) // 135/24=5.625
     {
         hardware::left_motor::stop();
         goalA=0;
-        if (goalB==0) 
+        if (goalB==0)
         {
             motion_mode = MOTION_STOP;
             bluetooth.println("Set to motion stop in callback1");
@@ -248,17 +248,17 @@ void callback2(void)
     {
         counterB--;
     }
-  	// bluetooth.print("CounterB is: ");
-  	// bluetooth.print(counterB);
-   //  bluetooth.print(" A is: ");
-   //  bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
-   //  bluetooth.print(" B is: ");
-   //  bluetooth.println((unsigned int)hardware::pins::right_encoder_b::read());
+  	bluetooth.print("CounterB is: ");
+  	bluetooth.print(counterB);
+    bluetooth.print(" A is: ");
+    bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
+    bluetooth.print(" B is: ");
+    bluetooth.println((unsigned int)hardware::pins::right_encoder_b::read());
     if(goalB!=0 && counterB==(int)(goalB/5.625))
     {
         hardware::right_motor::stop();
         goalB=0;
-        if (goalA==0) 
+        if (goalA==0)
         {
             motion_mode = MOTION_STOP;
             bluetooth.println("Set to motion stop in callback2");
