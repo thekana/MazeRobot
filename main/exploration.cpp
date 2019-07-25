@@ -288,6 +288,8 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
             if(lfr[2] == 0){
                 curCoord.x = X - 1;
                 *startStep = 3;
+                mazePrint->setInitHeading(4);
+                mazePrint->setInitCorner(8);
             }else if(lfr[0]==1){
             	//move forward one cell
             	motion_decision = MOTION_FORWARD;
@@ -296,6 +298,8 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                	
             }else{
                 *startStep = 3;
+                mazePrint->setInitHeading(4);
+                mazePrint->setInitCorner(0);
             }
         }
         else if(keyword.equals("l\n"))
@@ -304,6 +308,8 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
                 curCoord.x = X-1;
                 *heading = 2;
                 *startStep = 3;
+                mazePrint->setInitHeading(2);
+                mazePrint->setInitCorner(8);
             }else if(lfr[2]==1){
             	// move forward one cell
             	motion_decision = MOTION_FORWARD;
@@ -313,6 +319,8 @@ void exploration(Queue& motion_queue, int *lfr, int *startStep, String keyword, 
             }else{
                 *heading = 8;
                 *startStep = 3;
+                mazePrint->setInitHeading(8);
+                mazePrint->setInitCorner(0);
             }
         }
     }

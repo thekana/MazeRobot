@@ -37,15 +37,25 @@ class Maze {
     int cols = 9;
     int startX = 0;
     int startY = 0;
+    byte initHeading;
+    byte initCorner;
     Head head;
   public:
     Maze(String const &h) {
       this->rows = 5;
       this->cols = 9;
+      this->initHeading = 0;
+      byte initCorner = -1;
       initializeCells();  // -1 is unexplored
       initializeStatusCells(); // 4 spaces
-      statusCells[2][4] = " X ";  // mark goal
+      statusCells[2][4] = "   X   ";  // mark goal
     }
+    void setInitHeading(byte heading){
+      this->initHeading = heading;
+    }
+    void setInitCorner(byte corner){
+      this->initCorner = corner;  
+    } 
     void initializeCells() {
       for (int i = 0; i < 5 ; i++) {
         for (int j = 0; j < 9; j++) {
@@ -71,7 +81,7 @@ class Maze {
       for (int i = 0; i < 5 ; i++) {
         for (int j = 0; j < 9; j++) {
           // set every cells to 4 spaces
-          statusCells[i][j] = "   ";
+          statusCells[i][j] = "       ";
         }
       }
     }
@@ -87,7 +97,7 @@ class Maze {
       } else if (h == "N") {
         head = NORTH;
       }
-      statusCells[i][j] = String(" " + h + " ");
+      statusCells[i][j] = String("   " + h + "   ");
       //      Serial.print("Updated");
       //      Serial.print(i); Serial.print(j); Serial.println(statusCells[i][j]);
     }
@@ -143,46 +153,56 @@ class Maze {
       return startY;
     }
     void print() {
+      if(this->initHeading == 2 && this->initCorner == 0){
+        statusCells[0][0] = "   W   ";
+      }else if(this->initHeading == 4 && this->initCorner == 0){
+        statusCells[0][0] = "   S   ";
+      }else if(this->initHeading == 8 && this->initCorner == 8){
+        statusCells[0][8] = "   E   ";
+      }else if(this->initHeading == 4 && this->initCorner == 8){
+        statusCells[0][0] = "   S   ";
+      }
+      
       for (int j = 0; j < cols; j++) {
-        bluetooth.print(" ---"); // Print top walls
+        bluetooth.print("   ---   "); // Print top walls
       }
       bluetooth.print("\n");
       for (int i = 0; i < rows; i++) {
         // Print Vertical;
-        bluetooth.print("|"); // left most wall
+        bluetooth.print("| "); // left most wall
         for (int j = 0; j < cols - 1; j++) {
-          bluetooth.print("   ");
+          bluetooth.print(statusCells[i][j]);
           if (cells[i][j][1] == -1) {
-            bluetooth.print("*");
+            bluetooth.print(" * ");
           } else {
             if (cells[i][j][1] == 1) {
-              bluetooth.print("|");
+              bluetooth.print(" | ");
             } else {
-              bluetooth.print(" ");
+              bluetooth.print("   ");
             }
           }
         }
-        bluetooth.print("   ");
-        bluetooth.print("|"); // right most wall
+        bluetooth.print(statusCells[i][cols - 1]);
+        bluetooth.print(" |"); // right most wall
         bluetooth.print("\n");
         if (i == 4) {
           break;
         }
         for (int j = 0; j < cols; j++) {
           if (cells[i][j][2] == -1) {
-            bluetooth.print(" ***");
+            bluetooth.print("   ***   ");
           } else {
             if (cells[i][j][2] == 1) {
-              bluetooth.print(" ---");
+              bluetooth.print("   ---   ");
             } else {
-              bluetooth.print("    ");
+              bluetooth.print("         ");
             }
           }
         }
         bluetooth.print("\n");
       }
       for (int j = 0; j < cols; j++) {
-        bluetooth.print(" ---"); // Print closing bottom walls
+        bluetooth.print("   ---   "); // Print closing bottom walls
       }
       bluetooth.print("\n");
     }
@@ -190,4 +210,3 @@ class Maze {
       return head;
     }
 };
-
