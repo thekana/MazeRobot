@@ -39,10 +39,34 @@ void loop()
     {
       flood.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
     }
-    else if (c.startsWith("s"))
+    else if (c.startsWith("t"))
     {
       Serial.println(c.substring(3));
       maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
+      maze.print();
+    }
+    else if (c.startsWith("e"))
+    {
+      Serial.println(c.substring(3));
+      maze.updateEast(c.charAt(1) - '0', c.charAt(2) - '0', c.charAt(3) - '0');
+      maze.print();
+    }
+    else if (c.startsWith("s"))
+    {
+      Serial.println(c.substring(3));
+      maze.updateSouth(c.charAt(1) - '0', c.charAt(2) - '0', c.charAt(3) - '0');
+      maze.print();
+    }
+    else if (c.startsWith("w"))
+    {
+      Serial.println(c.substring(3));
+      maze.updateWest(c.charAt(1) - '0', c.charAt(2) - '0', c.charAt(3) - '0');
+      maze.print();
+    }
+    else if (c.startsWith("n"))
+    {
+      Serial.println(c.substring(3));
+      maze.updateNorth(c.charAt(1) - '0', c.charAt(2) - '0', c.charAt(3) - '0');
       maze.print();
     }
     else if (c.startsWith("m"))

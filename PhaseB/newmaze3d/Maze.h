@@ -128,6 +128,7 @@ class Maze
         head = NORTH;
       }
       statusCells[startI][startJ] = "   ";
+      Serial.println("hey");
       statusCells[i][j] = String(" " + h + " ");
       startI = i;
       startJ = j;
@@ -169,36 +170,63 @@ class Maze
         updateNeighbours(i, j);
       }
     }
+    void updateNorth(byte i, byte j, byte n) {
+      cells[i][j] |= n << NORTH;
+      exploredWalls[i][j] |= 1 << NORTH;
+      updateNeighbours(i, j);
+    }
+    void updateEast(byte i, byte j, byte n) {
+      cells[i][j] |= n << EAST;
+      exploredWalls[i][j] |= 1 << EAST;
+      updateNeighbours(i, j);
+    }
+    void updateWest(byte i, byte j, byte n) {
+      cells[i][j] |= n << WEST;
+      exploredWalls[i][j] |= 1 << WEST;
+      updateNeighbours(i, j);
+    }
+    void updateSouth(byte i, byte j, byte n) {
+      cells[i][j] |= n << SOUTH;
+      exploredWalls[i][j] |= 1 << SOUTH;
+      updateNeighbours(i, j);
+    }
     void updateNeighbours(byte i, byte j)
     {
-
       if (i >= 0 && i < 4)
       {
         // EAST <--> WEST
         // cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
-        (cells[i][j] & (1 << WEST)) ? setBit(i + 1, j, EAST) : clearBit(i + 1, j, EAST);
-        exploredWalls[i + 1][j] |= (1 << EAST);
+        if (isWalledExplored(i, j, WEST)) {
+          (cells[i][j] & (1 << WEST)) ? setBit(i + 1, j, EAST) : clearBit(i + 1, j, EAST);
+          exploredWalls[i + 1][j] |= (1 << EAST);
+        }
       }
       if (i <= 4 && i > 0)
       {
         // WEST <--> EAST
         // cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
-        (cells[i][j] & (1 << EAST)) ? setBit(i - 1, j, WEST) : clearBit(i - 1, j, WEST);
-        exploredWalls[i - 1][j] |= (1 << WEST);
+        if (isWalledExplored(i, j, EAST)) {
+          (cells[i][j] & (1 << EAST)) ? setBit(i - 1, j, WEST) : clearBit(i - 1, j, WEST);
+          exploredWalls[i - 1][j] |= (1 << WEST);
+        }
       }
       if (j >= 0 && j < 8)
       {
         // NORTH <--> SOUTH
         // cells[i][j + 1] |= ((cells[i][j] & (1 << SOUTH)) >> 2);
-        (cells[i][j] & (1 << SOUTH)) ? setBit(i, j + 1, NORTH) : clearBit(i, j + 1, NORTH);
-        exploredWalls[i][j + 1] |= (1 << NORTH);
+        if (isWalledExplored(i, j, SOUTH)) {
+          (cells[i][j] & (1 << SOUTH)) ? setBit(i, j + 1, NORTH) : clearBit(i, j + 1, NORTH);
+          exploredWalls[i][j + 1] |= (1 << NORTH);
+        }
       }
       if (j <= 8 && j > 0)
       {
         // SOUTH <--> NORTH
         // cells[i][j - 1] |= ((cells[i][j] & (1 << NORTH)) << 2);
-        (cells[i][j] & (1 << NORTH)) ? setBit(i, j - 1, SOUTH) : clearBit(i, j - 1, SOUTH);
-        exploredWalls[i][j - 1] |= (1 << SOUTH);
+        if (isWalledExplored(i, j, NORTH)) {
+          (cells[i][j] & (1 << NORTH)) ? setBit(i, j - 1, SOUTH) : clearBit(i, j - 1, SOUTH);
+          exploredWalls[i][j - 1] |= (1 << SOUTH);
+        }
       }
     }
     void setBit(byte i, byte j, byte n) {
