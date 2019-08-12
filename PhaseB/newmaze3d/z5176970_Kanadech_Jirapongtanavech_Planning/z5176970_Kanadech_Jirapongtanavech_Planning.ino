@@ -15,8 +15,8 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Hello");
-//  Serial3.begin(115200);
-//  Serial3.println("Ready");
+  //  Serial3.begin(115200);
+  //  Serial3.println("Ready");
 }
 String c;
 void loop()
@@ -38,7 +38,13 @@ void loop()
     }
     else if (c.startsWith("p"))
     {
-      flood.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
+      //flood.printCell(c.charAt(1) - '0', c.charAt(2) - '0');
+      createPath();
+      for (byte i = 0; i < path_list.size(); i++)
+      {
+        path_list.get(i)->print();
+        Serial.println(F("----------------------------------------------------"));
+      }
     }
     else if (c.startsWith("t"))
     {
@@ -202,6 +208,7 @@ void createPath()
       while (stack.size() > 0)
       {
         Path *new_path = getCloneOfPath(currPath);
+        new_path->nodeList->pop(); //need this to remove duplicate from cloning
         new_path->add(stack.pop());
         path_list.add(new_path);
       }
@@ -223,9 +230,11 @@ void assignCostToEachPath()
 {
   for (byte i = 0; i < path_list.size(); i++)
   {
+    Serial.println("Im here");
     resetCommand();
+    Serial.println("Im here2");
     Path *currPath = path_list.get(i);
-    Serial.println(i + "size" + currPath->nodeList->size());
+    Serial.println("Im here2");
     fillCommandArray(currPath->nodeList);
     currPath->actionCount = turnCount;
   }
@@ -299,12 +308,14 @@ void addCommand(byte i, char c)
 
 void resetCommand()
 {
-  for (int i = 0; i < 50; i++)
+  Serial.println("In reset");
+  for (byte i = 0; i < 50; i++)
   {
     commands[i] = ' ';
   }
   commandCount = 0;
   turnCount = 0;
+  Serial.println("Out reset");
 }
 
 void printCommand()
