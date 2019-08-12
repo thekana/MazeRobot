@@ -169,6 +169,14 @@ class Maze
         updateNeighbours(i, j);
       }
     }
+    void fillCells_steven(byte i, byte j, byte wall)
+    {
+      /*For steven to use*/
+        cells[i][j] = wall;
+        // Also need to mark cells as explored
+        exploredWalls[i][j] = 0x0F;
+        updateNeighbours(i, j);
+    }
     void updateNorth(byte i, byte j, byte n) {
       cells[i][j] |= n << NORTH;
       exploredWalls[i][j] |= 1 << NORTH;
