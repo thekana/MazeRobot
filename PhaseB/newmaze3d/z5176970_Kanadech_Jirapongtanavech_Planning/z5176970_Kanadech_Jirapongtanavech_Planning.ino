@@ -15,8 +15,8 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Hello");
-//  Serial3.begin(115200);
-//  Serial3.println("Ready");
+  //  Serial3.begin(115200);
+  //  Serial3.println("Ready");
 }
 String c;
 void loop()
@@ -115,7 +115,7 @@ void loop()
 Path *getCloneOfPath(Path *other)
 {
   Path *clone = new Path();
-  for (byte i = 0; i < other->nodeList->size(); i++)
+  for (byte i = 0; i < other->nodeList->size() - 1; i++)
   {
     clone->add(other->nodeList->get(i));
   }
@@ -225,7 +225,6 @@ void assignCostToEachPath()
   {
     resetCommand();
     Path *currPath = path_list.get(i);
-    Serial.println(i + "size" + currPath->nodeList->size());
     fillCommandArray(currPath->nodeList);
     currPath->actionCount = turnCount;
   }
@@ -235,14 +234,15 @@ void assignCostToEachPath()
 */
 void fillCommandArray(LinkedList<Node *> *path)
 {
-  if (path->size() <= 0)
+  // Ones to exclude starting cell
+  if (path->size() <= 1)
     return;
   Heading currHead = maze.getHeading();
-  while (currHead != path->get(0)->getHead())
+  while (currHead != path->get(1)->getHead())
   {
-    currHead = handleTurn(currHead, path->get(0)->getHead());
+    currHead = handleTurn(currHead, path->get(1)->getHead());
   }
-  for (byte i = 0; i < path->size(); i++)
+  for (byte i = 1; i < path->size(); i++)
   {
     addCommand(commandCount, 'F');
     if (i == path->size() - 1)
@@ -299,7 +299,7 @@ void addCommand(byte i, char c)
 
 void resetCommand()
 {
-  for (int i = 0; i < 50; i++)
+  for (byte i = 0; i < 50; i++)
   {
     commands[i] = ' ';
   }
