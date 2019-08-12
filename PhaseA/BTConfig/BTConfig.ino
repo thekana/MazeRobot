@@ -8,7 +8,7 @@
  
  
 #include <SoftwareSerial.h>
-#define BTserial Serial2
+#define BTserial Serial3
 // SoftwareSerial BTserial(2, 3); // RX | TX
 // Connect the HC-06 TX to the Arduino RX on pin 2. 
 // Connect the HC-06 RX to the Arduino TX on pin 3 through a voltage divider.

@@ -1,16 +1,16 @@
 #include <stdio.h>
-#define BT Serial1
+#define BT Serial3
 // connect BT module TX to 19
 // connect BT module RX to 18
 // connect BT Vcc to 5V, GND to GND
 void setup()  
 {
   // set the data rate for the SoftwareSerial port
-  BT.begin(9600);
-  BT.setTimeout(5000); //5secs
+  BT.begin(115200);
+  //BT.setTimeout(5000); //5secs
   // Send test message to other device
   BT.println("Hello from Arduino");
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Waiting Bluetooth Message Enter MAZE");
 }
 char a; // stores incoming character from other device
@@ -21,12 +21,13 @@ void loop()
   // if text arrived in from BT serial...
   // read every character
   {
-    while(BT.available()){
-      a = BT.read();
-      c = String(c+a);
-      delay(10);
-      BT.flush();
-    }
+//    while(BT.available()){
+//      a = BT.read();
+//      c = String(c+a);
+//      delay(10);
+//      BT.flush();
+//    }
+    c = BT.readString();
     Serial.print(c);
     if ( c.equals("MAZE\n") ){
       Serial.println("In Maze Constructor Mode");
