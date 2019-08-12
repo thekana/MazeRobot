@@ -9,20 +9,21 @@ Floodfill flood(&maze);
 LinkedList<Path *> path_list = LinkedList<Path *>();
 char commands[40]; // for storing commands
 byte commandCount = 0;
+byte turnCount = 0;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("Hello");
-  Serial3.begin(115200);
-  Serial3.println("Ready");
+//  Serial3.begin(115200);
+//  Serial3.println("Ready");
 }
 String c;
 void loop()
 {
-  if (Serial3.available())
+  if (Serial.available())
   {
-    c = Serial3.readString();
+    c = Serial.readString();
     Serial.println(c);
     if (c.startsWith("f"))
     {
@@ -42,7 +43,7 @@ void loop()
     else if (c.startsWith("t"))
     {
       Serial.println(c.substring(3));
-      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3, 3), c.charAt(4) - '0', c.charAt(5) - '0');
+      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3, 4), c.charAt(4) - '0', c.charAt(5) - '0');
       maze.print();
     }
     else if (c.startsWith("e"))
@@ -72,17 +73,30 @@ void loop()
     else if (c.startsWith("m"))
     {
       createPath();
-      for (byte i = 0; i < path.size() - 1; i++)
+      Serial.print("Total Path: ");
+      Serial.println(path_list.size());
+      assignCostToEachPath();
+      Serial.println("Assigned Path");
+      //Now we pick the path with least turns
+      Path *bestPath = path_list.get(0);
+      for (byte i = 0; i < path_list.size(); i++)
       {
-        byte num = path.get(i)->getValue();
+        if (bestPath->actionCount > path_list.get(i)->actionCount)
+        {
+          bestPath = path_list.get(i);
+        }
+      }
+      for (byte i = 0; i < bestPath->nodeList->size() - 1; i++)
+      {
+        byte num = bestPath->nodeList->get(i)->getValue();
         num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
         // Add to maze for printing
-        maze.addPath(path.get(i)->getX(), path.get(i)->getY(), num);
+        maze.addPath(bestPath->nodeList->get(i)->getX(), bestPath->nodeList->get(i)->getY(), num);
       }
       // first add forward then turn
       // We need to reset commandCount before doing so
       resetCommand();
-      fillCommandArray();
+      fillCommandArray(bestPath->nodeList);
       maze.print();
       printCommand();
     }
@@ -128,7 +142,7 @@ void createPath()
   byte currV = flood.getCell(currI, currJ);
   Heading h = maze.getHeading(); // starting heading
   Path *firstPath = new Path();
-  firstPath.add(new Node(currI, currJ, currV, h));
+  firstPath->add(new Node(currI, currJ, currV, h));
   path_list.add(firstPath);
   while (!everyPathComplete())
   {
@@ -143,7 +157,7 @@ void createPath()
       if (currV == 0)
       {
         //We have fully explored this path
-        currPath.completed = 1;
+        currPath->completed = 1;
         continue;
       }
       // for all cells neighbouring curr cells
@@ -193,48 +207,49 @@ void createPath()
       }
     }
   }
-  delete stack;
+  stack.clear();
 }
 void clearPathList()
 {
   while (path_list.size() > 0)
   {
-    Path *toDelete = path_list->pop();
+    Path *toDelete = path_list.pop();
     toDelete->clearNodeList();
     delete toDelete;
   }
-  path_list->clear();
+  path_list.clear();
 }
 void assignCostToEachPath()
 {
-  for (byte i = 0; path_list.size(); i++)
+  for (byte i = 0; i < path_list.size(); i++)
   {
+    resetCommand();
     Path *currPath = path_list.get(i);
-    for (byte j = 0; currPath->nodeList->size(); j++)
-    {
-    }
+    Serial.println(i + "size" + currPath->nodeList->size());
+    fillCommandArray(currPath->nodeList);
+    currPath->actionCount = turnCount;
   }
 }
 /*
   Assuming a path exist, commands array can be filled by calling this function
 */
-void fillCommandArray()
+void fillCommandArray(LinkedList<Node *> *path)
 {
-  if (path.size() <= 0)
+  if (path->size() <= 0)
     return;
   Heading currHead = maze.getHeading();
-  while (currHead != path.get(0)->getHead())
+  while (currHead != path->get(0)->getHead())
   {
-    currHead = handleTurn(currHead, path.get(0)->getHead());
+    currHead = handleTurn(currHead, path->get(0)->getHead());
   }
-  for (byte i = 0; i < path.size(); i++)
+  for (byte i = 0; i < path->size(); i++)
   {
     addCommand(commandCount, 'F');
-    if (i == path.size() - 1)
+    if (i == path->size() - 1)
     {
       continue;
     }
-    currHead = handleTurn(path.get(i)->getHead(), path.get(i + 1)->getHead());
+    currHead = handleTurn(path->get(i)->getHead(), path->get(i + 1)->getHead());
   }
 }
 
@@ -276,6 +291,10 @@ void addCommand(byte i, char c)
 {
   commands[i] = c;
   commandCount++;
+  if (c != 'F')
+  {
+    turnCount++;
+  }
 }
 
 void resetCommand()
@@ -285,6 +304,7 @@ void resetCommand()
     commands[i] = ' ';
   }
   commandCount = 0;
+  turnCount = 0;
 }
 
 void printCommand()

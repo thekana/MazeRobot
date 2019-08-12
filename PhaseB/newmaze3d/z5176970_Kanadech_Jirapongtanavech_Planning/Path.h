@@ -54,7 +54,7 @@ class Path
 public:
   byte actionCount = 0;
   byte completed = 0;
-  LinkedList<Node *> nodeList;
+  LinkedList<Node *> *nodeList;
   Path()
   {
     nodeList = new LinkedList<Node *>();
@@ -65,30 +65,30 @@ public:
   }
   void add(Node *n)
   {
-    nodeList.add(n);
+    nodeList->add(n);
   }
   void print()
   {
-    for (byte i = 0; i < nodeList.size(); i++)
+    for (byte i = 0; i < nodeList->size(); i++)
     {
-      nodeList.get(i)->print();
+      nodeList->get(i)->print();
     }
   }
   byte getLastX()
   {
-    return this.nodeList->get(nodeList->size() - 1)->getX();
+    return nodeList->get(nodeList->size() - 1)->getX();
   }
   byte getLastY()
   {
-    return this.nodeList->get(nodeList->size() - 1)->getY();
+    return nodeList->get(nodeList->size() - 1)->getY();
   }
   byte getLastValue()
   {
-    return this.nodeList->get(nodeList->size() - 1)->getValue();
+    return nodeList->get(nodeList->size() - 1)->getValue();
   }
   byte getLastHeading()
   {
-    return this.nodeList->get(nodeList->size() - 1)->getHead();
+    return nodeList->get(nodeList->size() - 1)->getHead();
   }
   void clearNodeList()
   {
