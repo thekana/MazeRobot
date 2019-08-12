@@ -81,7 +81,7 @@ public:
   }
   
   bool checkBounds(coord Coord) {
-    if ((Coord.x >= getX()) || (Coord.y >= getY()) || (Coord.x < 0) || (Coord.y < 0)) { return false; }
+    if ((Coord.x >= this->X) || (Coord.y >= this->Y) || (Coord.x < 0) || (Coord.y < 0)) { return false; }
     else { return true; }
   }
   

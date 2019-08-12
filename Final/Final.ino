@@ -42,7 +42,7 @@ byte heading = 4;
 int startStep = 0;
 int cellCount = 0;
 //MazeCell maze[5][9];
-Maze *mazePrint = new Maze("");
+Maze *mazePrint = new Maze();
 coord curCoord = {0,0};
 bool cellflag = true;
 int celldis = 0;
@@ -147,8 +147,8 @@ void loop() {
         current = millis();
         timeIntervel = 0;
       }
-      Serial.print("Sonic: ");
-      Serial.println(distance_f);
+      bluetooth.print("Sonic: ");
+      bluetooth.println(distance_f);
     }else if(distance_f > 50){
         bluetooth.println("Car start");
         ledR::low();
@@ -169,7 +169,7 @@ void loop() {
     }else if(lfr[0]==1){
         forward();
         cellCount++;
-        Serial.print("CellCount: "); Serial.println(cellCount);
+        bluetooth.print("CellCount: "); bluetooth.println(cellCount);
 //        bluetooth.println("Stop");
         delay(7000);
     }else{
@@ -180,7 +180,7 @@ void loop() {
       startStep = 3;
     }
   }else if(startStep == 3){
-    Serial.print("MazeType: ");Serial.println(mazeType);
+    bluetooth.print("MazeType: ");bluetooth.println(mazeType);
     if(cellCount!=0){
       curCoord.y = cellCount;
       for(int i=0;i<cellCount;i++){
@@ -189,74 +189,67 @@ void loop() {
       cellCount = 0;
     }
     if(newMaze->maze[curCoord.y][curCoord.x].distance != 0){
-      for(int i=0;i<9;i++){
-        for(int j=0;j<9;j++){
-          Serial.print(newMaze->maze[i][j].distance);
-          Serial.print("\t");
-        }  
-        Serial.println("");
-      }
-      Serial.print("Current cell distance: ");  Serial.println(newMaze->maze[curCoord.y][curCoord.x].distance);  
-      Serial.print("front: "); Serial.println(distance_f);
-      Serial.print("left: "); Serial.println(distance_l);
-      Serial.print("right: ");Serial.println(distance_r);
-      Serial.print("Wall: ");Serial.print(lfr[0]);Serial.print(lfr[1]);Serial.println(lfr[2]);
-      Serial.print("Current cell: [");Serial.print(curCoord.y);
-      Serial.print(" "); Serial.print(curCoord.x);Serial.println("] ");
+      bluetooth.print("Current cell distance: ");  bluetooth.println(newMaze->maze[curCoord.y][curCoord.x].distance);  
+      bluetooth.print("front: "); bluetooth.println(distance_f);
+      bluetooth.print("left: "); bluetooth.println(distance_l);
+      bluetooth.print("right: ");bluetooth.println(distance_r);
+      bluetooth.print("Wall: ");bluetooth.print(lfr[0]);bluetooth.print(lfr[1]);bluetooth.println(lfr[2]);
+      bluetooth.print("Current cell: [");bluetooth.print(curCoord.y);
+      bluetooth.print(" "); bluetooth.print(curCoord.x);bluetooth.println("] ");
       newMaze->floodFillUpdate(curCoord, heading, lfr);
-//      mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
+      mazePrint->fillCells_steven(curCoord.y,curCoord.x,newMaze->maze[curCoord.y][curCoord.x].walls);
       int nextHeading = newMaze->orient(curCoord, heading);
       coord nextCoord = newMaze->bearingCoord(curCoord, nextHeading);
       
       
-      Serial.print("next cell: ["); Serial.print(nextCoord.y);
-      Serial.print(" "); Serial.print(nextCoord.x);Serial.println("] "); 
-      Serial.print("Current heading: "); Serial.println(heading);
+      bluetooth.print("next cell: ["); bluetooth.print(nextCoord.y);
+      bluetooth.print(" "); bluetooth.print(nextCoord.x);bluetooth.println("] "); 
+      bluetooth.print("Current heading: "); bluetooth.println(heading);
       curCoord = nextCoord;
       heading = nextHeading;
       
-      Serial.print("next heading: "); Serial.println(heading);
-      Serial.println();  
+      bluetooth.print("next heading: "); bluetooth.println(heading);
+      bluetooth.println();  
       if(mazeType == 1&&mazeFound==false){
-        Serial.println("calc distance!");
+        bluetooth.println("calc distance!");
         if(curCoord.x > 4){
             newMaze->setDestX(4);
             newMaze->setDestY(2);
             newMaze->reloadDist();
             mazeFound = true;
-            Serial.print("DestX: ");Serial.println(newMaze->getDestX());
-            Serial.print("DestY: ");Serial.println(newMaze->getDestY());
+            bluetooth.print("DestX: ");bluetooth.println(newMaze->getDestX());
+            bluetooth.print("DestY: ");bluetooth.println(newMaze->getDestY());
         }else if(curCoord.y > 4){
             newMaze->setDestX(2);
             newMaze->setDestY(4);
             newMaze->reloadDist();
             mazeFound = true;
-            Serial.print("DestX: ");Serial.println(newMaze->getDestX());
-            Serial.print("DestY: ");Serial.println(newMaze->getDestY());
+            bluetooth.print("DestX: ");bluetooth.println(newMaze->getDestX());
+            bluetooth.print("DestY: ");bluetooth.println(newMaze->getDestY());
         }
       }else if(mazeType == 2&&mazeFound==false){
-        Serial.println("calc distance!");
+        bluetooth.println("calc distance!");
         if(curCoord.x < 4){
             newMaze->setDestX(4);
             newMaze->setDestY(2);
             newMaze->reloadDist();
             mazeFound = true;
-            Serial.print("DestX: ");Serial.println(newMaze->getDestX());
-            Serial.print("DestY: ");Serial.println(newMaze->getDestY());
+            bluetooth.print("DestX: ");bluetooth.println(newMaze->getDestX());
+            bluetooth.print("DestY: ");bluetooth.println(newMaze->getDestY());
         }else if(curCoord.y > 4){
             newMaze->setDestX(6);
             newMaze->setDestY(4);
             newMaze->reloadDist();
             mazeFound = true;
-            Serial.print("DestX: ");Serial.println(newMaze->getDestX());
-            Serial.print("DestY: ");Serial.println(newMaze->getDestY());
+            bluetooth.print("DestX: ");bluetooth.println(newMaze->getDestX());
+            bluetooth.print("DestY: ");bluetooth.println(newMaze->getDestY());
         }
       }
-      delay(10000);
+      delay(6000);
     }else{
-      Serial.println("end of maze. ready to print.");
+      bluetooth.println("end of maze. ready to print.");
       newMaze->floodFillUpdate(curCoord, heading, lfr);
-//      mazePrint->fillCells(curCoord.y,curCoord.x,maze[curCoord.y][curCoord.x].walls);
+      mazePrint->fillCells_steven(curCoord.y,curCoord.x,newMaze->maze[curCoord.y][curCoord.x].walls);
       ledG::low();
       ledR::high();
       while(bluetooth.available()==0){}
@@ -265,7 +258,9 @@ void loop() {
       startStep = 4;
     }
   }else if(startStep==4){
-    Serial.println("End");
+    mazePrint->print();
+    bluetooth.println("End");
+    startStep = 5;
     delay(100);  
   }
 }
