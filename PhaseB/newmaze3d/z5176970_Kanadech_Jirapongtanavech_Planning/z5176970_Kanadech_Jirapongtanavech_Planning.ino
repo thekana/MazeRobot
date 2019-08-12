@@ -6,7 +6,7 @@
 
 Maze maze;
 Floodfill flood(&maze);
-LinkedList<Node *> path = LinkedList<Node *>();
+LinkedList<Path *> path_list = LinkedList<Path *>();
 char commands[40]; // for storing commands
 byte commandCount = 0;
 
@@ -42,7 +42,7 @@ void loop()
     else if (c.startsWith("t"))
     {
       Serial.println(c.substring(3));
-      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3,3),  c.charAt(4) - '0', c.charAt(5) - '0');
+      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3, 3), c.charAt(4) - '0', c.charAt(5) - '0');
       maze.print();
     }
     else if (c.startsWith("e"))
@@ -86,7 +86,8 @@ void loop()
       maze.print();
       printCommand();
     }
-    else if (c.startsWith("o")) {
+    else if (c.startsWith("o"))
+    {
       maze.markAsExplored();
     }
     else
@@ -97,33 +98,65 @@ void loop()
   }
 }
 
+Path *getCloneOfPath(Path *other)
+{
+  Path *clone = new Path();
+  for (byte i = 0; i < other->nodeList->size(); i++)
+  {
+    clone->add(other->nodeList->get(i));
+  }
+  return clone;
+}
+//Return true if every path in path_list is completed
+bool everyPathComplete()
+{
+  for (byte i = 0; i < path_list.size(); i++)
+  {
+    if (path_list.get(i)->completed == 0)
+    {
+      return false;
+    }
+  }
+  return true;
+}
 void createPath()
 {
-  //Clear path
-  clearList(&path);
-  Heading h = maze.getHeading(); // starting heading
-  Node *currN = nullptr;
-  Node *toDelete = nullptr;
   LinkedList<Node *> stack = LinkedList<Node *>(); // Have a stack to keep all possible nodes we can traverse
   // move towards the neighbouring cells that has less than 1
   byte currI = maze.getStartI();
   byte currJ = maze.getStartJ();
   byte currV = flood.getCell(currI, currJ);
-  boolean movement = true;
-  while (movement)
+  Heading h = maze.getHeading(); // starting heading
+  Path *firstPath = new Path();
+  firstPath.add(new Node(currI, currJ, currV, h));
+  path_list.add(firstPath);
+  while (!everyPathComplete())
   {
-    movement = false;
-    // for all cells neighbouring curr cells
-    // add valid cells to stack
-    for (byte k = 0; k < 4; k++)
+    //Explore every possible path
+    for (byte i = 0; i < path_list.size(); i++)
     {
-      if (maze.hasWall(currI, currJ, k) == 0)
+      Path *currPath = path_list.get(i);
+      currI = currPath->getLastX();
+      currJ = currPath->getLastY();
+      currV = currPath->getLastValue();
+      h = currPath->getLastHeading();
+      if (currV == 0)
       {
-        // No wall here. Find out the cell Pose
-        byte tmpI = currI;
-        byte tmpJ = currJ;
-        switch (k)
+        //We have fully explored this path
+        currPath.completed = 1;
+        continue;
+      }
+      // for all cells neighbouring curr cells
+      // add valid cells to stack
+      for (byte k = 0; k < 4; k++)
+      {
+        if (maze.hasWall(currI, currJ, k) == 0)
         {
+          // No wall here. Find out the cell Pose
+          byte tmpI = currI;
+          byte tmpJ = currJ;
+          switch (k)
+          {
           case NORTH:
             tmpJ--;
             break;
@@ -138,77 +171,60 @@ void createPath()
             break;
           default:
             break;
-        }
-        byte nextV = flood.getCell(tmpI, tmpJ);
-        if ((currV - nextV) == 1)
-        {
-          // We want CurrV - nextCell = 1
-          // this is the right cell add to stack
-          stack.add(new Node(tmpI, tmpJ, nextV, k));
-        }
-      }
-    }
-    // At this point we should have all the cells to consider
-    // Among these cells we pick the one that does not require turning (If possible)
-    // And clear the stack
-    if (stack.size() != 0)
-    {
-      byte minTurn = 100;
-      byte minTurnIndex = 0;
-      for (byte i = 0; i < stack.size(); i++)
-      {
-        byte numTurn = abs(stack.get(i)->getHead() - h);
-        if (numTurn == 3) {
-          numTurn = 1; // turning correction
-        }
-        if (minTurn > numTurn)
-        {
-          minTurn = numTurn;
-          minTurnIndex = i;
+          }
+          byte nextV = flood.getCell(tmpI, tmpJ);
+          if ((currV - nextV) == 1)
+          {
+            // We want CurrV - nextCell = 1
+            // this is the right cell add to stack
+            stack.add(new Node(tmpI, tmpJ, nextV, k));
+          }
         }
       }
-      // Done looping through remove minTurnIndex
-      currN = stack.remove(minTurnIndex);
       // Add to path
-      path.add(currN);
-      // Update values for the next iteration
-      currI = currN->getX();
-      currJ = currN->getY();
-      currV = currN->getValue();
-      h = currN->getHead();
-      // Free all elems in stack
+      currPath->add(stack.pop());
+      // In a case where the stack size isnt zero
+      // new path needs to be created and added to path list
       while (stack.size() > 0)
       {
-        toDelete = stack.pop();
-        delete toDelete;
-      }
-      movement = true;
-      if (currV == 0)
-      {
-        break;
+        Path *new_path = getCloneOfPath(currPath);
+        new_path->add(stack.pop());
+        path_list.add(new_path);
       }
     }
   }
-  clearList(&stack);
+  delete stack;
 }
-void clearList(LinkedList<Node *> *list)
+void clearPathList()
 {
-  while (list->size() > 0)
+  while (path_list.size() > 0)
   {
-    Node *toDelete = list->pop();
+    Path *toDelete = path_list->pop();
+    toDelete->clearNodeList();
     delete toDelete;
   }
-  list->clear();
+  path_list->clear();
 }
-
+void assignCostToEachPath()
+{
+  for (byte i = 0; path_list.size(); i++)
+  {
+    Path *currPath = path_list.get(i);
+    for (byte j = 0; currPath->nodeList->size(); j++)
+    {
+    }
+  }
+}
 /*
   Assuming a path exist, commands array can be filled by calling this function
 */
 void fillCommandArray()
 {
-  if (path.size() <= 0) return;
+  if (path.size() <= 0)
+    return;
   Heading currHead = maze.getHeading();
-  while (currHead != path.get(0)->getHead()) {
+  while (currHead != path.get(0)->getHead())
+  {
     currHead = handleTurn(currHead, path.get(0)->getHead());
   }
   for (byte i = 0; i < path.size(); i++)
@@ -222,7 +238,8 @@ void fillCommandArray()
   }
 }
 
-Heading handleTurn(Heading now, Heading next) {
+Heading handleTurn(Heading now, Heading next)
+{
   if (now == NORTH && next == EAST)
   {
     addCommand(commandCount, 'R');

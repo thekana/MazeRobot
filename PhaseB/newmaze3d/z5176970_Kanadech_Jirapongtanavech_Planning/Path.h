@@ -52,22 +52,55 @@ public:
 class Path
 {
 public:
-  byte turn = 0;
-  LinkedList<Node *> path;
+  byte actionCount = 0;
+  byte completed = 0;
+  LinkedList<Node *> nodeList;
   Path()
   {
-    path = LinkedList<Node *>();
+    nodeList = new LinkedList<Node *>();
+  }
+  ~Path()
+  {
+    delete nodeList;
   }
   void add(Node *n)
   {
-    path.add(n);
+    nodeList.add(n);
   }
   void print()
   {
-    for (byte i = 0; i < path.size(); i++)
+    for (byte i = 0; i < nodeList.size(); i++)
     {
-      path.get(i)->print();
+      nodeList.get(i)->print();
     }
+  }
+  byte getLastX()
+  {
+    return this.nodeList->get(nodeList->size() - 1)->getX();
+  }
+  byte getLastY()
+  {
+    return this.nodeList->get(nodeList->size() - 1)->getY();
+  }
+  byte getLastValue()
+  {
+    return this.nodeList->get(nodeList->size() - 1)->getValue();
+  }
+  byte getLastHeading()
+  {
+    return this.nodeList->get(nodeList->size() - 1)->getHead();
+  }
+  void clearNodeList()
+  {
+    while (nodeList->size() > 0)
+    {
+      Node *toDel = nodeList->pop();
+      if (toDel)
+      {
+        delete toDel;
+      }
+    }
+    nodeList->clear();
   }
 };
 #endif
