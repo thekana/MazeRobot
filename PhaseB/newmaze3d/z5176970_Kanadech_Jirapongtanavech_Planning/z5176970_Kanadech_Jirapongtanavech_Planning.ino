@@ -99,6 +99,10 @@ void loop()
       fillCommandArray(bestPath->nodeList);
       maze.print();
       printCommand();
+      // Once we have got the command array need to free up everything
+      Serial.println("Going to clear Path List");
+      clearPathList();
+      Serial.println("Cleared Path List");
     }
     else if (c.startsWith("o"))
     {
@@ -211,10 +215,39 @@ void createPath()
 }
 void clearPathList()
 {
+  //Create a list that points to all other nodes
+  LinkedList<Node *> temp = LinkedList<Node *>();
+  for (byte i = 0; i < path_list.size(); i++)
+  {
+    Path *curr = path_list.get(i);
+    for (byte j = 0; j < curr->nodeList->size(); j++)
+    {
+      Node *currNode = curr->nodeList->get(j);
+      byte isInTemp = 0;
+      for (byte k = 0; k < temp.size(); k++)
+      {
+        if (temp.get(k)->getX() == currNode->getX() && temp.get(k)->getY() == currNode->getY())
+        {
+          isInTemp = 1;
+          break;
+        }
+      }
+      if (!isInTemp)
+      {
+        temp.add(currNode);
+      }
+    }
+  }
   while (path_list.size() > 0)
   {
     Path *toDelete = path_list.pop();
     toDelete->clearNodeList();
+    delete toDelete;
+  }
+  while (temp.size() > 0)
+  {
+    Node *toDelete = temp.pop();
+    toDelete->print();
     delete toDelete;
   }
   path_list.clear();

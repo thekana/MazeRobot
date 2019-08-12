@@ -92,14 +92,20 @@ public:
   }
   void clearNodeList()
   {
-    while (nodeList->size() > 0)
-    {
-      Node *toDel = nodeList->pop();
-      if (toDel)
-      {
-        delete toDel;
-      }
-    }
+    // while (nodeList->size() > 0)
+    // {
+    //   Node *toDel = nodeList->pop();
+    //   if (toDel != nullptr)
+    //   {
+    //     Serial.print("Deleting: ");
+    //     toDel->print();
+    //     delete toDel;
+    //   }
+    //   else
+    //   {
+    //     Serial.println("Null");
+    //   }
+    // }
     nodeList->clear();
   }
 };
