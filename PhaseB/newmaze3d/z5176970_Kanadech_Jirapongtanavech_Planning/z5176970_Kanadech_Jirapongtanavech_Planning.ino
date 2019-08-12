@@ -42,7 +42,7 @@ void loop()
     else if (c.startsWith("t"))
     {
       Serial.println(c.substring(3));
-      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3));
+      maze.updateStatusCells(c.charAt(1) - '0', c.charAt(2) - '0', c.substring(3,3),  c.charAt(4) - '0', c.charAt(5) - '0');
       maze.print();
     }
     else if (c.startsWith("e"))

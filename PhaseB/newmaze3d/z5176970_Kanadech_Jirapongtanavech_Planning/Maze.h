@@ -44,6 +44,8 @@ class Maze
     String statusCells[ROWS][COLS];
     byte startI = 0;
     byte startJ = 0;
+    byte goalI = 0;
+    byte goalJ = 0;
     Heading head;
 
   public:
@@ -51,7 +53,7 @@ class Maze
     {
       initializeCells();         // 2 is unexplored
       initializeStatusCells();   // 4 spaces
-      statusCells[2][4] = " X "; // mark goal
+      //statusCells[2][4] = " X "; // mark goal
     }
     void initializeCells()
     {
@@ -105,12 +107,12 @@ class Maze
         }
       }
     }
-    void updateStatusCells(byte i, byte j, String const &h)
+    void updateStatusCells(byte i, byte j, String const &h, byte g_i, byte g_j)
     {
       // to update these cells with path
       // data and start/end
       initializeStatusCells();
-      statusCells[2][4] = " X ";
+      statusCells[g_i][g_j] = " X ";
       if (h == "E")
       {
         head = EAST;
@@ -131,6 +133,8 @@ class Maze
       statusCells[i][j] = String(" " + h + " ");
       startI = i;
       startJ = j;
+      goalI = g_i;
+      goalJ = g_j;
     }
     void addPath(byte i, byte j, byte val)
     {
