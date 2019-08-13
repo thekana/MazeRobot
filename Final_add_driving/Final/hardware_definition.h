@@ -1,0 +1,104 @@
+#pragma once
+// __STUDENT_SHOULD_CHANGE_THIS_FILE__
+// Example of how hardware definition could look like.
+
+namespace hardware
+{
+  /**
+   * \brief The pins namespace contains definition of the functionality of all the
+   * pins on Arduino.
+   */
+  namespace pins    // TODO student to define.
+  {
+    /**
+     * \brief The imu_interrupt is used by imu to signal data ready.
+     */
+    using imu_interrupt = digital_pin<18U>;
+
+    /**
+     * \brief The M1 is motor drive channel 1 direction
+     */
+    using M1 = digital_pin<4U>;
+
+    /**
+     * \brief The E2 is motor drive channel 1 speed
+     */
+    using E1 = digital_pin<5U>;
+
+    /**
+     * \brief The M2 is motor drive channel 2 direction
+     */
+    using M2 = digital_pin<7U>;
+
+    /**
+     * \brief The E2 is motor drive channel 2 speed
+     */
+    using E2 = digital_pin<6U>;
+
+    /**
+     * \brief The sonar_trigger is ultrasound trigger pin connected to a0.
+     */
+    using sonar_trigger = analog_pin<digital_pin<38U>>;
+
+    /**
+     * \brief The ultrasound_echo is ultrasound echo pin connected to a1.
+     */
+    using sonar_echo = analog_pin<digital_pin<39U>>;
+
+    using left_encoder_a = interrupt<digital_pin<2U>>;
+    using left_encoder_b = digital_pin<8U>;
+
+    using right_encoder_a = interrupt<digital_pin<3U>>;
+    using right_encoder_b = digital_pin<9U>;
+
+    using left_lidar_enable = digital_pin<48U>;
+    using right_lidar_enable = digital_pin<49U>;
+
+    constexpr auto left_lidar_address = 0x22;
+    constexpr auto right_lidar_address = 0x42;
+  }    // namespace pins
+
+  /**
+   * \brief The led is on board led pin
+   */
+  using ledG = digital_pin<53U>;
+  using ledR = digital_pin<52U>;
+  using led_red = digital_pin<22U>;
+  using led_green = digital_pin<23u>;
+
+  using left_encoder = encoder<pins::left_encoder_a, pins::left_encoder_b>;
+  using left_wheel = wheel<pins::left_encoder_a, pins::left_encoder_b>;
+
+  using right_encoder = encoder<pins::right_encoder_a, pins::right_encoder_b>;
+  using right_wheel = wheel<pins::right_encoder_a, pins::right_encoder_b>;
+
+  /**
+   * \brief The left_motor bind left motor to the correct pins.
+   */
+  using right_motor = motor<pins::M2, pins::E2>;
+
+  /**
+   * \brief The right_motor bind right motor to the correct pins.
+   */
+  using left_motor = motor<pins::M1, pins::E1>;
+
+  /**
+   * \brief The ultrasound is ultrasound sensor template bind to the trigger and
+   * echo pin.
+   */
+  using front_sonar = sonar<pins::sonar_trigger, pins::sonar_echo>;
+
+  /**
+   * \brief This serial is used to communicate with pc via usb.
+   */
+  using serial = serial_api<serial_tag<0>>;
+
+  /**
+   * \brief The serial is used to communicate with Bluetooth module.
+   */
+  using bluetooth = serial_api<serial_tag<1>>;
+
+  using left_lidar = lidar<lidar_tag<0>>;
+
+  using right_lidar = lidar<lidar_tag<1>>;
+}    // namespace hardware
