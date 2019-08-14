@@ -65,8 +65,8 @@ void turning(void)
         counterA=0;
         goalB=68;
         counterB=0;
-        vLeft=-60.0;
-        vRight=61.0;
+        vLeft=-50.0;
+        vRight=51.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_RIGHT)
@@ -75,8 +75,8 @@ void turning(void)
         counterA=0;
         goalB=-68;
         counterB=0;
-        vLeft=60.0;
-        vRight=-61.0;
+        vLeft=50.0;
+        vRight=-51.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_BACK)
@@ -85,8 +85,8 @@ void turning(void)
         counterA=0;
         goalB=141;
         counterB=0;
-        vLeft=-60.0;
-        vRight=61.0;
+        vLeft=-50.0;
+        vRight=51.0;
         apply_speed();
     }
     else
@@ -103,8 +103,8 @@ void forward(int ncells, double distance_f, double distance_l, double distance_r
     goalB = ncells*253;
     counterB = 0;
     counterB_history = 0;
-    vLeft=60.0;
-    vRight=61.0;
+    vLeft=50.0;
+    vRight=51.0;
     apply_speed();
 }
 
@@ -150,7 +150,7 @@ void apply_speed(void)
 void motor_controller(double distance_f, double distance_l, double distance_r)
 {
     // brake
-    if (distance_f < 60.0)
+    if (distance_f > 10 && distance_f < 60.0)
     {
         vLeft=0.0;
         vRight=0.0;
@@ -186,7 +186,7 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
 
     double update;
     update = offset;
-    vLeft = 60.0 + update;
+    vLeft = 50.0 + update;
 //    bluetooth.print("Sensor add up: ");
 //    bluetooth.println(update);
 

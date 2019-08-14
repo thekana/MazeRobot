@@ -48,7 +48,7 @@ int orientation(int lfr[]) {
 }
 
 void carWall(double distance_l, double distance_f, double distance_r, int *lfr) {
-	if (distance_f < 120) {
+	if (distance_f > 10 && distance_f < 120) {
 		lfr[1] = 1;
 	}
 	else {
