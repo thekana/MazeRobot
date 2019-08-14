@@ -73,7 +73,7 @@ void loop()
     }
     else if (c.startsWith("m"))
     {
-      char commands[40];
+      byte commands[25];
       byte commandCount = 0;
       byte turnCount = 0;
       createPath();
@@ -83,6 +83,7 @@ void loop()
       // Serial.println("Assigned Path");
       //Now we pick the path with least turns
       Path *bestPath = path_list.get(0);
+      bestPath->print();
       // for (byte i = 0; i < path_list.size(); i++)
       // {
       //   if (bestPath->actionCount > path_list.get(i)->actionCount)
@@ -256,7 +257,7 @@ void clearPathList()
   }
   path_list.clear();
 }
-void assignCostToEachPath(char *commands, byte *commandCount, byte *turnCount)
+void assignCostToEachPath(byte *commands, byte *commandCount, byte *turnCount)
 {
   for (byte i = 0; i < path_list.size(); i++)
   {
@@ -269,7 +270,7 @@ void assignCostToEachPath(char *commands, byte *commandCount, byte *turnCount)
 /*
   Assuming a path exist, commands array can be filled by calling this function
 */
-void fillCommandArray(LinkedList<Node *> *path, char *commands, byte *commandCount, byte *turnCount)
+void fillCommandArray(LinkedList<Node *> *path, byte *commands, byte *commandCount, byte *turnCount)
 {
   // Ones to exclude starting cell
   if (path->size() <= 1)
@@ -281,7 +282,7 @@ void fillCommandArray(LinkedList<Node *> *path, char *commands, byte *commandCou
   }
   for (byte i = 1; i < path->size(); i++)
   {
-    addCommand('F', commands, commandCount, turnCount);
+    addCommand(1, commands, commandCount, turnCount);
     if (i == path->size() - 1)
     {
       continue;
@@ -290,61 +291,61 @@ void fillCommandArray(LinkedList<Node *> *path, char *commands, byte *commandCou
   }
 }
 
-Heading handleTurn(Heading now, Heading next, char *commands, byte *commandCount, byte *turnCount)
+Heading handleTurn(Heading now, Heading next, byte *commands, byte *commandCount, byte *turnCount)
 {
   if (now == NORTH && next == EAST)
   {
-    addCommand('R', commands, commandCount, turnCount);
+    addCommand(2, commands, commandCount, turnCount);
     return EAST;
   }
   else if (now == NORTH && next == WEST)
   {
-    addCommand('L', commands, commandCount, turnCount);
+    addCommand(3, commands, commandCount, turnCount);
     return WEST;
   }
   else if (now == EAST && next == NORTH)
   {
-    addCommand('L', commands, commandCount, turnCount);
+    addCommand(3, commands, commandCount, turnCount);
     return NORTH;
   }
   else if (now == EAST && next == SOUTH)
   {
-    addCommand('R', commands, commandCount, turnCount);
+    addCommand(2, commands, commandCount, turnCount);
     return SOUTH;
   }
   else if (now > next)
   {
-    addCommand('R', commands, commandCount, turnCount);
+    addCommand(2, commands, commandCount, turnCount);
     return now - 1;
   }
   else if (now < next)
   {
-    addCommand('L', commands, commandCount, turnCount);
+    addCommand(3, commands, commandCount, turnCount);
     return now + 1;
   }
 }
 
-void addCommand(char c, char *commands, byte *commandCount, byte *turnCount)
+void addCommand(byte c, byte *commands, byte *commandCount, byte *turnCount)
 {
   commands[*commandCount] = c;
   (*commandCount)++;
-  if (c != 'F')
+  if (c != 1)
   {
     (*turnCount)++;
   }
 }
 
-void resetCommand(char *commands, byte *commandCount, byte *turnCount)
+void resetCommand(byte *commands, byte *commandCount, byte *turnCount)
 {
-  for (byte i = 0; i < 50; i++)
+  for (byte i = 0; i < 25; i++)
   {
-    commands[i] = ' ';
+    commands[i] = 0;
   }
   *commandCount = 0;
   *turnCount = 0;
 }
 
-void printCommand(char *commands, byte *commandCount)
+void printCommand(byte *commands, byte *commandCount)
 {
   Serial.println(F("Commands to destination"));
   for (int i = 0; i < *commandCount; i++)
