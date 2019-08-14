@@ -1,7 +1,7 @@
 #include "Wire.h"
 #include "Sensor.h"
 #include "MazeExp.h"
-#include "Maze.h"
+//#include "Maze.h"
 #include "LiquidCrystal_I2C.h"
 #include "locomotion.h"
 #include "cppQueue.h"
@@ -44,7 +44,7 @@ byte heading = 4;
 int startStep = 0;
 int cellCount = 0;
 //MazeCell maze[5][9];
-Maze *mazePrint = new Maze();
+//Maze *mazePrint = new Maze();
 coord curCoord = {0,0};
 //coord initCoord;
 bool cellflag = true;
@@ -110,7 +110,8 @@ void setup() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void loop() {     
+void loop() {
+//  bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
   //Array be used to detect whether there is wall on the front of sensors, left, front and right respectively, 1 have wall 0 otherwise 
   //Variable that indicate the car to move front(0), left(1), right(2), back(3)                       
   move_dir = 0;
@@ -189,7 +190,7 @@ void loop() {
             {
               bluetooth.println("Warning! Queue not empty!");
             }
-            
+
             motion_queue.push(&motion_decision);
             bluetooth.print("Push: ");
             bluetooth.println(motion_decision);
@@ -206,6 +207,7 @@ void loop() {
           
           if(!motion_queue.isEmpty())
           {
+//              delay(1000);
               motion_queue.pop(&motion_mode);
               if (motion_mode==MOTION_FORWARD) ncells=1;
               bluetooth.print("Pop: ");
@@ -235,24 +237,26 @@ void loop() {
         }
         if(!motion_queue.isEmpty())
         {
+            bluetooth.println("Delay start!");
+            delay(1000);
+            bluetooth.println("Delay end!");
             motion_queue.pop(&motion_mode);
             if (motion_mode==MOTION_FORWARD) ncells=1;
-            
-//            delay(1000);
+
             bluetooth.print("Pop: ");
             bluetooth.println(motion_mode);
             bluetooth.println("Queue not empty");
         }
       }
     }else if(startStep==4){
-      for(byte i=0;i<9;i++){
-        for(byte j=0;j<9;j++){
-          if(newMaze->maze[i][j].detected==true)
-           mazePrint->fillCells_steven(i,j,newMaze->maze[i][j].walls);
-        }
-      }
+//      for(byte i=0;i<9;i++){
+//        for(byte j=0;j<9;j++){
+//          if(newMaze->maze[i][j].detected==true)
+//           mazePrint->fillCells_steven(i,j,newMaze->maze[i][j].walls);
+//        }
+//      }
   //    mazePrint->updateStatusCells(initCoord.y, initCoord.x, "S", newMaze->getDestY(), newMaze->getDestX());
-      mazePrint->print();
+//      mazePrint->print();
       bluetooth.println("End");
       startStep = 5;
 //      delay(100);  
@@ -277,7 +281,7 @@ void loop() {
         Serial.println("Motion status not recognized!");
     }
     
-    delay(1000);
+//    delay(1000);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

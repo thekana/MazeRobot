@@ -362,14 +362,14 @@ auto hardware::motor<pin_a, pin_b>::stop () -> void
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::forward (units::percentage velocity) -> void
 {
-  pin_a::write(FORWARD);
+    pin_a::write(FORWARD);
     pin_b::pwm_write(velocity);
 }
 
 template <class pin_a, class pin_b>
 auto hardware::motor<pin_a, pin_b>::backward (units::percentage velocity) -> void
 {
-  pin_a::write(BACKWARD);
+    pin_a::write(BACKWARD);
     pin_b::pwm_write(velocity);
 }
 
@@ -399,6 +399,10 @@ auto hardware::wheel<pin_a, pin_b>::position () -> units::millimeters
 
 template class hardware::digital_pin<22U>;
 template class hardware::digital_pin<23U>;
+template class hardware::digital_pin<4U>;
+template class hardware::digital_pin<5U>;
+template class hardware::digital_pin<6U>;
+template class hardware::digital_pin<7U>;
 template class hardware::motor<hardware::pins::M1, hardware::pins::E1>;
 template class hardware::motor<hardware::pins::M2, hardware::pins::E2>;
 template class hardware::digital_pin<2U>;
@@ -419,6 +423,8 @@ template class digital_pin<49>;
 template class digital_pin<18>;
 template class digital_pin<52>;
 template class digital_pin<53>;
-template class analog_pin<digital_pin<38>>;
-template class analog_pin<digital_pin<39>>;
-template class sonar<analog_pin<digital_pin<38>>,analog_pin<digital_pin<39>>>;
+template class digital_pin<36>;
+template class digital_pin<37>;
+template class analog_pin<digital_pin<36>>;
+template class analog_pin<digital_pin<37>>;
+template class sonar<analog_pin<digital_pin<36>>,analog_pin<digital_pin<37>>>;

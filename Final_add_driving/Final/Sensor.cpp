@@ -48,14 +48,14 @@ int orientation(int lfr[]) {
 }
 
 void carWall(double distance_l, double distance_f, double distance_r, int *lfr) {
-	if (distance_f < 80) {
+	if (distance_f < 120) {
 		lfr[1] = 1;
 	}
 	else {
 		lfr[1] = 0;
 	}
 
-	if (distance_l < 100) {
+	if (distance_l < 120) {
 		lfr[0] = 1;
 	}
 	else {
@@ -63,7 +63,7 @@ void carWall(double distance_l, double distance_f, double distance_r, int *lfr) 
 	}
 	//  delay(20);
 
-	if (distance_r < 100) {
+	if (distance_r < 120) {
 		lfr[2] = 1;
 	}
 	else {
