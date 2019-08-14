@@ -41,21 +41,20 @@ class Maze
 private:
   byte cells[ROWS][COLS] = {{0}};
   byte exploredWalls[ROWS][COLS] = {{0}};
-  String statusCells[ROWS][COLS];
+  byte statusCells[ROWS][COLS] = {{0}};
   byte startI = 0;
   byte startJ = 0;
-  Heading head;
+  Heading head = NORTH;
 
 public:
-  byte goalI = 0;
-  byte goalJ = 0;
+  byte goalI = 2;
+  byte goalJ = 4;
 
 public:
   Maze()
   {
     initializeCells();       // 2 is unexplored
     initializeStatusCells(); // 4 spaces
-    //statusCells[2][4] = " X "; // mark goal
   }
   void initializeCells()
   {
@@ -106,7 +105,7 @@ public:
       for (byte j = 0; j < COLS; j++)
       {
         // set every cells to 4 spaces
-        statusCells[i][j] = "    ";
+        statusCells[i][j] = 0;
       }
     }
   }
@@ -115,7 +114,6 @@ public:
     // to update these cells with path
     // data and start/end
     initializeStatusCells();
-    statusCells[g_i][g_j] = " X ";
     if (h == "E")
     {
       head = EAST;
@@ -132,8 +130,6 @@ public:
     {
       head = NORTH;
     }
-    statusCells[startI][startJ] = "   ";
-    statusCells[i][j] = String(" " + h + " ");
     startI = i;
     startJ = j;
     goalI = g_i;
@@ -141,14 +137,7 @@ public:
   }
   void addPath(byte i, byte j, byte val)
   {
-    String space = " ";
-    String str = String(val);
-    space.concat(str);
-    if (val < 10)
-    {
-      space.concat(" ");
-    }
-    statusCells[i][j] = space;
+    statusCells[i][j] = val;
   }
   void fillCells(String const &h)
   {
@@ -281,7 +270,18 @@ public:
       Serial.print("|"); // left most wall
       for (byte j = 0; j < COLS - 1; j++)
       {
-        Serial.print(statusCells[i][j]);
+        if (i == goalI && j == goalJ)
+        {
+          Serial.print(" X ");
+        }
+        else if (i == startI && j == startJ)
+        {
+          printStartingHeading();
+        }
+        else
+        {
+          printNumber(i, j);
+        }
         // if south wall not explored
         if (!(exploredWalls[i][j] & (1 << SOUTH)))
         {
@@ -299,7 +299,7 @@ public:
           }
         }
       }
-      Serial.print(statusCells[i][COLS - 1]);
+      printNumber(i, COLS - 1);
       Serial.print("|"); // right most wall
       Serial.print("\n");
       if (i == ROWS - 1)
@@ -331,6 +331,29 @@ public:
       Serial.print(F(" ---")); // Print closing bottom walls
     }
     Serial.print("\n");
+  }
+  void printNumber(byte i, byte j)
+  {
+    (statusCells[i][j]) ? (Serial.print(" "), Serial.print(statusCells[i][j]), Serial.print(" ")) : Serial.print("   ");
+  }
+
+  void printStartingHeading()
+  {
+    switch (head)
+    {
+    case NORTH:
+      Serial.print(" N ");
+      break;
+    case SOUTH:
+      Serial.print(" S ");
+      break;
+    case EAST:
+      Serial.print(" E ");
+      break;
+    case WEST:
+      Serial.print(" W ");
+      break;
+    }
   }
   Heading getHeading()
   {

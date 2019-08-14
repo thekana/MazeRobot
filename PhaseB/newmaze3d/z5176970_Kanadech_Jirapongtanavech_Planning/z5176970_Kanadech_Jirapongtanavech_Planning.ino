@@ -15,6 +15,7 @@ void setup()
   Serial.println(sizeof(path_list));
   Serial.println(sizeof(maze));
   Serial.println(sizeof(flood));
+  Serial.println(sizeof(Node));
   //  Serial3.begin(115200);
   //  Serial3.println("Ready");
 }
@@ -78,29 +79,29 @@ void loop()
       createPath();
       // Serial.print("Total Path: ");
       // Serial.println(path_list.size());
-      assignCostToEachPath(commands, commandCount, turnCount);
+      // assignCostToEachPath(commands, commandCount, turnCount);
       // Serial.println("Assigned Path");
       //Now we pick the path with least turns
       Path *bestPath = path_list.get(0);
-      for (byte i = 0; i < path_list.size(); i++)
-      {
-        if (bestPath->actionCount > path_list.get(i)->actionCount)
-        {
-          bestPath = path_list.get(i);
-        }
-      }
-      for (byte i = 0; i < bestPath->nodeList->size() - 1; i++)
-      {
-        byte num = bestPath->nodeList->get(i)->getValue();
-        num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
-        // Add to maze for printing
-        maze.addPath(bestPath->nodeList->get(i)->getX(), bestPath->nodeList->get(i)->getY(), num);
-      }
+      // for (byte i = 0; i < path_list.size(); i++)
+      // {
+      //   if (bestPath->actionCount > path_list.get(i)->actionCount)
+      //   {
+      //     bestPath = path_list.get(i);
+      //   }
+      // }
+      // for (byte i = 0; i < bestPath->nodeList->size() - 1; i++)
+      // {
+      //   byte num = bestPath->nodeList->get(i)->getValue();
+      //   num = abs(flood.getCell(maze.getStartI(), maze.getStartJ()) - num);
+      //   // Add to maze for printing
+      //   maze.addPath(bestPath->nodeList->get(i)->getX(), bestPath->nodeList->get(i)->getY(), num);
+      // }
       // first add forward then turn
       // We need to reset commandCount before doing so
       resetCommand(commands, commandCount, turnCount);
       fillCommandArray(bestPath->nodeList, commands, commandCount, turnCount);
-      maze.print();
+      //maze.print();
       printCommand(commands, commandCount);
       // Once we have got the command array need to free up everything
       Serial.println("Going to clear Path List");
