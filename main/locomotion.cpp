@@ -61,22 +61,22 @@ void turning(void)
 {
     if(motion_mode == MOTION_LEFT)
     {
-        goalA=-67;
+        goalA=-68;
         counterA=0;
-        goalB=67;
+        goalB=68;
         counterB=0;
         vLeft=-50.0;
-        vRight=50.0;
+        vRight=52.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_RIGHT)
     {
-        goalA=67;
+        goalA=68;
         counterA=0;
-        goalB=-67;
+        goalB=-68;
         counterB=0;
         vLeft=50.0;
-        vRight=-50.0;
+        vRight=-52.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_BACK)
@@ -86,7 +86,7 @@ void turning(void)
         goalB=141;
         counterB=0;
         vLeft=-50.0;
-        vRight=50.0;
+        vRight=52.0;
         apply_speed();
     }
     else
@@ -104,7 +104,7 @@ void forward(int ncells, double distance_f, double distance_l, double distance_r
     counterB = 0;
     counterB_history = 0;
     vLeft=50.0;
-    vRight=50.0;
+    vRight=52.0;
     apply_speed();
 }
 
@@ -150,7 +150,7 @@ void apply_speed(void)
 void motor_controller(double distance_f, double distance_l, double distance_r)
 {
     // brake
-    if (distance_f < 55.0)
+    if (distance_f < 60.0)
     {
         vLeft=0.0;
         vRight=0.0;
@@ -198,6 +198,7 @@ void motor_controller(double distance_f, double distance_l, double distance_r)
     // bluetooth.println("Here");
 
 print_out:
+    ;
     bluetooth.print(distance_l);
     bluetooth.print("**");
     bluetooth.print(vLeft);
@@ -220,18 +221,23 @@ void callback1(void)
     {
          counterA--;
     }
-    bluetooth.print("CounterA is: ");
-    bluetooth.print(counterA);
-    bluetooth.print(" A is: ");
-    bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
-    bluetooth.print(" B is: ");
-    bluetooth.println((unsigned int)hardware::pins::left_encoder_b::read());
+    // bluetooth.print("CounterA is: ");
+    // bluetooth.print(counterA);
+    // bluetooth.print(" A is: ");
+    // bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
+    // bluetooth.print(" B is: ");
+    // bluetooth.println((unsigned int)hardware::pins::left_encoder_b::read());
+    // bluetooth.print("goalA is: ");
+    // bluetooth.println((int)goalA/5.625);
     if(goalA!=0 && counterA==(int)(goalA/5.625)) // 135/24=5.625
     {
+        vLeft = 0.0;
         hardware::left_motor::stop();
+        // hardware::right_motor::stop();
         goalA=0;
         if (goalB==0)
         {
+            hardware::right_motor::stop();
             motion_mode = MOTION_STOP;
             bluetooth.println("Set to motion stop in callback1");
         }
@@ -248,18 +254,23 @@ void callback2(void)
     {
         counterB--;
     }
-  	bluetooth.print("CounterB is: ");
-  	bluetooth.print(counterB);
-    bluetooth.print(" A is: ");
-    bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
-    bluetooth.print(" B is: ");
-    bluetooth.println((unsigned int)hardware::pins::right_encoder_b::read());
+  	// bluetooth.print("CounterB is: ");
+  	// bluetooth.print(counterB);
+   //  bluetooth.print(" A is: ");
+   //  bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
+   //  bluetooth.print(" B is: ");
+   //  bluetooth.println((unsigned int)hardware::pins::right_encoder_b::read());
+   //  bluetooth.print("goalB is: ");
+   //  bluetooth.println((int)goalB/5.625);
     if(goalB!=0 && counterB==(int)(goalB/5.625))
     {
+        // hardware::left_motor::stop();
+        vRight = 0.0;
         hardware::right_motor::stop();
         goalB=0;
         if (goalA==0)
         {
+            hardware::left_motor::stop();
             motion_mode = MOTION_STOP;
             bluetooth.println("Set to motion stop in callback2");
         }

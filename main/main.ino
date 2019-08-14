@@ -41,18 +41,23 @@ void setup() {
     // setup map
 
     // Wait 5 seconds and main loop start
-    delay(1000);
+    delay(5000);
+    start=1;
 }
 
 void loop() {
+    // delay(5000);
     if(bluetooth.available() > 0)
     {
         String c = bluetooth.readString();
-        if(c.equals("12\n")) start=1;
+        if(c.equals("12")) start=1;
+        if(c.equals("90")) count=1;
+        if(c.equals("-90")) count=2;
         Serial.print(c);
         Serial.print(start);
     }
 
+    // bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
 
     // put your main code here, to run repeatedly:
     double distance_f, distance_l, distance_r;
@@ -91,6 +96,12 @@ void loop() {
     //function that records the walls near car (Ease, South, West, North)
     ESWNWall(Yaw, lfr, ESWN, &face_dir);
 
+    bluetooth.print("Front: ");
+    bluetooth.print(distance_f);
+    bluetooth.print(" Left: ");
+    bluetooth.print(distance_l);
+    bluetooth.print(" Right: ");
+    bluetooth.println(distance_r);
 
     // 2. Localisation and planning
 
@@ -104,7 +115,18 @@ void loop() {
 
     if(!start) return;
 
-    int ncells = 10;
+    // bluetooth.print("Count: ");
+    // bluetooth.println(count);
+
+    int ncells = 4;
+    motion_mode = MOTION_FORWARD;
+    // if(count==0)
+    // {
+    //     bluetooth.println("Here");
+    //     motion_mode = MOTION_FORWARD;
+    //     count=3;
+    // }
+
     // if (motion_mode == MOTION_STOP)
     // {
     //     // Assign other values here
@@ -132,10 +154,15 @@ void loop() {
         }
     }
 
-    // if (count==0)
+    // if (count==1)
     // {
     //   motion_mode = MOTION_LEFT;
-    //   count++;
+    //   count=3;
+    // }
+    // if (count==2)
+    // {
+    //   motion_mode = MOTION_RIGHT;
+    //   count=3;
     // }
 
     // motion_mode = MOTION_FORWARD;
@@ -161,7 +188,20 @@ void loop() {
     {
         Serial.println("Motion status not recognized!");
     }
+
     // Test code
+    // bluetooth.print("last_mode: ");
+    // bluetooth.println(current_mode);
+    // bluetooth.print("motion_mode: ");
+    // bluetooth.println(motion_mode);
+    // bluetooth.print("**");    
+    // bluetooth.print(distance_l);
+    // bluetooth.print("**");
+    // bluetooth.print(distance_f);
+    // bluetooth.print("**");
+    // bluetooth.print(distance_r);
+    // bluetooth.println("**");
+
     // bluetooth.print("Front: ");
     // bluetooth.print(distance_f);
     // bluetooth.print(" Left: ");
