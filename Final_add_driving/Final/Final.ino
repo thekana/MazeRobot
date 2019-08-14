@@ -207,7 +207,9 @@ void loop() {
           
           if(!motion_queue.isEmpty())
           {
-//              delay(1000);
+              bluetooth.println("Delay start!");
+              delay(1000);
+              bluetooth.println("Delay end!");
               motion_queue.pop(&motion_mode);
               if (motion_mode==MOTION_FORWARD) ncells=1;
               bluetooth.print("Pop: ");
