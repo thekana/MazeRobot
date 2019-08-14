@@ -153,12 +153,6 @@ public:
       byte data = x2i(&a);
       index++;
       // Now update the cell data
-      // byte data = decimal * 10 + digit;
-      // BITMASK E-S-W-N
-      //        cells[i][j] |= (data & B1000); // EAST
-      //        cells[i][j] |= (data & B0100); // SOUTH
-      //        cells[i][j] |= (data & B0010); // WEST
-      //        cells[i][j] |= (data & B0001); // NORTH
       cells[i][j] = data;
       // Also need to mark cells as explored
       exploredWalls[i][j] = 0x0F;
@@ -267,41 +261,30 @@ public:
     for (byte i = 0; i < ROWS; i++)
     {
       // Print Vertical;
-      Serial.print("|"); // left most wall
+      Serial.print(F("|")); // left most wall
       for (byte j = 0; j < COLS - 1; j++)
       {
-        if (i == goalI && j == goalJ)
-        {
-          Serial.print(" X ");
-        }
-        else if (i == startI && j == startJ)
-        {
-          printStartingHeading();
-        }
-        else
-        {
-          printNumber(i, j);
-        }
+        printNumber(i, j);
         // if south wall not explored
         if (!(exploredWalls[i][j] & (1 << SOUTH)))
         {
-          Serial.print("*");
+          Serial.print(F("*"));
         }
         else
         {
           if (hasWall(i, j, SOUTH))
           {
-            Serial.print("|");
+            Serial.print(F("|"));
           }
           else
           {
-            Serial.print(" ");
+            Serial.print(F(" "));
           }
         }
       }
       printNumber(i, COLS - 1);
-      Serial.print("|"); // right most wall
-      Serial.print("\n");
+      Serial.print(F("|")); // right most wall
+      Serial.print(F("\n"));
       if (i == ROWS - 1)
       {
         break;
@@ -334,24 +317,48 @@ public:
   }
   void printNumber(byte i, byte j)
   {
-    (statusCells[i][j]) ? (Serial.print(" "), Serial.print(statusCells[i][j]), Serial.print(" ")) : Serial.print("   ");
+    if (i == goalI && j == goalJ)
+    {
+      Serial.print(F(" X "));
+    }
+    else if (i == startI && j == startJ)
+    {
+      printStartingHeading();
+    }
+    else
+    {
+      if (statusCells[i][j] > 0 && statusCells[i][j] <= 9)
+      {
+        Serial.print(F(" "));
+        Serial.print(statusCells[i][j]);
+        Serial.print(F(" "));
+      }
+      else if (statusCells[i][j] >= 10)
+      {
+        Serial.print(F(" "));
+        Serial.print(statusCells[i][j]);
+      }
+      else
+      {
+        Serial.print(F("   "));
+      }
+    }
   }
-
   void printStartingHeading()
   {
     switch (head)
     {
     case NORTH:
-      Serial.print(" N ");
+      Serial.print(F(" N "));
       break;
     case SOUTH:
-      Serial.print(" S ");
+      Serial.print(F(" S "));
       break;
     case EAST:
-      Serial.print(" E ");
+      Serial.print(F(" E "));
       break;
     case WEST:
-      Serial.print(" W ");
+      Serial.print(F(" W "));
       break;
     }
   }
