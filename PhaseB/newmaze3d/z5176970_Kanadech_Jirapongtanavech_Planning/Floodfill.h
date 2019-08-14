@@ -34,7 +34,7 @@ public:
         cell[i][j] = MAX_CELL_VALUE;
       }
     }
-    cell[2][4] = 0; // goal is always here
+    cell[maze->goalI][maze->goalJ] = 0; // goal is always here
     byte currExploredValue = 0;
     byte mazeValueChange = 1;
     while (mazeValueChange != 0)
