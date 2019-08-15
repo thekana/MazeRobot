@@ -103,6 +103,7 @@ void loop()
       Serial.println("Going to clear Path List");
       clearPathList();
       Serial.println("Cleared Path List");
+      Serial.println(commandCount);
     }
     else if (c.startsWith("o"))
     {
