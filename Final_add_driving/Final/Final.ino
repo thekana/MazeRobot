@@ -61,7 +61,7 @@ byte turnCount = 0;
 bool map_ready = false;
 int start = 0;
 int pos = 0;
-
+byte mode = 0; // 1 for exploration 2 for vision
 // Tom set this
 bool planning_done = false;
 
@@ -77,9 +77,6 @@ void setup()
   Wire.setClock(400000);
   sensorSetup();
   locomotion_setup();
-  //  initLCD();
-  //  Serial.println("LCD   Connect!");
-  //  lcd.print("Ready");
   current = millis();
   timeIntervel = 0;
 
@@ -100,7 +97,7 @@ void setup()
     keyword = bluetooth.readString();
     if (keyword.equals("e"))
       startStep = 0;
-    else if (keyword.equals("v"))
+    if (keyword.equals("v"))
       startStep = 6;
     bluetooth.print("Heading = ");
     bluetooth.println(heading);
@@ -277,33 +274,22 @@ void loop()
     bluetooth.println("End");
     planning();
     startStep = 5;
-    delay(5000);
+    while (!bluetooth.available())
+    {
+    } //wait indefinitely for bluetooth input
   }
   else if (startStep == 5)
   {
-    ledR::low();
-    ledG::high();
-    //bluetooth.println("In step 5");
-    if (motion_mode == MOTION_STOP)
+    while (!motion_queue.isEmpty())
     {
-      if (!motion_queue.isEmpty())
+      motion_queue.pop(&motion_mode);
+      if (motion_mode >= 10)
       {
-        delay(500);
-        motion_queue.pop(&motion_mode);
-        if (motion_mode > 10)
-        {
-          ncells = motion_mode - 10;
-          motion_mode = MOTION_FORWARD;
-        }
-        bluetooth.println(motion_mode);
-      }
-      if (motion_queue.isEmpty())
-      {
-        startStep = 6;
-        ledR::high();
-        ledG::low();
+        ncells = motion_mode - 10;
+        motion_mode = MOTION_FORWARD;
       }
     }
+    startStep = 6;
   }
   else if (startStep == 6)
   {
