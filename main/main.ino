@@ -23,7 +23,7 @@ bool map_ready=false;
 float Yaw;
 //Variable that indicate the car to move , stop(0), front(1), left_turning(2), right_turning(3), back_turning(4)
 int motion_mode = MOTION_STOP;
-static Queue motion_queue(sizeof(int));
+static Queue motion_queue(sizeof(int),30);
 
 int count=2;
 
@@ -162,7 +162,6 @@ void loop() {
 	{
 		// exploration(motion_queue, lfr);
 	}
-
 
 	// 3. Give command to locomotion
 	// bluetooth.print(lfr[0]);
@@ -329,7 +328,7 @@ void planning()
   bluetooth.println("Going to clear Path List");
   clearPathList();
   bluetooth.println("Cleared Path List");
-
+  fillMotionQueue();
 }
 
 
@@ -579,6 +578,59 @@ void printCommand()
   bluetooth.println("");
 }
 
+void fillMotionQueue()
+{
+  if (commandCount == 0)
+  {
+    return; //error
+  }
+  byte forwardCount = 0;
+  int motion_decision = 0;
+  for (byte i = 0; i < commandCount; i++)
+  {
+    switch (commands[i])
+    {
+    case 'F':
+      forwardCount++;
+      break;
+    case 'R':
+      if (forwardCount != 0)
+      {
+        motion_decision = 10 + forwardCount;
+        motion_queue.push(&motion_decision);
+        forwardCount = 0;
+      }
+      motion_decision = 3;
+      motion_queue.push(&motion_decision);
+      break;
+    case 'L':
+      if (forwardCount != 0)
+      {
+        motion_decision = 10 + forwardCount;
+        motion_queue.push(&motion_decision);
+        forwardCount = 0;
+      }
+      motion_decision = 2;
+      motion_queue.push(&motion_decision);
+      break;
+    }
+  }
+  if (forwardCount != 0)
+  {
+    motion_decision = 10 + forwardCount;
+    motion_queue.push(&motion_decision);
+    forwardCount = 0;
+  }
+  
+//  int motion_mode;
+//  while (!motion_queue.isEmpty())
+//  {
+//    motion_queue.pop(&motion_mode);
+//    Serial.print(motion_mode);
+//    Serial.print(" ");
+//  }
+//  Serial.println("End of Queue");
+}
 // ESWN e.g. All 4 walls is F in HEX 1111
 // Give Cell position 00F
 //   E
