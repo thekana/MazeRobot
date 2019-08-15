@@ -119,7 +119,7 @@ void loop() {
     // bluetooth.println(count);
 
     int ncells = 4;
-    motion_mode = MOTION_FORWARD;
+    // motion_mode = MOTION_FORWARD;
     // if(count==0)
     // {
     //     bluetooth.println("Here");
@@ -134,36 +134,36 @@ void loop() {
     // }
 
     // A simple obstacle avoidance behaviour
-    if (motion_mode == MOTION_STOP)
-    {
-        delay(500);
-        if(lfr[1]==0)
-        {
-            bluetooth.println("Forward");
-            motion_mode=MOTION_FORWARD;
-        }
-        else if(lfr[0]==0)
-        {
-            bluetooth.println("Left");
-            motion_mode=MOTION_LEFT;
-        }
-        else if(lfr[2]==0)
-        {
-            bluetooth.println("Right");
-            motion_mode=MOTION_RIGHT;
-        }
-    }
+    // if (motion_mode == MOTION_STOP)
+    // {
+    //     delay(500);
+    //     if(lfr[1]==0)
+    //     {
+    //         bluetooth.println("Forward");
+    //         motion_mode=MOTION_FORWARD;
+    //     }
+    //     else if(lfr[0]==0)
+    //     {
+    //         bluetooth.println("Left");
+    //         motion_mode=MOTION_LEFT;
+    //     }
+    //     else if(lfr[2]==0)
+    //     {
+    //         bluetooth.println("Right");
+    //         motion_mode=MOTION_RIGHT;
+    //     }
+    // }
 
-    // if (count==1)
-    // {
-    //   motion_mode = MOTION_LEFT;
-    //   count=3;
-    // }
-    // if (count==2)
-    // {
-    //   motion_mode = MOTION_RIGHT;
-    //   count=3;
-    // }
+    if (count==1)
+    {
+      motion_mode = MOTION_LEFT;
+      count=3;
+    }
+    if (count==2)
+    {
+      motion_mode = MOTION_RIGHT;
+      count=3;
+    }
 
     // motion_mode = MOTION_FORWARD;
     // delay(5000);
