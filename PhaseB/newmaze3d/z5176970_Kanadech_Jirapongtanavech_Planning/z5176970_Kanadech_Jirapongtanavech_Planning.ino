@@ -3,6 +3,7 @@
 #include "Maze.h"
 #include "Floodfill.h"
 #include "Path.h"
+#include "cppQueue.h"
 
 Maze maze;
 Floodfill flood(&maze);
@@ -10,10 +11,11 @@ LinkedList<Path *> path_list = LinkedList<Path *>();
 char commands[40]; // for storing commands
 byte commandCount = 0;
 byte turnCount = 0;
-
+static Queue motion_queue(sizeof(int), 30);
 void setup()
 {
   Serial.begin(115200);
+  Serial.println(motion_queue.isInitialized());
   Serial.println("Hello");
   //  Serial3.begin(115200);
   //  Serial3.println("Ready");
@@ -104,6 +106,7 @@ void loop()
       clearPathList();
       Serial.println("Cleared Path List");
       Serial.println(commandCount);
+      fillMotionQueue();
     }
     else if (c.startsWith("o"))
     {
@@ -344,12 +347,65 @@ void resetCommand()
 void printCommand()
 {
   Serial.println(F("Commands to destination"));
-  for (int i = 0; i < commandCount; i++)
+  for (byte i = 0; i < commandCount; i++)
   {
     Serial.print(commands[i]);
     Serial.print("  ");
   }
   Serial.println("");
+}
+
+void fillMotionQueue()
+{
+  if (commandCount == 0)
+  {
+    return; //error
+  }
+  byte forwardCount = 0;
+  int motion_decision = 0;
+  for (byte i = 0; i < commandCount; i++)
+  {
+    switch (commands[i])
+    {
+    case 'F':
+      forwardCount++;
+      break;
+    case 'R':
+      if (forwardCount != 0)
+      {
+        motion_decision = 10 + forwardCount;
+        motion_queue.push(&motion_decision);
+        forwardCount = 0;
+      }
+      motion_decision = 3;
+      motion_queue.push(&motion_decision);
+      break;
+    case 'L':
+      if (forwardCount != 0)
+      {
+        motion_decision = 10 + forwardCount;
+        motion_queue.push(&motion_decision);
+        forwardCount = 0;
+      }
+      motion_decision = 2;
+      motion_queue.push(&motion_decision);
+      break;
+    }
+  }
+  if (forwardCount != 0)
+  {
+    motion_decision = 10 + forwardCount;
+    motion_queue.push(&motion_decision);
+    forwardCount = 0;
+  }
+  int motion_mode;
+  while (!motion_queue.isEmpty())
+  {
+    motion_queue.pop(&motion_mode);
+    Serial.print(motion_mode);
+    Serial.print(" ");
+  }
+  Serial.println("End of Queue");
 }
 
 // ESWN e.g. All 4 walls is F in HEX 1111
