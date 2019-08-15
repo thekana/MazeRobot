@@ -61,22 +61,22 @@ void turning(void)
 {
     if(motion_mode == MOTION_LEFT)
     {
-        goalA=-68;
+        goalA=-67;
         counterA=0;
-        goalB=68;
+        goalB=67;
         counterB=0;
         vLeft=-60.0;
-        vRight=65.0;
+        vRight=63.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_RIGHT)
     {
-        goalA=68;
+        goalA=67;
         counterA=0;
-        goalB=-68;
+        goalB=-67;
         counterB=0;
         vLeft=60.0;
-        vRight=-65.0;
+        vRight=-63.0;
         apply_speed();
     }
     else if (motion_mode == MOTION_BACK)
@@ -86,7 +86,7 @@ void turning(void)
         goalB=141;
         counterB=0;
         vLeft=-60.0;
-        vRight=65.0;
+        vRight=63.0;
         apply_speed();
     }
     else
@@ -104,7 +104,7 @@ void forward(int ncells, double distance_f, double distance_l, double distance_r
     counterB = 0;
     counterB_history = 0;
     vLeft=60.0;
-    vRight=65.0;
+    vRight=63.0;
     apply_speed();
 }
 

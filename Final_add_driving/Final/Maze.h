@@ -2,6 +2,7 @@
 #define MAZE_H
 #include <Arduino.h>
 #include <avr/pgmspace.h>
+#define bluetooth Serial3
 
 #define ROWS 9
 #define COLS 9
@@ -44,11 +45,13 @@ class Maze
     String statusCells[ROWS][COLS];
     byte startI = 0;
     byte startJ = 0;
-    byte goalI = 0;
-    byte goalJ = 0;
     Heading head;
 
   public:
+    byte goalI = 0;
+    byte goalJ = 0;
+  public:
+
     Maze()
     {
       initializeCells();         // 2 is unexplored
@@ -176,10 +179,20 @@ class Maze
     void fillCells_steven(byte i, byte j, byte wall)
     {
       /*For steven to use*/
-        cells[i][j] = wall;
-        // Also need to mark cells as explored
-        exploredWalls[i][j] = 0x0F;
-        updateNeighbours(i, j);
+      bluetooth.print(i);bluetooth.println(j);
+      bluetooth.print("FillCell walls: "); bluetooth.println(wall);
+      byte last_bit = (wall & 0x0001);
+      byte converted;
+      if(last_bit != 0){
+        converted = ((wall >> 1) | 0x8);        
+      } else {
+        converted = (wall >> 1);
+      }
+      cells[i][j] = converted;
+      bluetooth.print("Converted walls: "); bluetooth.println(cells[i][j]);
+      // Also need to mark cells as explored
+      exploredWalls[i][j] = 0x0F;
+      updateNeighbours(i, j);
     }
     void updateNorth(byte i, byte j, byte n) {
       cells[i][j] |= n << NORTH;
@@ -203,7 +216,7 @@ class Maze
     }
     void updateNeighbours(byte i, byte j)
     {
-      if (i >= 0 && i < ROWS-1)
+      if (i >= 0 && i < ROWS - 1)
       {
         // EAST <--> WEST
         // cells[i + 1][j] |= ((cells[i][j] & (1 << WEST)) << 2);
@@ -212,7 +225,7 @@ class Maze
           exploredWalls[i + 1][j] |= (1 << EAST);
         }
       }
-      if (i <= ROWS-1 && i > 0)
+      if (i <= ROWS - 1 && i > 0)
       {
         // WEST <--> EAST
         // cells[i - 1][j] |= ((cells[i][j] & (1 << EAST)) >> 2);
@@ -259,37 +272,37 @@ class Maze
     {
       for (byte j = 0; j < COLS; j++)
       {
-        Serial.print(F(" ---")); // Print top walls
+        bluetooth.print(F(" ---")); // Print top walls
       }
-      Serial.print("\n");
+      bluetooth.print("\n");
       for (byte i = 0; i < ROWS; i++)
       {
         // Print Vertical;
-        Serial.print("|"); // left most wall
+        bluetooth.print("|"); // left most wall
         for (byte j = 0; j < COLS - 1; j++)
         {
-          Serial.print(statusCells[i][j]);
+          bluetooth.print(statusCells[i][j]);
           // if south wall not explored
           if (!(exploredWalls[i][j] & (1 << SOUTH)))
           {
-            Serial.print("*");
+            bluetooth.print("*");
           }
           else
           {
             if (hasWall(i, j, SOUTH))
             {
-              Serial.print("|");
+              bluetooth.print("|");
             }
             else
             {
-              Serial.print(" ");
+              bluetooth.print(" ");
             }
           }
         }
-        Serial.print(statusCells[i][COLS - 1]);
-        Serial.print("|"); // right most wall
-        Serial.print("\n");
-        if (i == ROWS-1)
+        bluetooth.print(statusCells[i][COLS - 1]);
+        bluetooth.print("|"); // right most wall
+        bluetooth.print("\n");
+        if (i == ROWS - 1)
         {
           break;
         }
@@ -297,27 +310,27 @@ class Maze
         {
           if (!(exploredWalls[i][j] & (1 << WEST)))
           {
-            Serial.print(F(" ***"));
+            bluetooth.print(F(" ***"));
           }
           else
           {
             if (hasWall(i, j, WEST))
             {
-              Serial.print(F(" ---"));
+              bluetooth.print(F(" ---"));
             }
             else
             {
-              Serial.print(F("    "));
+              bluetooth.print(F("    "));
             }
           }
         }
-        Serial.print("\n");
+        bluetooth.print("\n");
       }
       for (byte j = 0; j < COLS; j++)
       {
-        Serial.print(F(" ---")); // Print closing bottom walls
+        bluetooth.print(F(" ---")); // Print closing bottom walls
       }
-      Serial.print("\n");
+      bluetooth.print("\n");
     }
     Heading getHeading()
     {
