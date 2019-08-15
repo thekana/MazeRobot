@@ -56,7 +56,7 @@ void loop() {
         Serial.print(c);
         Serial.print(start);
     }
-
+    bluetooth.print((unsigned int)hardware::pins::right_encoder_a::read());
     // bluetooth.print((unsigned int)hardware::pins::left_encoder_a::read());
 
     // put your main code here, to run repeatedly:
@@ -96,12 +96,12 @@ void loop() {
     //function that records the walls near car (Ease, South, West, North)
     ESWNWall(Yaw, lfr, ESWN, &face_dir);
 
-    bluetooth.print("Front: ");
-    bluetooth.print(distance_f);
-    bluetooth.print(" Left: ");
-    bluetooth.print(distance_l);
-    bluetooth.print(" Right: ");
-    bluetooth.println(distance_r);
+    // bluetooth.print("Front: ");
+    // bluetooth.print(distance_f);
+    // bluetooth.print(" Left: ");
+    // bluetooth.print(distance_l);
+    // bluetooth.print(" Right: ");
+    // bluetooth.println(distance_r);
 
     // 2. Localisation and planning
 
