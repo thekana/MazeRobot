@@ -281,7 +281,9 @@ void loop()
   }
   else if (startStep == 5)
   {
-    bluetooth.println("In step 5");
+    ledR::low();
+    ledG::high();
+    //bluetooth.println("In step 5");
     if (motion_mode == MOTION_STOP)
     {
       if (!motion_queue.isEmpty())
@@ -298,6 +300,8 @@ void loop()
       if (motion_queue.isEmpty())
       {
         startStep = 6;
+        ledR::high();
+        ledG::low();
       }
     }
   }
