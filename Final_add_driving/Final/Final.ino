@@ -307,7 +307,11 @@ void loop()
   }
   else if (startStep == 6)
   {
-    if (bluetooth.available() > 0)
+
+    while (!bluetooth.available() && !start)
+    {
+    }
+    if (bluetooth.available())
     {
       String c = bluetooth.readString();
       if (c.equals("12"))
@@ -354,56 +358,41 @@ void loop()
       free(buf);
       //Serial.println("No leaking!");
     }
-
-    if (!start)
-      return;
-    //bluetooth.println("Motion start");
-    int ncells = 0;
-    if (pos >= commandCount)
+    if (map_ready && !planning_done)
     {
-      // bluetooth3.println("Command finish !");
-      bluetooth.println("Command finish !");
+      planning();
+      planning_done = true;
+    }
+    if (!start)
+    {
       return;
     }
-
-    if (motion_mode == MOTION_STOP)
+    else
     {
-      // Code from Lee
-      bluetooth.print("Command at pos is: ");
-      bluetooth.println(commands[pos]);
-      bluetooth.print("pos is: ");
-      bluetooth.println(pos);
-      if (commands[pos] == 'F')
+      ledR::low();
+      ledG::high();
+      if (motion_mode == MOTION_STOP)
       {
-        // bluetooth3.println("forward");
-        bluetooth.print("forward");
-        motion_mode = MOTION_FORWARD;
-        ncells = 1;
-        pos++;
-        while (commands[pos] == 'F' && pos <= commandCount)
+        if (!motion_queue.isEmpty())
         {
-          ncells++;
-          pos++;
+          delay(500);
+          motion_queue.pop(&motion_mode);
+          if (motion_mode > 10)
+          {
+            ncells = motion_mode - 10;
+            motion_mode = MOTION_FORWARD;
+          }
+          bluetooth.println(motion_mode);
         }
-        bluetooth.println(ncells);
-      }
-      else if (commands[pos] == 'L')
-      {
-        // bluetooth3.println("Left");
-        bluetooth.println("Left");
-        motion_mode = MOTION_LEFT;
-        pos++;
-      }
-      else if (commands[pos] == 'R')
-      {
-        // bluetooth3.println("Right");
-        bluetooth.println("Right");
-        motion_mode = MOTION_RIGHT;
-        pos++;
+        if (motion_queue.isEmpty())
+        {
+          startStep = 6;
+          ledR::high();
+          ledG::low();
+        }
       }
     }
   }
-
   if (motion_mode >= MOTION_LEFT)
   {
     //         bluetooth.println("Turning");
