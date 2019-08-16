@@ -38,7 +38,7 @@ namespace hardware
     /**
      * \brief The sonar_trigger is ultrasound trigger pin connected to a0.
      */
-    using sonar_trigger = analog_pin<digital_pin<38U>>;
+    using sonar_trigger = analog_pin<digital_pin<37U>>;
 
     /**
      * \brief The ultrasound_echo is ultrasound echo pin connected to a1.

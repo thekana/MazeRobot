@@ -121,7 +121,7 @@ void setup()
 
 void loop()
 {
-  distance_f = sonar<analog_pin<digital_pin<38>>, analog_pin<digital_pin<39>>>::distance().count(); //convert the CM to MM
+  distance_f = sonar<analog_pin<digital_pin<37>>, analog_pin<digital_pin<39>>>::distance().count(); //convert the CM to MM
   //left distance (left lidar)
   distance_l = lidar<lidar_tag<0>>::distance().count();
   //right distance (right lidar)
